@@ -1,0 +1,14 @@
+run,data,ipc,seed,img_size,train_images,epochs_run,best_epoch,val_f1_macro,val_accuracy,train_seconds,distill_seconds,distill_iterations,model_path
+random_ipc1_res112_s0,random,1,0,112,104,280,230,0.0519,0.0533,36.4,,,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/random_ipc1_res112_s0.keras
+random_ipc1_res112_s1,random,1,1,112,104,230,180,0.0483,0.0544,29.9,,,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/random_ipc1_res112_s1.keras
+random_ipc1_res112_s2,random,1,2,112,104,300,270,0.054,0.0649,39.8,,,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/random_ipc1_res112_s2.keras
+random_ipc10_res112_s0,random,10,0,112,1040,270,220,0.2641,0.2686,294.2,,,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/random_ipc10_res112_s0.keras
+random_ipc10_res112_s1,random,10,1,112,1040,300,280,0.2602,0.2624,368.4,,,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/random_ipc10_res112_s1.keras
+random_ipc10_res112_s2,random,10,2,112,1040,300,270,0.2483,0.2449,325.7,,,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/random_ipc10_res112_s2.keras
+distilled_ipc1_res112_s0,distilled,1,0,112,104,230,180,0.0625,0.0999,30.7,985.4,500,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/distilled_ipc1_res112_s0.keras
+distilled_ipc1_res112_s1,distilled,1,1,112,104,300,260,0.0662,0.0884,39.9,985.4,500,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/distilled_ipc1_res112_s1.keras
+distilled_ipc1_res112_s2,distilled,1,2,112,104,290,240,0.0728,0.1072,38.2,985.4,500,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/distilled_ipc1_res112_s2.keras
+distilled_ipc10_res112_s0,distilled,10,0,112,1040,300,260,0.217,0.2107,329.6,1510.0,500,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/distilled_ipc10_res112_s0.keras
+distilled_ipc10_res112_s1,distilled,10,1,112,1040,230,180,0.2188,0.222,246.9,1510.0,500,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/distilled_ipc10_res112_s1.keras
+distilled_ipc10_res112_s2,distilled,10,2,112,1040,220,170,0.1773,0.1837,241.0,1510.0,500,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/distilled_ipc10_res112_s2.keras
+full_res112_s0,full,,0,112,,43,38,0.5538,0.6161,581.5,,,/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/full_res112_s0.keras
