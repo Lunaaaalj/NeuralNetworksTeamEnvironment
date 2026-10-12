@@ -1,0 +1,35 @@
+# Configuración para el notebook de Kaggle (GPU P100/T4 o TPU).
+# El repo se clona en /kaggle/working, así que las rutas relativas escriben ahí.
+paths:
+  tfrecords: /kaggle/input/tpu-getting-started/tfrecords-jpeg-224x224
+  processed: data/processed
+  models: models
+  runs: reports/runs
+  figures: reports/figures
+  results: reports/resultados.csv
+
+data:
+  img_size: 224
+  num_classes: 104
+  batch_size: 32
+
+distill:
+  ipc: 50
+  iterations: 5000
+  real_batch: 128
+  classes_per_step: 8
+  lr_img: 0.01         # Adam sobre los píxeles
+  log_every: 100
+
+train:
+  lr: 0.001
+  epochs_full: 50
+  epochs_small: 500
+  eval_every_small: 10
+  patience: 5
+
+experiments:
+  data: [random, distilled]
+  ipcs: [1, 10, 50]
+  seeds: [0, 1, 2]
+  include_full: true

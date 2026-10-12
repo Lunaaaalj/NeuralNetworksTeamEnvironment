@@ -205,3 +205,14 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# --- Proyecto: clasificación de flores ---
+# Datos (TFRecords de Kaggle, cachés y conjuntos destilados): se regeneran con scripts/
+data/raw/
+data/processed/
+data/external/
+# Modelos entrenados y corridas
+models/*
+!models/README.md
+reports/runs/
+submission.csv

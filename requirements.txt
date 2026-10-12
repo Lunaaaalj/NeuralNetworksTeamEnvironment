@@ -1,0 +1,18 @@
+# Python 3.12 recomendado (TensorFlow aún no soporta 3.14).
+# En macOS: tensorflow-metal 1.2.0 solo funciona con TF 2.18.x; TF 2.18 importa
+# distutils, que en Python 3.12 lo provee el shim de setuptools < 70.
+tensorflow~=2.18.0; sys_platform == "darwin"
+# Keras de la misma época que TF 2.18 (con Keras 3.15 el modo grafo difiere del eager).
+keras>=3.6,<3.8; sys_platform == "darwin"
+tensorflow>=2.16; sys_platform != "darwin"
+tensorflow-metal==1.2.0; sys_platform == "darwin" and platform_machine == "arm64"
+setuptools<70
+numpy
+scikit-learn
+pandas
+matplotlib
+pyyaml
+pytest
+kaggle
+nbconvert
+ipykernel
