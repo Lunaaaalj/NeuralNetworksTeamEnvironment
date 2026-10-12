@@ -1,0 +1,35 @@
+# Configuración para prototipar en la Mac (CPU / GPU Apple vía tensorflow-metal).
+# Las rutas relativas se resuelven contra la raíz del repositorio.
+paths:
+  tfrecords: data/raw/tpu-getting-started/tfrecords-jpeg-224x224
+  processed: data/processed
+  models: models
+  runs: reports/runs
+  figures: reports/figures
+  results: reports/resultados.csv
+
+data:
+  img_size: 112        # resolución de trabajo (destilación, entrenamiento y evaluación)
+  num_classes: 104
+  batch_size: 32
+
+distill:
+  ipc: 10              # imágenes sintéticas por clase
+  iterations: 500      # pasadas completas sobre las 104 clases (~2.7 s c/u en M-series)
+  real_batch: 64       # imágenes reales por clase en cada paso
+  classes_per_step: 8  # clases procesadas juntas (memoria)
+  lr_img: 0.01         # Adam sobre los píxeles
+  log_every: 25
+
+train:
+  lr: 0.001
+  epochs_full: 50
+  epochs_small: 300    # para 'random' y 'distilled'
+  eval_every_small: 10 # evaluar val cada N épocas en conjuntos pequeños
+  patience: 5          # evaluaciones sin mejora de F1 antes de detener
+
+experiments:
+  data: [random, distilled]
+  ipcs: [1, 10]
+  seeds: [0, 1, 2]
+  include_full: false
