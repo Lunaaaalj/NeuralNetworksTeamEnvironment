@@ -216,3 +216,18 @@ models/*
 !models/README.md
 reports/runs/
 submission.csv
+
+# LaTeX: archivos auxiliares de compilación (se regeneran con latexmk)
+*.aux
+*.abs
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.lof
+*.lot
