@@ -11,11 +11,11 @@ paths:
 data:
   img_size: 112        # resolución de trabajo (destilación, entrenamiento y evaluación)
   num_classes: 104
-  batch_size: 32
+  batch_size: 128
 
 distill:
   ipc: 10              # imágenes sintéticas por clase
-  iterations: 500      # pasadas completas sobre las 104 clases (~2.7 s c/u en M-series)
+  iterations: 200     # pasadas completas sobre las 104 clases (~2.7 s c/u en M-series)
   real_batch: 64       # imágenes reales por clase en cada paso
   classes_per_step: 8  # clases procesadas juntas (memoria)
   lr_img: 0.01         # Adam sobre los píxeles
@@ -23,10 +23,16 @@ distill:
 
 train:
   lr: 0.001
-  epochs_full: 50
+  epochs_full: 150
   epochs_small: 300    # para 'random' y 'distilled'
   eval_every_small: 10 # evaluar val cada N épocas en conjuntos pequeños
   patience: 5          # evaluaciones sin mejora de F1 antes de detener
+
+wandb:
+  enabled: false      # activar con --wandb o cambiar a true para todas las corridas
+  project: flower-cnn
+  entity: null        # usuario/equipo; null usa el predeterminado de tu cuenta
+  mode: online        # offline guarda localmente sin iniciar sesión
 
 experiments:
   data: [random, distilled]

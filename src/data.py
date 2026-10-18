@@ -5,6 +5,8 @@ Uso:
 """
 
 import argparse
+import hashlib
+import json
 from pathlib import Path
 
 import numpy as np
@@ -15,6 +17,8 @@ from src.augment import dsa
 
 AUTOTUNE = tf.data.AUTOTUNE
 NATIVE_SIZE = 224
+# Cambiar esta versión si cambia el preprocesamiento determinista guardado.
+DATASET_CACHE_VERSION = "rgb-float32-bilinear-antialias-v1"
 
 LABELED_FEATURES = {
     "image": tf.io.FixedLenFeature([], tf.string),
@@ -31,6 +35,20 @@ def list_tfrecords(tfrecord_dir, split):
     if not files:
         raise FileNotFoundError(f"No hay archivos .tfrec en {Path(tfrecord_dir) / split}")
     return files
+
+
+def dataset_cache_prefix(files, split, img_size, directory, parallel_reads=False):
+    """Invalida la caché de disco al cambiar archivos, resolución o preprocesamiento."""
+    metadata = []
+    for filename in files:
+        path = Path(filename).resolve()
+        stat = path.stat()
+        metadata.append((str(path), stat.st_size, stat.st_mtime_ns))
+    key = json.dumps({"files": metadata, "resolution": img_size, "split": split,
+                      "parallel_reads": parallel_reads, "version": DATASET_CACHE_VERSION,
+                      "tensorflow": tf.__version__}, sort_keys=True).encode()
+    fingerprint = hashlib.sha256(key).hexdigest()[:20]
+    return Path(directory) / f"{split}_res{img_size}_{fingerprint}"
 
 
 def decode_image(jpeg, img_size=NATIVE_SIZE):
@@ -66,12 +84,16 @@ def make_augmenter(seed=None):
 
 
 def build_dataset(tfrecord_dir, split, img_size=NATIVE_SIZE, batch_size=32,
-                  augment=False, shuffle=False, seed=None):
+                  augment=False, shuffle=False, seed=None, cache=False, cache_dir=None):
     """tf.data para 'train' / 'val' (imagen, etiqueta) o 'test' (imagen, id).
 
     La augmentación solo debe activarse en train; val y test se leen siempre sin modificar
     y en orden determinista.
+    cache: false/None para desactivar, true/'ram' para RAM o 'disk' para disco.
     """
+    cache_mode = "ram" if cache is True else "none" if cache is False or cache is None else cache
+    if cache_mode not in ("none", "ram", "disk"):
+        raise ValueError("data.cache debe ser false, true, 'ram' o 'disk'.")
     labeled = split != "test"
     parse = parse_labeled if labeled else parse_unlabeled
     files = list_tfrecords(tfrecord_dir, split)
@@ -82,6 +104,17 @@ def build_dataset(tfrecord_dir, split, img_size=NATIVE_SIZE, batch_size=32,
         options.deterministic = True
         ds = ds.with_options(options)
     ds = ds.map(lambda ex: parse(ex, img_size), num_parallel_calls=AUTOTUNE)
+    if cache_mode != "none":
+        # Cachear antes de shuffle/augment mantiene nuevos órdenes y aumentos cada época.
+        if cache_mode == "ram":
+            ds = ds.cache()
+        else:
+            directory = Path(cache_dir) if cache_dir is not None else (
+                Path(__file__).resolve().parents[1] / "data/processed/tfdata_cache")
+            directory.mkdir(parents=True, exist_ok=True)
+            prefix = dataset_cache_prefix(files, split, img_size, directory, parallel_reads=shuffle)
+            print(f"Disk cache ({split}): {prefix}", flush=True)
+            ds = ds.cache(str(prefix))
     if shuffle:
         ds = ds.shuffle(2048, seed=seed)
     ds = ds.batch(batch_size)

@@ -1,0 +1,5 @@
+# Windows AMD/Intel/NVIDIA: entrenamiento de la misma CNN con DirectML.
+-r requirements.txt
+torch-directml==0.2.5.dev240914
+# Compatibilidad del puente NumPy de PyTorch 2.4 en Windows.
+numpy>=1.26,<2

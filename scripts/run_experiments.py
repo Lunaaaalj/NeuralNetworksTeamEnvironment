@@ -56,11 +56,18 @@ def main():
             ensure_distilled(cfg, ipc)
 
     # El dataset de val se construye una sola vez y se reutiliza en todas las corridas.
-    val_ds = build_dataset(cfg["paths"]["tfrecords"], "val", cfg["data"]["img_size"], 128).cache()
+    val_ds = build_dataset(cfg["paths"]["tfrecords"], "val", cfg["data"]["img_size"], 128,
+                           cache=cfg["data"].get("cache", True),
+                           cache_dir=Path(cfg["paths"]["processed"]) / "tfdata_cache")
     for data, ipc, seed in jobs:
         print(f"\n=== {data} ipc={ipc} seed={seed} ===")
         row = run(cfg, data, ipc, seed, val_ds=val_ds)
-        pd.DataFrame([row]).to_csv(results_path, mode="a", header=not results_path.exists(), index=False)
+        result = pd.DataFrame([row])
+        if results_path.exists():
+            # Los detalles nuevos siguen en summary.json. Conservar el esquema
+            # del CSV existente evita desalinear filas de corridas anteriores.
+            result = result.reindex(columns=pd.read_csv(results_path, nrows=0).columns)
+        result.to_csv(results_path, mode="a", header=not results_path.exists(), index=False)
 
     df = pd.read_csv(results_path)
     df["ipc"] = df["ipc"].fillna(0).astype(int)  # 0 = conjunto completo

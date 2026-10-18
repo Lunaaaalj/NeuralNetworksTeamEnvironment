@@ -28,6 +28,12 @@ train:
   eval_every_small: 10
   patience: 5
 
+wandb:
+  enabled: false
+  project: flower-cnn
+  entity: null
+  mode: online
+
 experiments:
   data: [random, distilled]
   ipcs: [1, 10, 50]

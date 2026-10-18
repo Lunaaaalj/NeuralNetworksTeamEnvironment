@@ -215,6 +215,7 @@ data/external/
 models/*
 !models/README.md
 reports/runs/
+wandb/
 submission.csv
 
 # LaTeX: archivos auxiliares de compilación (se regeneran con latexmk)

@@ -16,3 +16,4 @@ pytest
 kaggle
 nbconvert
 ipykernel
+wandb>=0.19,<1

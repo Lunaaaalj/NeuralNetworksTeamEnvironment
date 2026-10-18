@@ -16,6 +16,183 @@ python -c "import src, tensorflow as tf; print(tf.config.list_physical_devices()
 
 Abre `notebooks/kaggle_runner.ipynb` en Kaggle, agrega el dataset de la competencia *tpu-getting-started*, activa Internet y elige una GPU (T4/P100). El notebook clona este repo y corre todo con `configs/kaggle.yaml`. No instales `requirements.txt` en Kaggle, porque TensorFlow ya viene preinstalado.
 
+### Windows con GPU AMD / DirectML
+
+Para la Radeon RX 6700S, usa PyTorch con DirectML en Windows. CUDA corresponde
+a NVIDIA; instalar CUDA no acelera esta Radeon. El plugin TensorFlow-DirectML
+antiguo está descontinuado y requiere versiones anteriores de Python/TensorFlow.
+Referencias: [Microsoft DirectML](https://learn.microsoft.com/en-us/windows/ai/directml/pytorch-windows)
+y [estado del plugin TensorFlow](https://learn.microsoft.com/en-us/windows/ai/directml/gpu-tensorflow-plugin).
+
+Desde CMD, en la raíz del repositorio:
+
+```bat
+.venv\Scripts\python.exe -m pip install -r requirements-directml.txt
+.venv\Scripts\python.exe -m src.train --config configs/local.yaml --data full --epochs 1 --backend directml
+```
+
+Al iniciar se enumeran las GPUs y se imprime `Training on GPU: AMD Radeon RX 6700S`.
+La GPU Radeon RX dedicada se selecciona automáticamente; puedes elegir otro
+adaptador con `--device-index N`. Si DirectML no puede usar la GPU, el entrenamiento
+falla con un mensaje en lugar de seguir silenciosamente en CPU.
+
+Para el entrenamiento completo con gráficas de W&B:
+
+```bat
+.venv\Scripts\python.exe -m src.train --config configs/local.yaml --data full --epochs 50 --backend directml --wandb
+```
+
+La arquitectura, resolución, normalización y aumentos de datos son los del config
+y de la CNN original. TensorFlow se utiliza para leer y aumentar imágenes en CPU;
+PyTorch ejecuta la CNN y sus gradientes en la GPU mediante DirectML. Las secuencias
+aleatorias y la implementación de Adam difieren entre frameworks, por lo que las
+curvas no son idénticas a las de TensorFlow. Registra este backend en el reporte.
+El backend también puede entrenar `random` y conjuntos `distilled` ya generados;
+la destilación de `src.distill` continúa usando TensorFlow.
+
+Con DirectML puede seguir apareciendo el aviso de TensorFlow sin GPU: corresponde
+al lector de datos en CPU. La línea `Training on GPU: ... (privateuseone:0)` indica
+el dispositivo que ejecuta la CNN. `DirectMLAdam` utiliza las ecuaciones estándar
+de Adam con multiplicación y suma para evitar el fallback a CPU de `aten::lerp`.
+Las métricas de entrenamiento se acumulan en GPU y se copian a CPU al terminar
+la época; sus cálculos incluyen correctamente el último lote incompleto.
+
+La entrada de DirectML usa DLPack para compartir los tensores de TensorFlow con
+PyTorch sin pasar por `.numpy()`. Conserva la decodificación, normalización,
+resolución, mezclado y aumentos originales. Todavía es necesario preparar NCHW
+y transferir cada lote a la GPU. `runtime.input_pipeline` permite comparar
+`numpy` (puente anterior), `dlpack` y `dlpack_prefetch` (prepara un lote adicional
+en CPU mientras trabaja la GPU; la cola está limitada para no duplicar la caché).
+
+Durante el entrenamiento, cada mejora del F1 se guarda como `.pt` con pesos en
+CPU, época, métricas y resolución. El reemplazo del checkpoint es atómico.
+Al finalizar o al interrumpir normalmente con Ctrl+C, se exporta una sola vez
+el mejor checkpoint a `.keras`, compatible con `src.evaluate`. Una terminación
+forzada puede impedir esa exportación; el `.pt` ya guardado se puede convertir:
+
+```bat
+.venv\Scripts\python.exe -m src.directml_checkpoint models/directml_fast/full_res112_s0_directml.pt
+```
+
+El checkpoint contiene los mejores pesos, no el estado necesario para reanudar
+Adam. `summary.json` registra `checkpoint_path`, `checkpoint_seconds`,
+`export_seconds` e `input_pipeline`; W&B conserva sus gráficas por época.
+Antes de estas optimizaciones, en una prueba de una época con 12,753 imágenes, batch 32 y resolución 112,
+la RX 6700S tardó 20.7 s incluyendo validación (16.7 s de entrenamiento), frente
+a los 80 s de la corrida anterior de TensorFlow/CPU. Son mediciones de corridas
+individuales con frameworks distintos, no una garantía de tiempo por época.
+
+Para medir el baseline anterior y las variantes optimizadas con batches 32/64/128:
+
+```bat
+.venv\Scripts\python.exe -m scripts.benchmark_directml --config configs/local.yaml --epochs 3
+```
+
+Cada variante usa una época de calentamiento y dos medidas. El resultado compara
+la mediana de entrenamiento más validación, sin exportación de modelos ni W&B.
+Se guarda en `reports/runs/directml_benchmark/FECHA/results.json`, sin escribir
+los checkpoints ni historiales de tus corridas. Ejecuta la medición con la GPU
+libre de otros entrenamientos. Las corridas cortas comparan velocidad; la calidad
+de cada batch debe comprobarse con entrenamientos completos y F1 macro.
+
+`data.cache` acepta `false` (sin caché), `true`/`ram` (RAM) o `disk` (disco).
+La caché guarda imágenes decodificadas antes de mezclar y aumentar los datos,
+conservando los aumentos aleatorios de cada época. A resolución 112, train y val
+requieren aproximadamente 2.5 GB de RAM o disco, según el modo elegido.
+La opción `disk` guarda archivos en `data/processed/tfdata_cache/` y los reutiliza
+entre ejecuciones. Su huella incluye rutas, tamaño/fecha de los TFRecords,
+resolución, versión del preprocesamiento y TensorFlow. Si estos cambian se genera
+otra caché. Las cachés antiguas permanecen en disco hasta que las elimines.
+
+La primera pasada completa crea la caché de disco; las siguientes evitan repetir
+la decodificación y el redimensionamiento. El mezclado y los aumentos se vuelven
+a ejecutar. Es el comportamiento de [`Dataset.cache`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#cache).
+Para comparar los modos con el batch de tu configuración:
+
+```bat
+.venv\Scripts\python.exe -m scripts.benchmark_directml --config configs/directml_fast.yaml --compare-cache --epochs 3
+```
+
+Se compara sin caché contra disco y, si hay RAM suficiente, contra RAM. La primera
+época se reporta separada como calentamiento y las dos siguientes determinan la
+mediana. El benchmark verifica espacio disponible antes de probar disco, y deja
+un margen de RAM antes de probar RAM; `--no-cache` permite excluir el modo RAM.
+
+El perfil `configs/directml_fast.yaml` usa batch 64, lr 0.001 y caché en RAM,
+con hasta 150 épocas y parada temprana. Guarda modelos y corridas en subcarpetas
+`directml_fast`, separadas de los entrenamientos anteriores. Para usarlo:
+
+```bat
+.venv\Scripts\python.exe -m src.train --config configs/directml_fast.yaml --data full --wandb
+```
+
+Para comparar los tres puentes de entrada con el mismo batch y caché, y medir
+por separado el guardado anterior frente al checkpoint de PyTorch:
+
+```bat
+.venv\Scripts\python.exe -m scripts.benchmark_directml --config configs/directml_fast.yaml --compare-input --epochs 4
+```
+
+La primera época se excluye y se toma la mediana de las tres siguientes. Los
+archivos de la comparación de guardados quedan en la carpeta del benchmark,
+sin sobrescribir los checkpoints del entrenamiento. La exportación final se
+mide aparte; los tiempos por época de esta comparación excluyen guardado y W&B.
+
+En la RX 6700S, con batch 64, resolución 112 y caché en RAM, se midieron 8.58
+s/época con NumPy, 8.42 con DLPack y 8.40 con DLPack y preparación anticipada
+(medianas de tres épocas después del calentamiento). El perfil rápido usa
+`input_pipeline: dlpack_prefetch`; su mejora frente a NumPy fue aproximadamente
+2%, y la diferencia entre las dos variantes DLPack fue muy pequeña. Guardar una
+mejora tardó 27.4 ms con la exportación Keras anterior frente a 5.4 ms con `.pt`;
+la exportación Keras final tardó 69.8 ms. El ahorro de guardado es pequeño en
+tiempo absoluto y solo corresponde a las épocas que mejoran el F1. El reporte
+está en `reports/runs/directml_fast/directml_benchmark/20261018T034302639111Z/results.json`.
+
+La medición local en RX 6700S dio estas medianas de dos épocas después del calentamiento:
+
+| Variante | Batch | Segundos/época |
+|---|---:|---:|
+| Adam estándar + métricas por lote | 32 | 16.23 |
+| DirectMLAdam + métricas por época | 32 | 10.95 |
+| DirectMLAdam + métricas por época | 64 | 10.40 |
+| DirectMLAdam + métricas por época | 128 | 10.68 |
+
+Se eligió 64: 64 y 128 dieron tiempos cercanos, y 64 usa menos memoria y conserva
+más actualizaciones por época. Estos tiempos incluyen validación, excluyen exportar
+checkpoints y W&B, y pueden variar con la carga y temperatura del equipo. No se
+activó caché en esa comparación porque el equipo no tenía suficiente RAM libre. Cambiar el batch puede
+cambiar la convergencia y el F1; el benchmark corto no establece la calidad final.
+
+En una comparación posterior con batch 64, sin caché se midieron 10.07 s/época y
+con caché en SSD 9.58 s/época (medianas de dos épocas después del calentamiento),
+aproximadamente un 5% menos.
+Se verificaron 12,753 imágenes y etiquetas de train y 3,712 de val en los archivos
+persistentes, que ocupan aproximadamente 2.48 GB en total. Se conserva float32 y
+el mismo redimensionamiento; no se cuantizan las imágenes ni se congelan los aumentos.
+
+Después de liberar RAM y cerrar la otra ventana de VS Code, quedaron 5.26 GiB
+disponibles antes de cargar TensorFlow y PyTorch. Una nueva comparación con batch
+64 midió 9.81 s/época sin caché, 9.14 s con disco y 8.92 s con RAM. Son medianas
+de dos épocas después del calentamiento, con entrenamiento y validación; la
+ventaja de RAM frente a disco es pequeña (aproximadamente 2%). El perfil rápido
+queda con `cache: ram`; la caché se vuelve a llenar en la primera época de cada
+ejecución. Mantén cerrada la otra ventana mientras entrenas; si necesitas abrir
+otras aplicaciones pesadas, cambia a `cache: disk` para dejar más RAM disponible.
+Los resultados están en
+`reports/runs/directml_fast/directml_benchmark/20261018T032901446546Z/results.json`.
+
+Se guardan `history.csv` y `summary.json` en `reports/runs/full_res112_s0_directml/`,
+y el mejor checkpoint en `models/full_res112_s0_directml.keras`, compatible con:
+
+```bat
+.venv\Scripts\python.exe -m src.evaluate --config configs/local.yaml --model models/full_res112_s0_directml.keras
+```
+
+Para usar DirectML también en `scripts.run_experiments`, agrega
+`runtime: {backend: directml}` al YAML de tus experimentos y usa un archivo de
+resultados nuevo para conservar la información del backend. Sin `--backend`
+ni esa configuración se mantiene el entrenamiento original de TensorFlow.
+
 ## 2. Datos
 
 ```bash
@@ -80,6 +257,51 @@ python -m src.train --config configs/local.yaml --data {full|random|distilled} [
 - `train_seconds` excluye el tiempo de evaluación.
 
 Cada corrida escribe `reports/runs/{run}/history.csv` y `summary.json`.
+
+### Gráficas con Weights & Biases (Windows / CMD)
+
+Desde la raíz del repositorio, instala el SDK en el entorno del proyecto e inicia sesión:
+
+```bat
+.venv\Scripts\python.exe -m pip install "wandb>=0.19,<1"
+.venv\Scripts\wandb.exe login
+```
+
+Crea una cuenta siguiendo la [guía oficial de W&B](https://docs.wandb.ai/quickstart).
+En **User settings → API keys → New key**, crea y copia una clave, y pégala cuando
+`wandb login` la solicite. Esta clave es distinta al token de Kaggle.
+
+Prueba una época y después ejecuta el entrenamiento completo:
+
+```bat
+.venv\Scripts\python.exe -m src.train --config configs/local.yaml --data full --epochs 1 --wandb
+.venv\Scripts\python.exe -m src.train --config configs/local.yaml --data full --wandb
+```
+
+El terminal imprime el enlace a cada corrida del proyecto `flower-cnn`. En su pestaña
+**Workspace** aparecen `loss`, `accuracy`, `val_loss`, `val_accuracy` y `val_f1_macro`
+contra `epoch`, además del tiempo por época y los hiperparámetros. Para comparar
+entrenamientos, selecciona las corridas en el mismo proyecto. Las métricas de val
+en conjuntos pequeños se registran solo cuando se evalúa, sin rellenar los huecos.
+El resumen incluye el mejor F1, su accuracy y su época.
+
+Usa `--wandb-project NOMBRE` para otro proyecto y `--wandb-entity EQUIPO` para
+seleccionar tu equipo de W&B. El mismo `--wandb` funciona con `random` y `distilled`.
+Para registrar todas las corridas de `scripts.run_experiments`, cambia
+`wandb.enabled` a `true` en el YAML que uses.
+
+Sin conexión o sin iniciar sesión puedes registrar localmente:
+
+```bat
+.venv\Scripts\python.exe -m src.train --config configs/local.yaml --data full --epochs 1 --wandb --wandb-mode offline
+```
+
+Con `configs/local.yaml`, los registros del SDK se guardan en `reports/wandb/`;
+con `configs/directml_fast.yaml`, en `reports/runs/wandb/` (ambos excluidos de Git). Para ver
+una corrida offline en la web, inicia sesión y ejecuta
+`.venv\Scripts\wandb.exe sync reports\wandb\offline-run-NOMBRE`
+usando el nombre de la carpeta que imprimió el SDK. La integración registra métricas
+y configuración; el checkpoint sigue guardándose en `models/`.
 
 ## 5. Experimentos y evaluación
 

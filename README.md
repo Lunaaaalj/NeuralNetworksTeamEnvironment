@@ -28,6 +28,17 @@ python -m scripts.run_experiments --config configs/local.yaml               # ba
 
 En [docs/USAGE.md](docs/USAGE.md) está la guía completa: local vs. Kaggle, cómo funciona DM, el diseño de experimentos y los problemas conocidos.
 
+Para ver gráficas de entrenamiento en **Weights & Biases**, ejecuta `wandb login` en
+el entorno del proyecto y agrega `--wandb` al comando de `src.train`. El proyecto
+predeterminado es `flower-cnn`; los pasos para Windows/CMD están en la guía de uso.
+
+En Windows con GPU AMD/Intel, instala `requirements-directml.txt` y agrega
+`--backend directml` al comando de entrenamiento. Usa la misma arquitectura y
+exporta checkpoints `.keras`; los pasos están en `docs/USAGE.md`.
+El perfil `configs/directml_fast.yaml` usa el batch medido de 64 y las optimizaciones
+de Adam, métricas y entrada DLPack para la Radeon RX 6700S. Guarda el mejor modelo
+en PyTorch durante el entrenamiento y lo exporta una vez a `.keras` al terminar.
+
 ## Estructura
 
 ```
