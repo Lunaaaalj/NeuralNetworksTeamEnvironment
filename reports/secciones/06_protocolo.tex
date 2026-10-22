@@ -24,6 +24,11 @@ final independiente de generalización. El conjunto de prueba de Kaggle carece
 de etiquetas locales; no se presentan los resultados de validación como
 exactitud de prueba ni como puntaje de la competencia.
 
+La semilla y las configuraciones se guardan para repetir el procedimiento, pero
+las operaciones de GPU y la canalización paralela no garantizan resultados
+idénticos bit a bit. Las métricas históricas y las nuevas ejecuciones se identifican
+por separado en sus respectivas carpetas.
+
 \subsection{Trazabilidad y ajustes del documento}
 
 Las ejecuciones nuevas se guardan bajo \texttt{reports/avance4\_2026-10-21}, con

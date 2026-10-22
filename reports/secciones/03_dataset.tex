@@ -27,6 +27,11 @@ Total         & 23,847 & 100.0 & \\
 
 Cada partición viene en 4 resoluciones: $192\times192$, $224\times224$, $331\times331$ y $512\times512$ píxeles, con 16 archivos TFRecord por partición, por lo que la base de datos trae 192 archivos TFRecord (4 resoluciones $\times$ 3 particiones $\times$ 16 archivos) más \texttt{sample\_submission.csv}. Tener varias resoluciones nos conviene porque no todas las arquitecturas se diseñaron para el mismo tamaño de entrada: ResNet50, DenseNet201 y EfficientNetB0 hacen uso de $224\times224$, mientras que las EfficientNet más grandes usan resoluciones mayores. Para dimensionar el problema, una sola imágen de $224\times224$ ya tiene 150,528 valores.
 
+En las ejecuciones de este avance se leen los TFRecord de $224\times224$, pero
+se redimensionan las imágenes a $112\times112$ antes de entrar a cualquiera de
+los modelos. La resolución de origen y la entrada efectiva de entrenamiento
+son, por tanto, distintas. Se conservan las particiones y etiquetas originales.
+
 \subsection{Ejemplos de las imágenes}
 
 La tabla~\ref{tab:ejemplos} muestra algunas clases concretas y lo que cada una nos dice sobre el problema. Además, dentro de una misma clase, las fotos cambian mucho de escala, pose e iluminación \citep{nilsback2008} 

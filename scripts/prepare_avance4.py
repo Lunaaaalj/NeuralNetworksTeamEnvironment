@@ -54,7 +54,7 @@ def architecture_figures(output):
         ax.set(xlim=(0, 1), ylim=(0, 1))
         ax.axis("off")
         ax.set_title(LABELS[key], fontsize=14, fontweight="bold", pad=20)
-        height = 0.068
+        height = min(0.068, (0.85 / (len(blocks) - 1)) * 0.65)
         positions = np.linspace(0.93, 0.08, len(blocks))
         for index, ((title, shape), y) in enumerate(zip(blocks, positions)):
             extra = "extra" in title
