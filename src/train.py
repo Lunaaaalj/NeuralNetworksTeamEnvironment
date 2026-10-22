@@ -18,8 +18,9 @@ from src.config import get_strategy, load_config, run_name, set_seed
 from src.data import ClassCache, arrays_dataset, build_dataset, cache_path
 from src.distill import load_synthetic, synthetic_path
 from src.metrics import ValidationMonitor
-from src.model import build_cnn, compile_cnn
+from src.model import build_cnn, compile_cnn, model_architecture
 from src.tracking import WandbEpochLogger, track_training
+from src.training_policy import keras_scheduler, optimizer_options, training_suffix
 
 
 def load_train_data(cfg, data, ipc, seed):
@@ -54,8 +55,12 @@ def run(cfg, data, ipc=None, seed=0, epochs=None, val_ds=None):
         return run_directml(cfg, data, ipc, seed, epochs, val_ds)
     set_seed(seed)
     tcfg = cfg["train"]
+    architecture = model_architecture(cfg)
     img_size = cfg["data"]["img_size"]
     name = run_name(data, ipc, img_size, seed)
+    if architecture != "baseline":
+        name += f"_{architecture}"
+    name += training_suffix(tcfg)
     run_dir = Path(cfg["paths"]["runs"]) / name
     run_dir.mkdir(parents=True, exist_ok=True)
     model_path = Path(cfg["paths"]["models"]) / f"{name}.keras"
@@ -72,10 +77,16 @@ def run(cfg, data, ipc=None, seed=0, epochs=None, val_ds=None):
                                cache_dir=Path(cfg["paths"]["processed"]) / "tfdata_cache")
 
     with get_strategy().scope():
-        model = compile_cnn(build_cnn(cfg["data"]["num_classes"]), tcfg["lr"])
+        optimizer, decay = optimizer_options(tcfg)
+        model = compile_cnn(build_cnn(cfg["data"]["num_classes"], architecture=architecture), tcfg["lr"],
+                            optimizer=optimizer, weight_decay=decay)
 
     monitor = ValidationMonitor(val_ds, model_path, every=every, patience=tcfg["patience"])
-    callbacks = [monitor, keras.callbacks.CSVLogger(str(run_dir / "history.csv"))]
+    callbacks = [monitor]
+    schedule = keras_scheduler(tcfg)
+    if schedule is not None:
+        callbacks.append(schedule)
+    callbacks.append(keras.callbacks.CSVLogger(str(run_dir / "history.csv")))
 
     with track_training(cfg, name, data, ipc, seed, epochs) as tracking_run:
         if tracking_run is not None:
@@ -91,6 +102,9 @@ def run(cfg, data, ipc=None, seed=0, epochs=None, val_ds=None):
             "best_epoch": monitor.best_epoch, "val_f1_macro": round(monitor.best_f1, 4),
             "val_accuracy": round(monitor.best_accuracy, 4), "train_seconds": round(total - monitor.eval_seconds, 1),
             "distill_seconds": None, "distill_iterations": None,  # columnas fijas para resultados.csv
+            "architecture": architecture, "parameters": model.count_params(),
+            "optimizer": optimizer, "weight_decay": decay, "lr_schedule": tcfg.get("lr_schedule"),
+            "final_learning_rate": float(model.optimizer.learning_rate.numpy()),
             "model_path": str(model_path), **extra,
         }
         with open(run_dir / "summary.json", "w") as f:

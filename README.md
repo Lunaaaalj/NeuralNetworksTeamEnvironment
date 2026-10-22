@@ -38,6 +38,14 @@ exporta checkpoints `.keras`; los pasos están en `docs/USAGE.md`.
 El perfil `configs/directml_fast.yaml` usa el batch medido de 64 y las optimizaciones
 de Adam, métricas y entrada DLPack para la Radeon RX 6700S. Guarda el mejor modelo
 en PyTorch durante el entrenamiento y lo exporta una vez a `.keras` al terminar.
+Para probar seis convoluciones manteniendo las imágenes a 112 px, usa
+`configs/directml_deep.yaml`. Añade dos Conv/ReLU de 128 y 256 filtros, conserva
+la CNN original como referencia y guarda sus propios modelos y corridas.
+El perfil `configs/directml_regularized.yaml` prueba la CNN original con AdamW
+y reducción automática del learning rate según la pérdida de validación.
+`configs/directml_batchnorm.yaml` añade Batch Normalization antes de cada ReLU
+convolucional y mantiene Adam con LR fijo. Esta variante está implementada,
+pendiente de que el equipo ejecute sus pruebas y entrenamiento.
 
 ## Estructura
 

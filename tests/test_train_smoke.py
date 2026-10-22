@@ -24,7 +24,9 @@ def prepared_cfg(tiny_cfg):
 
 
 @pytest.mark.parametrize("data,ipc", [("distilled", 2), ("random", 2), ("full", None)])
-def test_run_writes_checkpoint_history_and_summary(prepared_cfg, data, ipc):
+@pytest.mark.parametrize("architecture", ["baseline", "deep"])
+def test_run_writes_checkpoint_history_and_summary(prepared_cfg, data, ipc, architecture):
+    prepared_cfg["model"] = {"architecture": architecture}
     summary = run(prepared_cfg, data, ipc, seed=0)
     run_dir = prepared_cfg["paths"]["runs"] / summary["run"]
 
@@ -33,5 +35,8 @@ def test_run_writes_checkpoint_history_and_summary(prepared_cfg, data, ipc):
     assert {"loss", "val_loss", "val_f1_macro"} <= set(history.columns)
     assert json.loads((run_dir / "summary.json").read_text())["run"] == summary["run"]
     assert 0.0 <= summary["val_f1_macro"] <= 1.0
+    assert summary["architecture"] == architecture
+    if architecture == "deep":
+        assert summary["run"].endswith("_deep")
     if data == "distilled":
         assert "distill_seconds" in summary

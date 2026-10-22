@@ -1,0 +1,45 @@
+paths:
+  tfrecords: C:\Users\andre\Documents\Tec escuela\redes neuronales\NeuralNetworksTeamEnvironment\data\raw\tpu-getting-started\tfrecords-jpeg-224x224
+  processed: C:\Users\andre\Documents\Tec escuela\redes neuronales\NeuralNetworksTeamEnvironment\data\processed
+  models: C:\Users\andre\Documents\Tec escuela\redes neuronales\NeuralNetworksTeamEnvironment\reports\avance4_2026-10-21\models\cnn_original
+  runs: C:\Users\andre\Documents\Tec escuela\redes neuronales\NeuralNetworksTeamEnvironment\reports\avance4_2026-10-21\runs\cnn_original
+  figures: C:\Users\andre\Documents\Tec escuela\redes neuronales\NeuralNetworksTeamEnvironment\reports\avance4_2026-10-21\figures\cnn_original
+  results: C:\Users\andre\Documents\Tec escuela\redes neuronales\NeuralNetworksTeamEnvironment\reports\avance4_2026-10-21\resultados.csv
+data:
+  img_size: 112
+  num_classes: 104
+  batch_size: 64
+  cache: ram
+runtime:
+  backend: directml
+  input_pipeline: dlpack_prefetch
+distill:
+  ipc: 10
+  iterations: 500
+  real_batch: 64
+  classes_per_step: 8
+  lr_img: 0.01
+  log_every: 25
+train:
+  lr: 0.001
+  epochs_full: 150
+  epochs_small: 300
+  eval_every_small: 10
+  patience: 5
+wandb:
+  enabled: false
+  project: flower-cnn
+  entity: null
+  mode: online
+experiments:
+  data:
+  - random
+  - distilled
+  ipcs:
+  - 1
+  - 10
+  seeds:
+  - 0
+  - 1
+  - 2
+  include_full: false

@@ -7,6 +7,9 @@ import time
 
 import keras
 
+from src.model import model_architecture
+from src.training_policy import optimizer_options, plateau_options
+
 
 class WandbEpochLogger(keras.callbacks.Callback):
     """Se ejecuta después de ValidationMonitor para incluir sus métricas de val."""
@@ -47,9 +50,12 @@ def track_training(cfg, name, data, ipc, seed, epochs):
         mode=options.get("mode", "online"),
         name=name,
         dir=str(log_dir),
-        tags=[data, f"res{cfg['data']['img_size']}"],
+        tags=[data, f"res{cfg['data']['img_size']}", model_architecture(cfg), optimizer_options(cfg["train"])[0]]
+             + (["plateau"] if plateau_options(cfg["train"]) is not None else []),
         config={
-            "architecture": "flower_cnn", "data_mode": data,
+            "architecture": ("flower_cnn" if model_architecture(cfg) == "baseline"
+                             else f"flower_cnn_{model_architecture(cfg)}"),
+            "model": cfg.get("model", {"architecture": "baseline"}), "data_mode": data,
             "ipc": ipc if data != "full" else None, "seed": seed, "epochs": epochs,
             "data": cfg["data"], "train": cfg["train"],
             "runtime": cfg.get("runtime", {"backend": "tensorflow"}),

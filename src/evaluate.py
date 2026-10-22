@@ -61,6 +61,7 @@ def main():
     parser.add_argument("--model", required=True)
     parser.add_argument("--make-submission", action="store_true")
     parser.add_argument("--submission-path", default="submission.csv")
+    parser.add_argument("--confusion-matrix", action="store_true", help="exporta matriz completa a CSV, PNG y PDF")
     args = parser.parse_args()
 
     cfg = load_config(args.config)
@@ -68,12 +69,22 @@ def main():
     model = keras.models.load_model(args.model)
 
     val_ds = build_dataset(cfg["paths"]["tfrecords"], "val", img_size, 128)
-    y_true, y_pred, _ = predict_labels(model, val_ds)
+    y_true, y_pred, val_loss = predict_labels(model, val_ds)
     report = error_report(y_true, y_pred, cfg["data"]["num_classes"])
-    print(json.dumps(report, indent=2, ensure_ascii=False))
 
     out = Path(cfg["paths"]["runs"]) / f"{Path(args.model).stem}" / "eval_report.json"
     out.parent.mkdir(parents=True, exist_ok=True)
+    if args.confusion_matrix:
+        from src.confusion import save_confusion_artifacts
+
+        details = save_confusion_artifacts(
+            y_true, y_pred, CLASSES[:cfg["data"]["num_classes"]], out.parent / "evaluation",
+            Path(cfg["paths"]["figures"]) / Path(args.model).stem,
+            title=f"{model.name} — {Path(args.model).stem}")
+        report.update(details)
+        report.update(val_loss=float(val_loss), model_path=str(Path(args.model).resolve()),
+                      split="val", img_size=img_size)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
     out.write_text(json.dumps(report, indent=2, ensure_ascii=False))
 
     if args.make_submission:

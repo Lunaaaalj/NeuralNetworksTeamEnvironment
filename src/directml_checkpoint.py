@@ -15,6 +15,7 @@ def save_checkpoint(model, path, *, epoch, metrics, img_size):
         "metrics": dict(metrics),
         "img_size": img_size,
         "num_classes": model.logits.out_features,
+        "architecture": model.architecture,
     }
     try:
         torch.save(checkpoint, temporary)
@@ -32,9 +33,10 @@ def export_checkpoint(path, model_path):
     if model_path.suffix != ".keras":
         raise ValueError("El destino de exportación debe terminar en .keras")
     checkpoint = torch.load(path, map_location="cpu", weights_only=True)
-    model = FlowerCNN(checkpoint["num_classes"])
+    architecture = checkpoint.get("architecture", "baseline")
+    model = FlowerCNN(checkpoint["num_classes"], architecture=architecture)
     model.load_state_dict(checkpoint["model_state"])
-    exported = build_cnn(checkpoint["num_classes"])
+    exported = build_cnn(checkpoint["num_classes"], architecture=architecture)
     copy_to_keras(model, exported)
     temporary = model_path.with_name(model_path.stem + ".tmp.keras")
     try:

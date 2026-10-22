@@ -193,6 +193,161 @@ Para usar DirectML también en `scripts.run_experiments`, agrega
 resultados nuevo para conservar la información del backend. Sin `--backend`
 ni esa configuración se mantiene el entrenamiento original de TensorFlow.
 
+### Variante de seis convoluciones
+
+`configs/directml_deep.yaml` selecciona `model.architecture: deep`. La CNN
+original de cuatro convoluciones sigue siendo el valor por defecto (`baseline`).
+La variante añade una Conv 3x3 de 128 filtros después de pool3 y otra de 256
+después de pool4, ambas con ReLU y padding same. Conserva los cuatro poolings,
+GAP, Dense 256, Dropout 0.5, los 104 logits y las imágenes a 112x112. La nueva
+arquitectura tiene 1,218,600 parámetros; la original, 480,936. El extractor usado
+para destilar datos con DM conserva la arquitectura original.
+
+| Etapa | Original | Deep |
+|---|---|---|
+| 1 | Conv32 → ReLU → Pool | Igual |
+| 2 | Conv64 → ReLU → Pool | Igual |
+| 3 | Conv128 → ReLU → Pool | Conv128 → ReLU → Pool → **Conv128 → ReLU** |
+| 4 | Conv256 → ReLU → Pool | Conv256 → ReLU → Pool → **Conv256 → ReLU** |
+| Clasificador | GAP → Dense256/ReLU → Dropout → 104 logits | Igual |
+
+Para entrenarla con DirectML y gráficas de W&B:
+
+```bat
+.venv\Scripts\python.exe -m src.train --config configs/directml_deep.yaml --data full --wandb
+```
+
+Usa hasta 150 épocas, batch 64, lr 0.001, caché RAM y la misma parada temprana
+de cinco evaluaciones. El nombre es `full_res112_s0_deep_directml`; los modelos
+quedan en `models/directml_deep/` y los historiales en
+`reports/runs/directml_deep/`. W&B registra la arquitectura `flower_cnn_deep`
+y la etiqueta `deep`. El `.pt` guarda la arquitectura y la exportación final
+conserva las seis convoluciones; los `.pt` anteriores sin ese campo se siguen
+leyendo como la arquitectura original.
+
+Una prueba de tres épocas sobre las 12,753 imágenes en RX 6700S completó la
+validación y la exportación, con 11.3 s en la primera época y 9.0–9.1 s en las
+dos siguientes. Se comprobaron las salidas de los pesos `.pt` frente al `.keras`
+y el registro offline de W&B. Es una prueba de funcionamiento, no una medida
+de calidad convergida ni una comparación controlada de velocidad. Sus archivos
+están en `reports/runs/directml_deep/smoke_20261018T045028Z/`.
+
+La corrida original de DirectML compartida antes de añadir capas terminó en la
+época 74 y eligió la 69 por F1 macro. Su resumen está en
+`reports/runs/directml_fast/full_res112_s0_directml/summary.json`.
+Comparada con la corrida full del reporte proporcionado:
+
+| Medida | Reporte | Corrida original en DirectML |
+|---|---:|---:|
+| F1 macro de validación | 0.5538 | 0.6051 |
+| Accuracy del checkpoint elegido | 61.61% | 63.82% |
+| Mejor época | 38 | 69 |
+| Épocas ejecutadas | 43 | 74 |
+| Batch | 32 | 64 |
+| Épocas máximas | 50 | 150 |
+| Tiempo de entrenamiento, sin validación | 581.5 s | 577.6 s |
+
+La mejora observada es 0.0513 de F1 macro y 2.21 puntos porcentuales de accuracy.
+Ambas corridas usan resolución 112 y el mismo conjunto de validación de 3,712
+imágenes, pero cambian el batch, el presupuesto de épocas y el backend. Una sola
+corrida por configuración no permite atribuir esa mejora a una optimización
+concreta ni establecer superioridad estadística. Estos números corresponden a
+la CNN original; el desempeño de deep debe medirse con un entrenamiento completo.
+Más capas aumentan el cálculo y su beneficio en validación no está garantizado.
+
+### Experimento con AdamW y learning rate adaptativo
+
+`configs/directml_regularized.yaml` vuelve a la CNN original de cuatro
+convoluciones y 480,936 parámetros. Entrena desde cero con resolución 112,
+batch 64 y los mismos aumentos. Cambia la política de optimización:
+
+- AdamW con weight decay de 0.01 sobre matrices de pesos; los sesgos quedan excluidos.
+- Learning rate inicial de 0.001, multiplicado por 0.5 al acumular tres evaluaciones
+  sin una mejora de al menos 0.0001 en val_loss (patience del scheduler = 2).
+- Learning rate mínimo de 0.00001. El mejor checkpoint sigue elegido por F1 macro.
+- Máximo de 150 épocas y parada tras 12 evaluaciones sin mejorar el F1, para dar
+  tiempo a las reducciones del learning rate.
+
+```bat
+.venv\Scripts\python.exe -m src.train --config configs/directml_regularized.yaml --data full --wandb
+```
+
+El nombre de corrida es `full_res112_s0_adamw_plateau_directml`. Los checkpoints
+se guardan en `models/directml_regularized/`; los historiales, en
+`reports/runs/directml_regularized/`. El manifiesto de la corrida local está en
+`reports/runs/directml_regularized/experiment_manifest.json` y conserva la
+configuración y las huellas de los checkpoints de referencia.
+
+`learning_rate` registra el valor usado en una época y `next_learning_rate` el
+que se usará en la siguiente. Ambos están en CSV y W&B. La pérdida de validación
+controla el scheduler; el F1 controla el guardado y la parada temprana. En conjuntos
+pequeños, las épocas sin validación no consumen paciencia del scheduler.
+
+`DirectMLAdamW` conserva el decay separado de los momentos de Adam y evita
+el operador lerp que causa fallback a CPU en DirectML. Sus actualizaciones se
+comparan con `torch.optim.AdamW`, incluyendo cambios de LR, gradientes ausentes
+y restauración del estado. TensorFlow admite la misma configuración con AdamW
+y un callback que ajusta el LR únicamente después de evaluaciones válidas.
+
+Este experimento cambia conjuntamente el optimizador, la regularización, el
+scheduler y la paciencia. Su comparación mide esa estrategia completa; una sola
+corrida no permite atribuir un cambio del F1 exclusivamente a AdamW.
+
+La corrida local de semilla 0 terminó tras 69 épocas y eligió la época 57.
+Obtuvo F1 macro de 0.5855 y accuracy de 64.36% (2,389 aciertos de 3,712 imágenes
+de validación), confirmados al evaluar el `.keras` exportado. Frente a la CNN
+original (F1 0.6051, accuracy 63.82%), aumentó la accuracy en 0.54 puntos
+porcentuales pero bajó el F1 en 0.0196. Por la métrica principal del proyecto,
+la CNN original continúa siendo el mejor de estos tres checkpoints.
+
+La primera reducción de LR ocurrió al terminar la época 46 y la última llegó
+a 0.00001 al terminar la 67. El tiempo de entrenamiento sin validación fue de
+540.2 s. Los checkpoints originales y profundos conservaron sus huellas.
+La corrida y las gráficas están en
+[W&B](https://forge.coreweave.com/wandb/a00838626-tecnol-gico-de-monterrey/flower-cnn/runs/qh3nx933).
+
+Para regenerar la comparación y la matriz:
+
+```bat
+.venv\Scripts\python.exe -m scripts.compare_training
+.venv\Scripts\python.exe -m src.evaluate --config configs/directml_regularized.yaml --model models/directml_regularized/full_res112_s0_adamw_plateau_directml.keras --confusion-matrix
+```
+
+La comparación en CSV/JSON está en `reports/runs/directml_regularized/` y sus
+curvas PNG/PDF en `reports/figures/directml_regularized/training_comparison.*`.
+La matriz y sus porcentajes por fila están bajo esa carpeta de figuras, en
+`full_res112_s0_adamw_plateau_directml/`; los conteos y predicciones están bajo
+`reports/runs/directml_regularized/full_res112_s0_adamw_plateau_directml/evaluation/`.
+
+### Nuevo experimento pendiente: Batch Normalization
+
+`configs/directml_batchnorm.yaml` selecciona `model.architecture: batchnorm`.
+Cada bloque usa Conv 3x3 → BatchNorm → ReLU → MaxPool; conserva los filtros
+32/64/128/256, GAP, Dense 256, Dropout 0.5 y los 104 logits. Las convoluciones
+anteriores a BatchNorm omiten el sesgo porque la normalización ya incluye un
+desplazamiento entrenable.
+
+El perfil conserva resolución 112, batch 64, Adam con LR fijo 0.001, máximo de
+150 épocas y parada después de cinco evaluaciones sin mejora del F1. Así se
+compara la normalización con la CNN original sin añadir simultáneamente AdamW
+ni un scheduler. Se entrena desde cero y guarda sus archivos en subcarpetas
+`directml_batchnorm`, con nombre `full_res112_s0_batchnorm_directml`.
+
+```bat
+.venv\Scripts\python.exe -m src.train --config configs/directml_batchnorm.yaml --data full --wandb
+```
+
+La exportación copia gamma, beta, media y varianza acumuladas desde PyTorch a
+Keras. Ambos modelos usan epsilon 0.001; el momentum de Keras es 0.9 y el de
+PyTorch 0.1 porque sus convenciones son inversas. PyTorch y Keras actualizan la
+varianza de entrenamiento con convenciones distintas; la exportación usa
+directamente la varianza acumulada por PyTorch para la inferencia en Keras.
+Los buffers también se conservan en el checkpoint `.pt`.
+
+Esta variante se implementó sin ejecutar pruebas, evaluaciones ni entrenamiento,
+por petición del usuario. Su compatibilidad de ejecución, exactitud y F1 quedan
+pendientes de la corrida del equipo; no hay una mejora medida que reportar.
+
 ## 2. Datos
 
 ```bash

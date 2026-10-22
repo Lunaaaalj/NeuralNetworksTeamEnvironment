@@ -19,15 +19,16 @@ from src.train_directml import FlowerCNN, copy_from_keras, copy_to_keras, evalua
 
 
 @pytest.mark.parametrize("size", [32, 112, 224])
-def test_pytorch_and_keras_have_same_logits(size):
-    original = build_cnn()
-    model = FlowerCNN()
-    assert sum(p.numel() for p in model.parameters()) == original.count_params() == 480_936
+@pytest.mark.parametrize("architecture,parameters", [("baseline", 480_936), ("deep", 1_218_600)])
+def test_pytorch_and_keras_have_same_logits(size, architecture, parameters):
+    original = build_cnn(architecture=architecture)
+    model = FlowerCNN(architecture=architecture)
+    assert sum(p.numel() for p in model.parameters()) == original.count_params() == parameters
     copy_from_keras(original, model)
     # Cambiar pesos tras importarlos verifica también la exportación del modelo entrenado.
     with torch.no_grad():
         model.dense.bias.add_(0.1)
-    exported = build_cnn()
+    exported = build_cnn(architecture=architecture)
     copy_to_keras(model, exported)
     images = np.random.default_rng(0).uniform(size=(2, size, size, 3)).astype(np.float32)
     model.eval()
@@ -38,12 +39,14 @@ def test_pytorch_and_keras_have_same_logits(size):
 
 
 @pytest.mark.parametrize("cache", [False, "disk", "ram"])
-def test_training_checkpoint_loads_in_existing_evaluator(tiny_cfg, cache, monkeypatch):
+@pytest.mark.parametrize("architecture", ["baseline", "deep"])
+def test_training_checkpoint_loads_in_existing_evaluator(tiny_cfg, cache, monkeypatch, architecture):
     from unittest.mock import Mock
 
     export = Mock(wraps=export_checkpoint)
     monkeypatch.setattr("src.train_directml.export_checkpoint", export)
     tiny_cfg["data"]["cache"] = cache
+    tiny_cfg["model"] = {"architecture": architecture}
     summary = run(tiny_cfg, "full", epochs=2, device=torch.device("cpu"))
     model = keras.models.load_model(summary["model_path"])
     val = build_dataset(tiny_cfg["paths"]["tfrecords"], "val", 32, 4)
@@ -61,6 +64,9 @@ def test_training_checkpoint_loads_in_existing_evaluator(tiny_cfg, cache, monkey
     assert export.call_count == 1
     checkpoint = torch.load(summary["checkpoint_path"], map_location="cpu", weights_only=True)
     assert checkpoint["epoch"] == summary["best_epoch"]
+    assert checkpoint["architecture"] == summary["architecture"] == architecture
+    if architecture == "deep":
+        assert "_deep_directml" in summary["run"]
     assert round(checkpoint["metrics"]["val_f1_macro"], 4) == summary["val_f1_macro"]
     directory = tiny_cfg["paths"]["runs"] / summary["run"]
     history = pd.read_csv(directory / "history.csv")
@@ -69,6 +75,32 @@ def test_training_checkpoint_loads_in_existing_evaluator(tiny_cfg, cache, monkey
     assert json.loads((directory / "summary.json").read_text())["backend"] == "directml"
     if cache == "disk":
         assert len(list((tiny_cfg["paths"]["processed"] / "tfdata_cache").glob("*.index"))) == 2
+
+
+def test_legacy_checkpoint_without_architecture_still_exports(tmp_path):
+    path = tmp_path / "legacy.pt"
+    model = FlowerCNN(3)
+    save_checkpoint(model, path, epoch=1, metrics={"val_f1_macro": 0.5}, img_size=32)
+    legacy = torch.load(path, weights_only=True)
+    legacy.pop("architecture")
+    torch.save(legacy, path)
+    export_checkpoint(path, path.with_suffix(".keras"))
+    exported = keras.models.load_model(path.with_suffix(".keras"))
+    restored = FlowerCNN(3)
+    copy_from_keras(exported, restored)
+    for left, right in zip(model.parameters(), restored.parameters()):
+        torch.testing.assert_close(left, right, atol=0, rtol=0)
+
+
+@pytest.mark.parametrize("direction", ["import", "export"])
+def test_copy_rejects_mismatched_architectures(direction):
+    keras_model = build_cnn(architecture="deep")
+    torch_model = FlowerCNN()
+    with pytest.raises(ValueError, match="arquitecturas"):
+        if direction == "import":
+            copy_from_keras(keras_model, torch_model)
+        else:
+            copy_to_keras(torch_model, keras_model)
 
 
 @pytest.mark.parametrize("pipeline", INPUT_PIPELINES)

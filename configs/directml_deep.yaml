@@ -1,0 +1,48 @@
+# Variante de seis convoluciones: dos Conv/ReLU nuevas tras pool3 y pool4.
+paths:
+  tfrecords: data/raw/tpu-getting-started/tfrecords-jpeg-224x224
+  processed: data/processed
+  models: models/directml_deep
+  runs: reports/runs/directml_deep
+  figures: reports/figures/directml_deep
+  results: reports/resultados_directml_deep.csv
+
+model:
+  architecture: deep
+
+data:
+  img_size: 112
+  num_classes: 104
+  batch_size: 64
+  cache: ram
+
+runtime:
+  backend: directml
+  input_pipeline: dlpack_prefetch
+
+distill:
+  ipc: 10
+  iterations: 500
+  real_batch: 64
+  classes_per_step: 8
+  lr_img: 0.01
+  log_every: 25
+
+train:
+  lr: 0.001
+  epochs_full: 150
+  epochs_small: 300
+  eval_every_small: 10
+  patience: 5
+
+wandb:
+  enabled: false
+  project: flower-cnn
+  entity: null
+  mode: online
+
+experiments:
+  data: []
+  ipcs: []
+  seeds: [0]
+  include_full: true

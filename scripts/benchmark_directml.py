@@ -17,8 +17,9 @@ from src.config import load_config, set_seed
 from src.data import build_dataset
 from src.directml_checkpoint import export_checkpoint, save_checkpoint
 from src.directml_input import INPUT_PIPELINES
-from src.model import build_cnn
-from src.optim_directml import DirectMLAdam
+from src.model import build_cnn, model_architecture
+from src.optim_directml import build_optimizer
+from src.training_policy import torch_scheduler
 from src.train_directml import FlowerCNN, copy_from_keras, copy_to_keras, evaluate, select_device, train_epoch
 
 
@@ -51,26 +52,30 @@ def run_case(cfg, device, batch_size, *, optimized=True, cache=False, epochs=3,
     train = build_dataset(cfg["paths"]["tfrecords"], "train", img_size, batch_size,
                           augment=True, shuffle=True, seed=0, cache=cache, cache_dir=cache_dir)
     val = build_dataset(cfg["paths"]["tfrecords"], "val", img_size, 128, cache=cache, cache_dir=cache_dir)
-    model = FlowerCNN(cfg["data"]["num_classes"])
-    initial = build_cnn(cfg["data"]["num_classes"])
+    architecture = model_architecture(cfg)
+    model = FlowerCNN(cfg["data"]["num_classes"], architecture=architecture)
+    initial = build_cnn(cfg["data"]["num_classes"], architecture=architecture)
     copy_from_keras(initial, model)
     del initial
     model.to(device)
-    optimizer = (DirectMLAdam(model.parameters(), lr=cfg["train"]["lr"], eps=1e-7) if optimized
-                 else torch.optim.Adam(model.parameters(), lr=cfg["train"]["lr"], eps=1e-7, foreach=False))
+    optimizer = build_optimizer(model, cfg["train"], native=not optimized)
+    scheduler = torch_scheduler(optimizer, cfg["train"])
     cache_label = "disk" if cache == "disk" else str(int(cache))
     label = f"{'fast' if optimized else 'baseline'}_b{batch_size}_cache{cache_label}_{input_pipeline}"
     measurements = []
     for epoch in range(epochs):
         start = time.perf_counter()
+        learning_rate = optimizer.param_groups[0]["lr"]
         metrics, images, steps = train_epoch(model, train, optimizer, device,
                                             sync_each_batch=not optimized, input_pipeline=input_pipeline)
         trained = time.perf_counter()
         metrics.update(evaluate(model, val, device, input_pipeline=input_pipeline))
+        if scheduler is not None:
+            scheduler.step(metrics["val_loss"])
         finished = time.perf_counter()
         measurement = {"epoch": epoch + 1, "warmup": epoch == 0, "images": images, "batches": steps,
                        "train_seconds": trained - start, "validation_seconds": finished - trained,
-                       "epoch_seconds": finished - start, **metrics}
+                       "epoch_seconds": finished - start, "learning_rate": learning_rate, **metrics}
         measurements.append(measurement)
         print(f"{label} epoch {epoch + 1}/{epochs}: {finished - start:.2f}s "
               f"(train {trained - start:.2f}s; val {finished - trained:.2f}s; "
@@ -83,8 +88,9 @@ def run_case(cfg, device, batch_size, *, optimized=True, cache=False, epochs=3,
 
 def compare_saving(cfg, device, directory):
     """Mide guardados reales en GPU, en una carpeta aislada de los modelos del usuario."""
-    model = FlowerCNN(cfg["data"]["num_classes"]).to(device)
-    exported = build_cnn(cfg["data"]["num_classes"])
+    architecture = model_architecture(cfg)
+    model = FlowerCNN(cfg["data"]["num_classes"], architecture=architecture).to(device)
+    exported = build_cnn(cfg["data"]["num_classes"], architecture=architecture)
     old, native = [], []
     for repeat in range(4):
         started = time.perf_counter()
@@ -149,7 +155,8 @@ def main():
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     destination = Path(cfg["paths"]["runs"]) / "directml_benchmark" / stamp / "results.json"
     destination.parent.mkdir(parents=True, exist_ok=True)
-    report = {"device": name, "img_size": cfg["data"]["img_size"], "learning_rate": cfg["train"]["lr"],
+    report = {"device": name, "architecture": model_architecture(cfg),
+              "img_size": cfg["data"]["img_size"], "learning_rate": cfg["train"]["lr"],
               "free_ram_bytes": free_ram, "estimated_cache_bytes": estimated_cache,
               "comparison": "input" if args.compare_input else "cache" if args.compare_cache else "batches",
               "note": "Primera época excluida. Incluye validación; excluye exportación Keras y W&B. "

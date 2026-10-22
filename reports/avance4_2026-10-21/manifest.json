@@ -1,0 +1,27 @@
+{
+  "created_at": "2026-10-21T20:10:13.111130-06:00",
+  "purpose": "Avance 4: reruns with seed 0, same train/validation split and resolution",
+  "git_commit": "857e6839023076d18bb4f68dc253c844b94d4dc6",
+  "source_sha256": {
+    "src\\__init__.py": "86d8c5c93bd108ffec97bb14263af446409f8cd83f654947b58e2f037ec3a87f",
+    "src\\augment.py": "7d5e20346251d3a9e5217a7d490846f43ef7796af1c8ef59bc9d5335687546b0",
+    "src\\classes.py": "47727ddd8203b1e4e851abe91de2f12561a1f51b66fc67575ae2cc1ef254826d",
+    "src\\config.py": "203bace7538cba9714e8e05828c4fbf21cd4e68a181b698d876eec04c1c148db",
+    "src\\confusion.py": "86be9ff2641baa7375952a06ff96e3d97692712d9735b20482c1646165a41a84",
+    "src\\data.py": "253a534cda79e9457b9454c26a060843bdb40d19a9480fdacbfd07fb98b12cf9",
+    "src\\directml_checkpoint.py": "2021f5dc33e720d5bb3167d481cd132ef690f3f0d47e52c24aadb4f621aa17b9",
+    "src\\directml_input.py": "d11ba402bb374cc8ed0c77a464b3797e0838c5dd55f9955c97ea64d16a6ce112",
+    "src\\distill.py": "3bbfb78f0e79fd32d2129f501f4fb90f873e893aea230fc0fdd8c5c792421ddc",
+    "src\\evaluate.py": "514c4a2b59e5ea5a73db86e3839fdf34f99fecb6105ea6df4110a3302d711d7d",
+    "src\\metrics.py": "cb45e777bfe30f6ba0d3dd800ec7253d5f68b125197e4916a7a16a5c48fdba20",
+    "src\\model.py": "9459b8178b9566af4685f0eb71a4a93893526631b2c327acacaa154273c5a2a6",
+    "src\\optim_directml.py": "d62855cefa2027237c907ac6b28b499727f3d7b89ec500454b3082afbac35740",
+    "src\\tracking.py": "c0a7f859b55a487dcdb74ab029551920f1b23252bdd8a8876fd0506d6ac2bd2b",
+    "src\\train.py": "0c0d080c9e5e600cc285f95192d1f03f1883ad27cf0bb9c35bc2def97f5ac82f",
+    "src\\train_directml.py": "b8cce4c308fc2bb21c2117dccd4c29450cad606558fe99d35e99a1a19b3b78ec",
+    "src\\training_policy.py": "914835579dbc77ad05c879373d18b424ef535ad39f83b5d508cd77893ed76cd5"
+  },
+  "fully_connected_avance3": "not_found; any new MLP is a reconstructed reference",
+  "teacher_feedback": "not_provided",
+  "selection_metric": "validation macro F1; no labeled independent test set"
+}

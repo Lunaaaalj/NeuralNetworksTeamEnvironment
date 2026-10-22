@@ -1,0 +1,42 @@
+\section{Protocolo experimental y correcciones}
+
+\subsection{Condiciones de comparación}
+
+Se usan los mismos 12,753 ejemplos reales de entrenamiento y 3,712 de validación,
+104 clases, entrada $112\times112$, lote de 64 y semilla 0. Se permiten hasta 150
+épocas. Se guarda el checkpoint con el mayor F1 macro de validación; por ello,
+la exactitud final reportada corresponde a ese mismo checkpoint y no al máximo
+independiente de exactitud. La referencia totalmente conectada y las dos CNN
+comparadas por profundidad comparten optimizador, aumentos, dropout y paciencia
+de cinco evaluaciones sin mejora. La intervención combinada de regularización
+permite una paciencia mayor y cambia el optimizador y su tasa; no es una ablación
+aislada de cada técnica.
+
+Las curvas contienen métricas de entrenamiento con aumentos y dropout activos,
+mientras que la validación se calcula sin ellos. Por esta razón, una exactitud
+de validación mayor que la de entrenamiento no implica por sí sola fuga de datos.
+Para diagnosticar sobreajuste se examinan conjuntamente la tendencia de la
+pérdida, la exactitud y F1 macro, sin usar únicamente la distancia entre dos curvas.
+
+La comparación se limita a una semilla y utiliza validación para seleccionar
+épocas e hiperparámetros. No proporciona intervalos de confianza ni una medida
+final independiente de generalización. El conjunto de prueba de Kaggle carece
+de etiquetas locales; no se presentan los resultados de validación como
+exactitud de prueba ni como puntaje de la competencia.
+
+\subsection{Trazabilidad y ajustes del documento}
+
+Las ejecuciones nuevas se guardan bajo \texttt{reports/avance4\_2026-10-21}, con
+configuraciones, históricos por época, checkpoints y predicciones por imagen.
+Las figuras se exportan tanto a PNG para presentación como a PDF para el reporte.
+Un manifiesto registra la versión del código y sus hashes; los experimentos
+anteriores se conservan y no se mezclan con las métricas nuevas.
+
+Respecto del documento anterior, las secciones 1 a 6 ahora explicitan los
+objetivos medibles, la resolución realmente usada y el lote de 64; representan
+las arquitecturas y la ubicación exacta de las dos capas nuevas; distinguen la
+referencia totalmente conectada de la CNN original; separan destilación y
+clasificación; y aclaran el criterio de selección y el alcance de la validación.
+Se atiende la observación compartida sobre las representaciones de los modelos.
+No se dispone del texto completo de la retroalimentación del Avance 3, por lo que
+no se afirma haber atendido observaciones adicionales no documentadas.

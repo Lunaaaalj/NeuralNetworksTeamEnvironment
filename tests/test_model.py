@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from src.model import build_cnn, build_embedder, compile_cnn
+from src.model import build_cnn, build_embedder, compile_cnn, model_architecture
 
 
 @pytest.mark.parametrize("size", [224, 112])
@@ -14,6 +14,23 @@ def test_output_is_104_logits_at_any_resolution(size):
 def test_parameter_count_matches_table_3():
     # conv: 896 + 18,496 + 73,856 + 295,168 ; dense 256: 65,792 ; salida 104: 26,728
     assert build_cnn().count_params() == 480_936
+
+
+def test_deep_cnn_adds_two_convolutions_without_extra_pooling():
+    model = build_cnn(architecture="deep")
+    assert model.count_params() == 1_218_600
+    assert model(np.zeros((2, 112, 112, 3), np.float32)).shape == (2, 104)
+    assert model.get_layer("conv3_extra").output.shape[-1] == 128
+    assert model.get_layer("conv4_extra").output.shape[-1] == 256
+    # Mantener cuatro poolings evita reducir 112 píxeles hasta mapas de 1x1.
+    assert sum(layer.name.startswith("pool") for layer in model.layers) == 4
+
+
+def test_unknown_architecture_fails_instead_of_training_baseline():
+    with pytest.raises(ValueError, match="Arquitectura desconocida"):
+        build_cnn(architecture="typo")
+    with pytest.raises(ValueError, match="model.architecture"):
+        model_architecture({"model": {"architecture": "typo"}})
 
 
 def test_embedder_outputs_256_features():

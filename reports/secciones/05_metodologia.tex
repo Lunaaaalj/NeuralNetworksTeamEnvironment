@@ -1,142 +1,85 @@
-\section{Metodología}
+﻿\section{Metodología}
 
-\subsection{Arquitectura de red propuesta}
+\subsection{Representación de las arquitecturas implementadas}
 
-Para la clasificación de las 104 clases de flores se propone utilizar una red neuronal convolucional (CNN). La elección de este tipo de red se debe a que las CNN están diseñadas para trabajar con imágenes y permiten aprender automáticamente características espaciales relevantes, como bordes, texturas, colores y formas.
+La Figura~\ref{fig:arquitecturas-av4} representa los tres diseños entrenados
+desde cero. La entrada efectiva es una imagen RGB de $112\times112$ píxeles,
+obtenida de los TFRecord de $224\times224$ mediante redimensionamiento bilineal
+con antialias. Esto corrige la descripción anterior, que presentaba
+$224\times224$ como resolución de entrenamiento.
 
-Las imágenes utilizadas tienen una resolución de $224 \times 224$ píxeles y tres canales de color RGB, por lo que la entrada de la red tendrá dimensiones $224 \times 224 \times 3$. A partir de esta entrada se utilizarán varios bloques convolucionales que aumentarán progresivamente el número de filtros mientras disminuyen el tamaño espacial de la representación.
+\begin{figure*}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{avance4_2026-10-21/figures/arquitecturas.png}
+\caption{Representación de la red totalmente conectada de referencia, la CNN
+original y la CNN con dos convoluciones adicionales. Las dimensiones corresponden
+a las salidas de cada etapa; las capas adicionales se destacan en naranja.
+La variante regularizada conserva la arquitectura de la CNN original.}
+\label{fig:arquitecturas-av4}
+\end{figure*}
 
-La arquitectura propuesta es la siguiente:
+La red \textbf{totalmente conectada de referencia} aplana los $112\times112\times3$
+valores de entrada en un vector de 37,632 componentes. Aplica una capa densa de
+256 unidades con ReLU, dropout de 0.5 y una salida de 104 logits. No contiene
+convoluciones ni pooling. Es una comparación reconstruida, como se aclara en la
+sección 1, y utiliza el mismo cargador, aumentos y ciclo de entrenamiento que la CNN.
 
-\begin{table*}[htbp]
-    \centering
-    \caption{Arquitectura propuesta de la red neuronal convolucional.}
-    \label{tab:arquitectura_cnn}
-    \small
-    
-    \begin{tabular}{
-        p{0.20\textwidth}
-        p{0.46\textwidth}
-        p{0.24\textwidth}
-    }
-        \hline
-        \textbf{Capa} 
-        & \textbf{Configuración} 
-        & \textbf{Dimensión de salida} \\
-        \hline
+La \textbf{CNN original} emplea cuatro convoluciones de $3\times3$, padding
+\textit{same}, ReLU y 32, 64, 128 y 256 filtros. Cada convolución va seguida de
+max pooling de $2\times2$. Las salidas de esos bloques son
+$56\times56\times32$, $28\times28\times64$, $14\times14\times128$ y
+$7\times7\times256$. Después aplica global average pooling (GAP), una capa densa
+de 256 unidades con ReLU, dropout de 0.5 y 104 logits de salida.
 
-        Entrada
-        & Imagen RGB
-        & $224 \times 224 \times 3$ \\
+La \textbf{CNN ampliada} agrega dos capas convolucionales ocultas: una de 128
+filtros después del tercer pooling y otra de 256 después del cuarto. Ambas usan
+kernel $3\times3$, padding \textit{same} y ReLU, sin pooling adicional. Por tanto,
+esta versión tiene seis convoluciones. No se trata de dos capas densas nuevas.
 
-        Convolución 1
-        & 32 filtros de $3 \times 3$, padding \textit{same} + ReLU
-        & $224 \times 224 \times 32$ \\
+La convolución comparte los pesos del filtro entre posiciones y analiza
+vecindarios de píxeles. Así puede aprender bordes, texturas y partes de pétalos
+antes de combinarlos. Una capa densa sobre píxeles aplanados asigna pesos
+independientes a cada posición y no impone esta estructura local. Esta diferencia
+motiva la comparación, pero la mejora debe comprobarse con las métricas.
 
-        Max Pooling 1
-        & Ventana de $2 \times 2$
-        & $112 \times 112 \times 32$ \\
+\subsection{Preprocesamiento y aumento de datos}
 
-        Convolución 2
-        & 64 filtros de $3 \times 3$, padding \textit{same} + ReLU
-        & $112 \times 112 \times 64$ \\
+Se decodifica cada JPEG como RGB, se convierten sus valores a float32, se
+normalizan mediante $x_{\mathrm{norm}}=x/255$ y se redimensionan a $112\times112$.
+Las etiquetas son enteros entre 0 y 103. Se mantiene la separación de archivos
+original entre entrenamiento y validación, sin incorporar imágenes de validación
+al entrenamiento.
 
-        Max Pooling 2
-        & Ventana de $2 \times 2$
-        & $56 \times 56 \times 64$ \\
+Solo en entrenamiento se aplican volteo horizontal, rotación aleatoria de factor
+0.05, zoom de 0.1 y contraste de 0.1. Los valores resultantes se recortan a $[0,1]$.
+Los aumentos se calculan después de la caché y del mezclado, por lo que cambian
+entre épocas. La validación usa imágenes deterministas sin aumentos.
 
-        Convolución 3
-        & 128 filtros de $3 \times 3$, padding \textit{same} + ReLU
-        & $56 \times 56 \times 128$ \\
+\subsection{Pérdida y actualización de parámetros}
 
-        Max Pooling 3
-        & Ventana de $2 \times 2$
-        & $28 \times 28 \times 128$ \\
-
-        Convolución 4
-        & 256 filtros de $3 \times 3$, padding \textit{same} + ReLU
-        & $28 \times 28 \times 256$ \\
-
-        Max Pooling 4
-        & Ventana de $2 \times 2$
-        & $14 \times 14 \times 256$ \\
-
-        Global Average Pooling
-        & Promedio de cada mapa de características
-        & $256$ \\
-
-        Capa densa
-        & 256 neuronas + ReLU
-        & $256$ \\
-
-        Dropout
-        & Tasa de 0.5
-        & $256$ \\
-
-        Salida
-        & 104 neuronas, una por clase
-        & $104$ \\
-
-        \hline
-    \end{tabular}
-\end{table*}
-
-Se utilizan filtros de $3 \times 3$ porque permiten analizar regiones pequeñas de la imagen y aprender patrones locales. Las primeras capas pueden aprender características simples, como bordes, cambios de color o texturas, mientras que las capas posteriores combinan estos patrones para representar estructuras más complejas de las flores.
-
-El número de filtros aumenta de 32 a 256 conforme la información avanza por la red. Al mismo tiempo, las capas de \textit{Max Pooling} reducen progresivamente el tamaño espacial de las representaciones. De esta manera, las primeras capas conservan mayor información sobre la posición de los elementos de la imagen, mientras que las capas profundas pueden almacenar una mayor cantidad de características aprendidas.
-
-Después de los bloques convolucionales se utilizará una capa de \textit{Global Average Pooling}, que resume cada mapa de características en un solo valor. Posteriormente se utilizará una capa completamente conectada de 256 neuronas y una capa de \textit{Dropout} para reducir el riesgo de sobreajuste.
-
-En las capas internas se utilizará la función de activación ReLU. Esta función introduce no linealidad en la red, permitiendo aprender relaciones más complejas que no podrían obtenerse utilizando únicamente transformaciones lineales.
-
-Finalmente, la red tendrá una capa de salida de 104 neuronas, una por cada clase presente en el conjunto de datos. A partir de estos valores se podrá utilizar la función Softmax para representar la probabilidad asignada por el modelo a cada una de las clases.
-
-
-\subsection{Preprocesamiento de las imágenes}
-
-Antes de ingresar las imágenes a la red neuronal es necesario realizar una serie de pasos de preprocesamiento. Para este proyecto se utilizarán los archivos TFRecord correspondientes a la resolución de $224 \times 224$ píxeles. Cada registro contiene la imagen codificada en formato JPEG, su identificador y, para los conjuntos de entrenamiento y validación, una etiqueta entera entre 0 y 103.
-
-Como primer paso, las imágenes serán extraídas de los archivos TFRecord y decodificadas como imágenes RGB de tres canales. Debido a que el conjunto de datos ya proporciona una versión de $224 \times 224$ píxeles, no será necesario realizar un redimensionamiento adicional.
-
-Los valores de los píxeles originalmente se encuentran entre 0 y 255. Para facilitar el entrenamiento, estos valores serán convertidos a tipo decimal y normalizados al intervalo $[0,1]$ mediante
-
+Los modelos producen 104 logits $z_k$. La entropía cruzada se calcula directamente
+sobre ellos, sin añadir una segunda softmax a la pérdida:
 \begin{equation}
-    x_{\text{norm}} = \frac{x}{255}.
+L=-\log\left(\frac{\exp(z_c)}{\sum_{k=1}^{104}\exp(z_k)}\right),
 \end{equation}
+donde $c$ es la clase verdadera. Para visualizar la confianza se transforma la
+salida mediante softmax; esta confianza no constituye una evaluación de calibración.
 
-De esta forma, todas las entradas de la red se encuentran en una escala común y de menor magnitud.
+La referencia totalmente conectada y ambas CNN sin la intervención adicional
+usan Adam con tasa inicial $10^{-3}$ y lotes de 64 imágenes. La variante
+regularizada usa AdamW y un ajuste de tasa que se detalla en la sección 7.
+Se entrena con PyTorch/DirectML en la GPU AMD Radeon RX 6700S, conservando el
+cargador y los aumentos de TensorFlow. El mejor checkpoint se exporta a Keras
+y se comprueba que mantiene los logits y las predicciones sobre un lote de control.
 
-Además, se propone utilizar aumento de datos (\textit{data augmentation}) únicamente sobre el conjunto de entrenamiento. Se aplicarán transformaciones moderadas, como volteos horizontales, pequeñas rotaciones, acercamientos o alejamientos y variaciones leves de contraste. Estas transformaciones generan diferentes versiones de una misma imagen sin modificar su clase y ayudan a que el modelo no dependa de una orientación, posición o condición de iluminación específica.
+\subsection{Imágenes sintéticas: experimento independiente}
 
-El aumento de datos no será aplicado a los conjuntos de validación y prueba, ya que estos deben conservarse sin modificaciones aleatorias para poder evaluar el desempeño del modelo de manera consistente.
+El proyecto también incluye destilación de datos mediante Distribution Matching
+(DM). IPC 1 significa una imagen sintética por cada una de las 104 clases, es
+decir, 104 imágenes; IPC 10 significa 1,040. El generador utiliza el extractor
+convolucional de la arquitectura original con pesos aleatorios que se renuevan
+durante la optimización de los píxeles. No utiliza como generador el checkpoint
+entrenado de aproximadamente 63\% de exactitud. Estas figuras históricas se
+conservan separadas; los experimentos principales de este avance entrenan con
+las 12,753 imágenes reales y no se atribuyen sus métricas a los conjuntos sintéticos.
 
-
-\subsection{Función de pérdida y entrenamiento}
-
-El problema corresponde a una clasificación multiclase en la que cada imagen pertenece a una sola de las 104 clases posibles. Por esta razón se utilizará la entropía cruzada categórica dispersa (\textit{sparse categorical cross-entropy}) como función de pérdida.
-
-La red producirá 104 valores de salida, conocidos como \textit{logits}, uno para cada clase. Estos valores pueden transformarse en probabilidades mediante la función Softmax:
-
-\begin{equation}
-    \hat{y}_k =
-    \frac{e^{z_k}}
-    {\sum_{j=1}^{104} e^{z_j}},
-\end{equation}
-
-donde $z_k$ representa el valor de salida asociado a la clase $k$ y $\hat{y}_k$ representa la probabilidad estimada para dicha clase.
-
-Para una imagen cuya clase correcta es $c$, la pérdida de entropía cruzada puede expresarse como
-
-\begin{equation}
-    L = -\log(\hat{y}_c).
-\end{equation}
-
-Esta función penaliza al modelo cuando asigna una probabilidad baja a la clase correcta. Si el modelo asigna una probabilidad alta a la clase verdadera, la pérdida será pequeña; en cambio, una predicción incorrecta realizada con alta confianza producirá una pérdida mayor.
-
-Se utiliza la versión categórica dispersa debido a que las etiquetas del conjunto de datos se encuentran representadas directamente mediante números enteros entre 0 y 103, por lo que no es necesario transformarlas manualmente a vectores \textit{one-hot}.
-
-Durante el entrenamiento, primero se realizará una propagación hacia adelante (\textit{forward propagation}) para obtener las predicciones y calcular la pérdida. Posteriormente se utilizará retropropagación (\textit{backpropagation}) para calcular el gradiente de la pérdida con respecto a los parámetros de la red.
-
-Para actualizar los parámetros se utilizará el optimizador Adam, el cual empleará los gradientes obtenidos mediante retropropagación. El entrenamiento se realizará utilizando minilotes de 32 imágenes, y el conjunto de entrenamiento será mezclado antes de formar cada lote.
-
-Aunque la función de pérdida utilizada durante el entrenamiento será la entropía cruzada, el desempeño del modelo también será evaluado mediante F1 macro, debido al desbalance existente entre las 104 clases.

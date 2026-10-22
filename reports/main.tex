@@ -1,8 +1,10 @@
 \documentclass[a4paper,fleqn]{cas-dc}
 
 \usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
-\usepackage[backend=biber,style=apa,natbib=true]{biblatex}
-\addbibresource{references.bib}
+\usepackage[authoryear,round]{natbib}
+\bibliographystyle{plainnat}
+\newcommand{\autocite}[1]{\citep{#1}}
+\newcommand{\parencite}[1]{\citep{#1}}
 \usepackage{float}
 % cas-dc ya carga graphicx, amsmath, amssymb, booktabs y hyperref
 \graphicspath{{figures/}}
@@ -38,11 +40,15 @@
 
 \maketitle
 
+\input{secciones/01_objetivos}
 \input{secciones/02_contexto}
 \input{secciones/03_dataset}
 \input{secciones/04_algoritmos}
 \input{secciones/05_metodologia}
+\input{secciones/06_protocolo}
+\input{secciones/07_regularizacion}
+\input{secciones/08_resultados}
 
 \nocite{*}
-\printbibliography
+\bibliography{references}
 \end{document}

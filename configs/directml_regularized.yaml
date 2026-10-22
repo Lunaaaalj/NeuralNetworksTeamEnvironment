@@ -1,0 +1,47 @@
+# CNN original + AdamW + reducción del LR al estancarse val_loss. Entrena desde cero.
+paths:
+  tfrecords: data/raw/tpu-getting-started/tfrecords-jpeg-224x224
+  processed: data/processed
+  models: models/directml_regularized
+  runs: reports/runs/directml_regularized
+  figures: reports/figures/directml_regularized
+  results: reports/resultados_directml_regularized.csv
+
+model:
+  architecture: baseline
+
+data:
+  img_size: 112
+  num_classes: 104
+  batch_size: 64
+  cache: ram
+
+runtime:
+  backend: directml
+  input_pipeline: dlpack_prefetch
+
+train:
+  optimizer: adamw
+  weight_decay: 0.01
+  lr: 0.001
+  lr_schedule:
+    type: plateau
+    factor: 0.5
+    patience: 2
+    min_lr: 0.00001
+  epochs_full: 150
+  epochs_small: 300
+  eval_every_small: 10
+  patience: 12
+
+wandb:
+  enabled: false
+  project: flower-cnn
+  entity: null
+  mode: online
+
+experiments:
+  data: []
+  ipcs: []
+  seeds: [0]
+  include_full: true
