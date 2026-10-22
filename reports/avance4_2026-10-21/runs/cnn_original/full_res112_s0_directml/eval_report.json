@@ -1,0 +1,191 @@
+{
+  "f1_macro": 0.574,
+  "accuracy": 0.6325431034482759,
+  "worst_classes": [
+    {
+      "label": 2,
+      "name": "canterbury bells",
+      "f1": 0.0
+    },
+    {
+      "label": 3,
+      "name": "sweet pea",
+      "f1": 0.0
+    },
+    {
+      "label": 38,
+      "name": "siam tulip",
+      "f1": 0.0
+    },
+    {
+      "label": 44,
+      "name": "bolero deep blue",
+      "f1": 0.0
+    },
+    {
+      "label": 85,
+      "name": "tree mallow",
+      "f1": 0.2
+    },
+    {
+      "label": 83,
+      "name": "columbine",
+      "f1": 0.2
+    },
+    {
+      "label": 92,
+      "name": "pink quill",
+      "f1": 0.2222
+    },
+    {
+      "label": 31,
+      "name": "garden phlox",
+      "f1": 0.25
+    },
+    {
+      "label": 15,
+      "name": "globe-flower",
+      "f1": 0.25
+    },
+    {
+      "label": 89,
+      "name": "canna lily",
+      "f1": 0.2727
+    }
+  ],
+  "confused_pairs": [
+    {
+      "true": "common dandelion",
+      "pred": "sunflower",
+      "count": 14
+    },
+    {
+      "true": "common tulip",
+      "pred": "rose",
+      "count": 13
+    },
+    {
+      "true": "wild rose",
+      "pred": "wild geranium",
+      "count": 12
+    },
+    {
+      "true": "wild rose",
+      "pred": "windflower",
+      "count": 12
+    },
+    {
+      "true": "common tulip",
+      "pred": "sunflower",
+      "count": 11
+    },
+    {
+      "true": "lotus",
+      "pred": "water lily",
+      "count": 10
+    },
+    {
+      "true": "wild geranium",
+      "pred": "iris",
+      "count": 10
+    },
+    {
+      "true": "rose",
+      "pred": "carnation",
+      "count": 10
+    },
+    {
+      "true": "anthurium",
+      "pred": "rose",
+      "count": 10
+    },
+    {
+      "true": "rose",
+      "pred": "common dandelion",
+      "count": 9
+    }
+  ],
+  "samples": 3712,
+  "correct_predictions": 2348,
+  "matrices": {
+    "confusion_matrix": [
+      "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\figures\\cnn_original\\confusion_matrix.png",
+      "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\figures\\cnn_original\\confusion_matrix.pdf"
+    ],
+    "confusion_matrix_normalized": [
+      "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\figures\\cnn_original\\confusion_matrix_normalized.png",
+      "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\figures\\cnn_original\\confusion_matrix_normalized.pdf"
+    ]
+  },
+  "csv_directory": "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\runs\\cnn_original\\full_res112_s0_directml\\evaluation",
+  "val_loss": 1.519583064934303,
+  "split": "val",
+  "seed": 0,
+  "checkpoint_epoch": 53,
+  "keras_export_verified": true,
+  "model_path": "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\models\\cnn_original\\full_res112_s0_directml.keras",
+  "confusion_focus_labels": [
+    4,
+    48,
+    49,
+    53,
+    67,
+    68,
+    73,
+    75,
+    86,
+    95,
+    102,
+    103
+  ],
+  "displayed_examples": [
+    {
+      "sample_index": 981,
+      "correct": true
+    },
+    {
+      "sample_index": 2342,
+      "correct": true
+    },
+    {
+      "sample_index": 1871,
+      "correct": true
+    },
+    {
+      "sample_index": 1109,
+      "correct": true
+    },
+    {
+      "sample_index": 161,
+      "correct": true
+    },
+    {
+      "sample_index": 3150,
+      "correct": true
+    },
+    {
+      "sample_index": 2733,
+      "correct": false
+    },
+    {
+      "sample_index": 1897,
+      "correct": false
+    },
+    {
+      "sample_index": 3385,
+      "correct": false
+    },
+    {
+      "sample_index": 2377,
+      "correct": false
+    },
+    {
+      "sample_index": 2279,
+      "correct": false
+    },
+    {
+      "sample_index": 3605,
+      "correct": false
+    }
+  ]
+}

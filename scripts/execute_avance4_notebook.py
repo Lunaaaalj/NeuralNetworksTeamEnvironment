@@ -30,8 +30,12 @@ def main():
     manager = KernelManager(kernel_name="avance4", kernel_spec_manager=KernelSpecManager(kernel_dirs=[str(kernels)]))
     client = NotebookClient(notebook, km=manager, timeout=240,
                             resources={"metadata": {"path": str(ROOT)}})
-    client.execute()
-    nbformat.write(notebook, path)
+    try:
+        client.execute()
+        nbformat.write(notebook, path)
+    finally:
+        if manager.has_kernel:
+            manager.shutdown_kernel(now=True)
     print(f"Executed {sum(c.cell_type == 'code' for c in notebook.cells)} code cells: {path}")
 
 

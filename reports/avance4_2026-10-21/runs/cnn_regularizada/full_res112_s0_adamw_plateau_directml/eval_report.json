@@ -1,0 +1,191 @@
+{
+  "f1_macro": 0.5745,
+  "accuracy": 0.6443965517241379,
+  "worst_classes": [
+    {
+      "label": 38,
+      "name": "siam tulip",
+      "f1": 0.0
+    },
+    {
+      "label": 44,
+      "name": "bolero deep blue",
+      "f1": 0.0
+    },
+    {
+      "label": 100,
+      "name": "trumpet creeper",
+      "f1": 0.0
+    },
+    {
+      "label": 31,
+      "name": "garden phlox",
+      "f1": 0.0
+    },
+    {
+      "label": 3,
+      "name": "sweet pea",
+      "f1": 0.0
+    },
+    {
+      "label": 2,
+      "name": "canterbury bells",
+      "f1": 0.0
+    },
+    {
+      "label": 42,
+      "name": "sword lily",
+      "f1": 0.0952
+    },
+    {
+      "label": 92,
+      "name": "pink quill",
+      "f1": 0.2222
+    },
+    {
+      "label": 83,
+      "name": "columbine",
+      "f1": 0.25
+    },
+    {
+      "label": 66,
+      "name": "spring crocus",
+      "f1": 0.25
+    }
+  ],
+  "confused_pairs": [
+    {
+      "true": "common tulip",
+      "pred": "rose",
+      "count": 12
+    },
+    {
+      "true": "carnation",
+      "pred": "rose",
+      "count": 12
+    },
+    {
+      "true": "anthurium",
+      "pred": "rose",
+      "count": 10
+    },
+    {
+      "true": "windflower",
+      "pred": "wild rose",
+      "count": 8
+    },
+    {
+      "true": "wild rose",
+      "pred": "windflower",
+      "count": 8
+    },
+    {
+      "true": "daisy",
+      "pred": "common dandelion",
+      "count": 8
+    },
+    {
+      "true": "camellia",
+      "pred": "rose",
+      "count": 8
+    },
+    {
+      "true": "rose",
+      "pred": "wild rose",
+      "count": 7
+    },
+    {
+      "true": "wild rose",
+      "pred": "wild geranium",
+      "count": 7
+    },
+    {
+      "true": "common dandelion",
+      "pred": "daisy",
+      "count": 7
+    }
+  ],
+  "samples": 3712,
+  "correct_predictions": 2392,
+  "matrices": {
+    "confusion_matrix": [
+      "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\figures\\cnn_regularizada\\confusion_matrix.png",
+      "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\figures\\cnn_regularizada\\confusion_matrix.pdf"
+    ],
+    "confusion_matrix_normalized": [
+      "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\figures\\cnn_regularizada\\confusion_matrix_normalized.png",
+      "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\figures\\cnn_regularizada\\confusion_matrix_normalized.pdf"
+    ]
+  },
+  "csv_directory": "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\runs\\cnn_regularizada\\full_res112_s0_adamw_plateau_directml\\evaluation",
+  "val_loss": 1.5074768929645932,
+  "split": "val",
+  "seed": 0,
+  "checkpoint_epoch": 61,
+  "keras_export_verified": true,
+  "model_path": "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\models\\cnn_regularizada\\full_res112_s0_adamw_plateau_directml.keras",
+  "confusion_focus_labels": [
+    4,
+    48,
+    49,
+    53,
+    67,
+    68,
+    71,
+    73,
+    75,
+    82,
+    102,
+    103
+  ],
+  "displayed_examples": [
+    {
+      "sample_index": 993,
+      "correct": true
+    },
+    {
+      "sample_index": 2326,
+      "correct": true
+    },
+    {
+      "sample_index": 1877,
+      "correct": true
+    },
+    {
+      "sample_index": 1126,
+      "correct": true
+    },
+    {
+      "sample_index": 168,
+      "correct": true
+    },
+    {
+      "sample_index": 3139,
+      "correct": true
+    },
+    {
+      "sample_index": 2752,
+      "correct": false
+    },
+    {
+      "sample_index": 1888,
+      "correct": false
+    },
+    {
+      "sample_index": 3392,
+      "correct": false
+    },
+    {
+      "sample_index": 2408,
+      "correct": false
+    },
+    {
+      "sample_index": 2303,
+      "correct": false
+    },
+    {
+      "sample_index": 3604,
+      "correct": false
+    }
+  ]
+}

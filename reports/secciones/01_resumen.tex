@@ -1,15 +1,17 @@
 \begin{abstract}
-Este trabajo aborda el problema de clasificación automática de imágenes de flores utilizando técnicas de aprendizaje automático y redes neuronales profundas. Se utiliza el conjunto de datos de la competencia \textit{Petals to the Metal -- Flower Classification on TPU} de Kaggle, compuesto por 23,847 imágenes RGB distribuidas entre 104 clases distintas de flores. El conjunto presenta variaciones importantes en tamaño, color, iluminación, orientación y composición de las imágenes, además de un desbalance en la cantidad de ejemplos disponibles para cada clase.
-
-La tarea consiste en desarrollar un modelo capaz de identificar correctamente la clase de una flor a partir de una imagen. Debido a la similitud visual entre algunas categorías y a la variabilidad dentro de una misma clase, se considera principalmente el uso de redes neuronales convolucionales (CNN), ya que permiten extraer automáticamente características relevantes como formas, bordes, colores y patrones visuales. También se consideran arquitecturas previamente desarrolladas, como ResNet, AlexNet e Inception, así como métodos tradicionales de aprendizaje automático, entre ellos KNN, bosques aleatorios y máquinas de vectores de soporte, con el objetivo de comparar distintas alternativas para la solución del problema.
-
-Para evaluar el desempeño se considera especialmente la métrica F1 macro utilizada por Kaggle, ya que asigna la misma importancia a cada una de las 104 clases independientemente de la cantidad de imágenes disponibles. De esta forma, el proyecto busca seleccionar y posteriormente implementar una estrategia de clasificación que logre un buen desempeño general sin favorecer únicamente a las clases con mayor cantidad de ejemplos.
+Se comparan una red totalmente conectada de referencia, una CNN original de cuatro
+convoluciones, una variante con dos convoluciones adicionales y una intervención
+de regularización con AdamW y ajuste de tasa. Se utilizan 12,753 imágenes reales
+de entrenamiento y 3,712 de validación de 104 categorías de flores, con entrada
+$112\times112$. Se incluyen representaciones de las arquitecturas, curvas de
+entrenamiento y validación, matrices de confusión y predicciones ilustrativas.
+El modelo elegido por F1 macro de validación es CNN + AdamW + LR, con F1 macro 0.5745 y exactitud 64.44\%. 
+La red totalmente conectada es una referencia reconstruida, no un checkpoint
+histórico identificado del Avance 3. Los resultados corresponden a una sola
+semilla y no se presentan como evaluación sobre prueba independiente.
 \end{abstract}
 
 \begin{keywords}
-Clasificación de imágenes \sep
-Redes neuronales convolucionales \sep
-Aprendizaje profundo \sep
-F1 macro \sep
-Kaggle
+Clasificación de imágenes \sep Redes neuronales convolucionales \sep
+Regularización \sep F1 macro \sep Flores
 \end{keywords}

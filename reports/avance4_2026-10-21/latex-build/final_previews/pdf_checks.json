@@ -1,0 +1,15 @@
+{
+  "pages": 12,
+  "sections": [
+    "Resumen y objetivos",
+    "Contexto del problema",
+    "Descripci\u00f3n del dataset",
+    "Algoritmos y aplicaciones",
+    "Metodolog\u00eda",
+    "Protocolo experimental y correcciones",
+    "Regularizaci\u00f3n",
+    "Resultados y evaluaci\u00f3n"
+  ],
+  "unresolved_references": false,
+  "metrics_present": true
+}

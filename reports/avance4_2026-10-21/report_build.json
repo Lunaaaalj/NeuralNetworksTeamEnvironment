@@ -1,0 +1,13 @@
+{
+  "updated_at": "2026-10-21T20:58:40.892139-06:00",
+  "notebook": "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\notebooks\\equipo_proyecto_avance4.ipynb",
+  "selected": {
+    "experiment": "cnn_regularizada",
+    "selection_metric": "val_f1_macro",
+    "model_path": "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\models\\cnn_regularizada\\full_res112_s0_adamw_plateau_directml.keras",
+    "accuracy": 0.6443965517241379,
+    "f1_macro": 0.5745,
+    "split": "val",
+    "samples": 3712
+  }
+}

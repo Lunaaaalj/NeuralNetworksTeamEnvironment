@@ -1,0 +1,5 @@
+﻿Modelo,Parametros,Epoca_checkpoint,Exactitud_porcentaje,F1_macro
+Totalmente conectada (referencia),9660776,77,15.52,0.028
+CNN original (4 convoluciones),480936,53,63.25,0.574
+CNN ampliada (6 convoluciones),1218600,46,62.23,0.5502
+CNN original + AdamW + LR adaptable,480936,61,64.44,0.5745
