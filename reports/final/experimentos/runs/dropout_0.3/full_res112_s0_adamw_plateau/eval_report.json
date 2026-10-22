@@ -1,0 +1,959 @@
+{
+  "f1_macro": 0.5596,
+  "accuracy": 0.6196120689655172,
+  "per_class": [
+    {
+      "label": 0,
+      "name": "pink primrose",
+      "precision": 0.8289,
+      "recall": 0.7975,
+      "f1": 0.8129,
+      "support": 79
+    },
+    {
+      "label": 1,
+      "name": "hard-leaved pocket orchid",
+      "precision": 1.0,
+      "recall": 0.5714,
+      "f1": 0.7273,
+      "support": 7
+    },
+    {
+      "label": 2,
+      "name": "canterbury bells",
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 6
+    },
+    {
+      "label": 3,
+      "name": "sweet pea",
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 6
+    },
+    {
+      "label": 4,
+      "name": "wild geranium",
+      "precision": 0.7345,
+      "recall": 0.8098,
+      "f1": 0.7703,
+      "support": 205
+    },
+    {
+      "label": 5,
+      "name": "tiger lily",
+      "precision": 0.3415,
+      "recall": 0.56,
+      "f1": 0.4242,
+      "support": 25
+    },
+    {
+      "label": 6,
+      "name": "moon orchid",
+      "precision": 0.5,
+      "recall": 0.6,
+      "f1": 0.5455,
+      "support": 5
+    },
+    {
+      "label": 7,
+      "name": "bird of paradise",
+      "precision": 0.8276,
+      "recall": 0.7742,
+      "f1": 0.8,
+      "support": 31
+    },
+    {
+      "label": 8,
+      "name": "monkshood",
+      "precision": 0.6667,
+      "recall": 0.72,
+      "f1": 0.6923,
+      "support": 25
+    },
+    {
+      "label": 9,
+      "name": "globe thistle",
+      "precision": 0.6111,
+      "recall": 0.9167,
+      "f1": 0.7333,
+      "support": 24
+    },
+    {
+      "label": 10,
+      "name": "snapdragon",
+      "precision": 0.4242,
+      "recall": 0.35,
+      "f1": 0.3836,
+      "support": 40
+    },
+    {
+      "label": 11,
+      "name": "colt's foot",
+      "precision": 0.6154,
+      "recall": 0.6154,
+      "f1": 0.6154,
+      "support": 13
+    },
+    {
+      "label": 12,
+      "name": "king protea",
+      "precision": 0.6667,
+      "recall": 0.7407,
+      "f1": 0.7018,
+      "support": 27
+    },
+    {
+      "label": 13,
+      "name": "spear thistle",
+      "precision": 0.7045,
+      "recall": 0.8052,
+      "f1": 0.7515,
+      "support": 77
+    },
+    {
+      "label": 14,
+      "name": "yellow iris",
+      "precision": 0.6795,
+      "recall": 0.803,
+      "f1": 0.7361,
+      "support": 66
+    },
+    {
+      "label": 15,
+      "name": "globe-flower",
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 6
+    },
+    {
+      "label": 16,
+      "name": "purple coneflower",
+      "precision": 0.9333,
+      "recall": 0.875,
+      "f1": 0.9032,
+      "support": 16
+    },
+    {
+      "label": 17,
+      "name": "peruvian lily",
+      "precision": 0.6,
+      "recall": 0.4286,
+      "f1": 0.5,
+      "support": 14
+    },
+    {
+      "label": 18,
+      "name": "balloon flower",
+      "precision": 0.5,
+      "recall": 0.3077,
+      "f1": 0.381,
+      "support": 26
+    },
+    {
+      "label": 19,
+      "name": "giant white arum lily",
+      "precision": 0.8333,
+      "recall": 0.625,
+      "f1": 0.7143,
+      "support": 8
+    },
+    {
+      "label": 20,
+      "name": "fire lily",
+      "precision": 0.8333,
+      "recall": 0.8333,
+      "f1": 0.8333,
+      "support": 6
+    },
+    {
+      "label": 21,
+      "name": "pincushion flower",
+      "precision": 0.5,
+      "recall": 0.5357,
+      "f1": 0.5172,
+      "support": 28
+    },
+    {
+      "label": 22,
+      "name": "fritillary",
+      "precision": 0.8333,
+      "recall": 0.7143,
+      "f1": 0.7692,
+      "support": 14
+    },
+    {
+      "label": 23,
+      "name": "red ginger",
+      "precision": 1.0,
+      "recall": 0.6667,
+      "f1": 0.8,
+      "support": 6
+    },
+    {
+      "label": 24,
+      "name": "grape hyacinth",
+      "precision": 0.5385,
+      "recall": 0.5833,
+      "f1": 0.56,
+      "support": 24
+    },
+    {
+      "label": 25,
+      "name": "corn poppy",
+      "precision": 0.5263,
+      "recall": 0.4167,
+      "f1": 0.4651,
+      "support": 24
+    },
+    {
+      "label": 26,
+      "name": "prince of wales feathers",
+      "precision": 0.75,
+      "recall": 0.5,
+      "f1": 0.6,
+      "support": 6
+    },
+    {
+      "label": 27,
+      "name": "stemless gentian",
+      "precision": 0.6667,
+      "recall": 0.8,
+      "f1": 0.7273,
+      "support": 10
+    },
+    {
+      "label": 28,
+      "name": "artichoke",
+      "precision": 0.5455,
+      "recall": 0.5294,
+      "f1": 0.5373,
+      "support": 34
+    },
+    {
+      "label": 29,
+      "name": "sweet william",
+      "precision": 0.4146,
+      "recall": 0.5312,
+      "f1": 0.4658,
+      "support": 32
+    },
+    {
+      "label": 30,
+      "name": "carnation",
+      "precision": 0.3333,
+      "recall": 0.3548,
+      "f1": 0.3438,
+      "support": 31
+    },
+    {
+      "label": 31,
+      "name": "garden phlox",
+      "precision": 0.5,
+      "recall": 0.1429,
+      "f1": 0.2222,
+      "support": 7
+    },
+    {
+      "label": 32,
+      "name": "love in the mist",
+      "precision": 0.375,
+      "recall": 0.4286,
+      "f1": 0.4,
+      "support": 7
+    },
+    {
+      "label": 33,
+      "name": "cosmos",
+      "precision": 1.0,
+      "recall": 0.3333,
+      "f1": 0.5,
+      "support": 6
+    },
+    {
+      "label": 34,
+      "name": "alpine sea holly",
+      "precision": 0.1667,
+      "recall": 0.2,
+      "f1": 0.1818,
+      "support": 5
+    },
+    {
+      "label": 35,
+      "name": "ruby-lipped cattleya",
+      "precision": 1.0,
+      "recall": 0.7273,
+      "f1": 0.8421,
+      "support": 11
+    },
+    {
+      "label": 36,
+      "name": "cape flower",
+      "precision": 1.0,
+      "recall": 0.8824,
+      "f1": 0.9375,
+      "support": 17
+    },
+    {
+      "label": 37,
+      "name": "great masterwort",
+      "precision": 0.8571,
+      "recall": 0.75,
+      "f1": 0.8,
+      "support": 8
+    },
+    {
+      "label": 38,
+      "name": "siam tulip",
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 5
+    },
+    {
+      "label": 39,
+      "name": "lenten rose",
+      "precision": 0.6842,
+      "recall": 0.619,
+      "f1": 0.65,
+      "support": 21
+    },
+    {
+      "label": 40,
+      "name": "barberton daisy",
+      "precision": 0.6923,
+      "recall": 0.5,
+      "f1": 0.5806,
+      "support": 18
+    },
+    {
+      "label": 41,
+      "name": "daffodil",
+      "precision": 0.3636,
+      "recall": 0.2857,
+      "f1": 0.32,
+      "support": 28
+    },
+    {
+      "label": 42,
+      "name": "sword lily",
+      "precision": 0.6667,
+      "recall": 0.2222,
+      "f1": 0.3333,
+      "support": 18
+    },
+    {
+      "label": 43,
+      "name": "poinsettia",
+      "precision": 0.3191,
+      "recall": 0.4688,
+      "f1": 0.3797,
+      "support": 32
+    },
+    {
+      "label": 44,
+      "name": "bolero deep blue",
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 5
+    },
+    {
+      "label": 45,
+      "name": "wallflower",
+      "precision": 0.7619,
+      "recall": 0.64,
+      "f1": 0.6957,
+      "support": 50
+    },
+    {
+      "label": 46,
+      "name": "marigold",
+      "precision": 0.5208,
+      "recall": 0.6757,
+      "f1": 0.5882,
+      "support": 37
+    },
+    {
+      "label": 47,
+      "name": "buttercup",
+      "precision": 0.7761,
+      "recall": 0.6842,
+      "f1": 0.7273,
+      "support": 76
+    },
+    {
+      "label": 48,
+      "name": "daisy",
+      "precision": 0.7273,
+      "recall": 0.7154,
+      "f1": 0.7213,
+      "support": 123
+    },
+    {
+      "label": 49,
+      "name": "common dandelion",
+      "precision": 0.6289,
+      "recall": 0.7439,
+      "f1": 0.6816,
+      "support": 164
+    },
+    {
+      "label": 50,
+      "name": "petunia",
+      "precision": 0.5577,
+      "recall": 0.5,
+      "f1": 0.5273,
+      "support": 58
+    },
+    {
+      "label": 51,
+      "name": "wild pansy",
+      "precision": 0.8182,
+      "recall": 0.6,
+      "f1": 0.6923,
+      "support": 30
+    },
+    {
+      "label": 52,
+      "name": "primula",
+      "precision": 0.5882,
+      "recall": 0.303,
+      "f1": 0.4,
+      "support": 33
+    },
+    {
+      "label": 53,
+      "name": "sunflower",
+      "precision": 0.6646,
+      "recall": 0.7985,
+      "f1": 0.7254,
+      "support": 134
+    },
+    {
+      "label": 54,
+      "name": "lilac hibiscus",
+      "precision": 0.6,
+      "recall": 0.8182,
+      "f1": 0.6923,
+      "support": 11
+    },
+    {
+      "label": 55,
+      "name": "bishop of llandaff",
+      "precision": 0.9333,
+      "recall": 0.8235,
+      "f1": 0.875,
+      "support": 17
+    },
+    {
+      "label": 56,
+      "name": "gaura",
+      "precision": 0.56,
+      "recall": 0.5385,
+      "f1": 0.549,
+      "support": 26
+    },
+    {
+      "label": 57,
+      "name": "geranium",
+      "precision": 0.8182,
+      "recall": 1.0,
+      "f1": 0.9,
+      "support": 18
+    },
+    {
+      "label": 58,
+      "name": "orange dahlia",
+      "precision": 0.9091,
+      "recall": 1.0,
+      "f1": 0.9524,
+      "support": 10
+    },
+    {
+      "label": 59,
+      "name": "pink-yellow dahlia",
+      "precision": 0.8947,
+      "recall": 1.0,
+      "f1": 0.9444,
+      "support": 17
+    },
+    {
+      "label": 60,
+      "name": "cautleya spicata",
+      "precision": 0.8889,
+      "recall": 1.0,
+      "f1": 0.9412,
+      "support": 8
+    },
+    {
+      "label": 61,
+      "name": "japanese anemone",
+      "precision": 0.625,
+      "recall": 0.625,
+      "f1": 0.625,
+      "support": 8
+    },
+    {
+      "label": 62,
+      "name": "black-eyed susan",
+      "precision": 0.7778,
+      "recall": 0.5185,
+      "f1": 0.6222,
+      "support": 27
+    },
+    {
+      "label": 63,
+      "name": "silverbush",
+      "precision": 0.8889,
+      "recall": 1.0,
+      "f1": 0.9412,
+      "support": 8
+    },
+    {
+      "label": 64,
+      "name": "californian poppy",
+      "precision": 0.8333,
+      "recall": 0.9375,
+      "f1": 0.8824,
+      "support": 16
+    },
+    {
+      "label": 65,
+      "name": "osteospermum",
+      "precision": 0.75,
+      "recall": 1.0,
+      "f1": 0.8571,
+      "support": 9
+    },
+    {
+      "label": 66,
+      "name": "spring crocus",
+      "precision": 0.5,
+      "recall": 0.1667,
+      "f1": 0.25,
+      "support": 6
+    },
+    {
+      "label": 67,
+      "name": "iris",
+      "precision": 0.7419,
+      "recall": 0.807,
+      "f1": 0.7731,
+      "support": 228
+    },
+    {
+      "label": 68,
+      "name": "windflower",
+      "precision": 0.557,
+      "recall": 0.5789,
+      "f1": 0.5677,
+      "support": 76
+    },
+    {
+      "label": 69,
+      "name": "tree poppy",
+      "precision": 0.7,
+      "recall": 0.5185,
+      "f1": 0.5957,
+      "support": 27
+    },
+    {
+      "label": 70,
+      "name": "gazania",
+      "precision": 0.6538,
+      "recall": 0.5667,
+      "f1": 0.6071,
+      "support": 30
+    },
+    {
+      "label": 71,
+      "name": "azalea",
+      "precision": 0.2647,
+      "recall": 0.225,
+      "f1": 0.2432,
+      "support": 40
+    },
+    {
+      "label": 72,
+      "name": "water lily",
+      "precision": 0.6458,
+      "recall": 0.6327,
+      "f1": 0.6392,
+      "support": 49
+    },
+    {
+      "label": 73,
+      "name": "rose",
+      "precision": 0.3567,
+      "recall": 0.4552,
+      "f1": 0.4,
+      "support": 134
+    },
+    {
+      "label": 74,
+      "name": "thorn apple",
+      "precision": 0.6875,
+      "recall": 0.6111,
+      "f1": 0.6471,
+      "support": 36
+    },
+    {
+      "label": 75,
+      "name": "morning glory",
+      "precision": 0.6667,
+      "recall": 0.5618,
+      "f1": 0.6098,
+      "support": 89
+    },
+    {
+      "label": 76,
+      "name": "passion flower",
+      "precision": 0.8056,
+      "recall": 0.8286,
+      "f1": 0.8169,
+      "support": 35
+    },
+    {
+      "label": 77,
+      "name": "lotus",
+      "precision": 0.6667,
+      "recall": 0.5366,
+      "f1": 0.5946,
+      "support": 41
+    },
+    {
+      "label": 78,
+      "name": "toad lily",
+      "precision": 0.56,
+      "recall": 0.56,
+      "f1": 0.56,
+      "support": 25
+    },
+    {
+      "label": 79,
+      "name": "anthurium",
+      "precision": 0.303,
+      "recall": 0.2941,
+      "f1": 0.2985,
+      "support": 34
+    },
+    {
+      "label": 80,
+      "name": "frangipani",
+      "precision": 0.7143,
+      "recall": 0.6667,
+      "f1": 0.6897,
+      "support": 45
+    },
+    {
+      "label": 81,
+      "name": "clematis",
+      "precision": 0.3667,
+      "recall": 0.3793,
+      "f1": 0.3729,
+      "support": 29
+    },
+    {
+      "label": 82,
+      "name": "hibiscus",
+      "precision": 0.4118,
+      "recall": 0.359,
+      "f1": 0.3836,
+      "support": 39
+    },
+    {
+      "label": 83,
+      "name": "columbine",
+      "precision": 0.3529,
+      "recall": 0.1818,
+      "f1": 0.24,
+      "support": 33
+    },
+    {
+      "label": 84,
+      "name": "desert-rose",
+      "precision": 0.7143,
+      "recall": 0.5556,
+      "f1": 0.625,
+      "support": 9
+    },
+    {
+      "label": 85,
+      "name": "tree mallow",
+      "precision": 0.375,
+      "recall": 0.3333,
+      "f1": 0.3529,
+      "support": 9
+    },
+    {
+      "label": 86,
+      "name": "magnolia",
+      "precision": 0.3913,
+      "recall": 0.5143,
+      "f1": 0.4444,
+      "support": 35
+    },
+    {
+      "label": 87,
+      "name": "cyclamen",
+      "precision": 0.5952,
+      "recall": 0.5814,
+      "f1": 0.5882,
+      "support": 43
+    },
+    {
+      "label": 88,
+      "name": "watercress",
+      "precision": 0.4643,
+      "recall": 0.4643,
+      "f1": 0.4643,
+      "support": 28
+    },
+    {
+      "label": 89,
+      "name": "canna lily",
+      "precision": 0.3333,
+      "recall": 0.2308,
+      "f1": 0.2727,
+      "support": 13
+    },
+    {
+      "label": 90,
+      "name": "hippeastrum",
+      "precision": 0.5,
+      "recall": 0.3226,
+      "f1": 0.3922,
+      "support": 31
+    },
+    {
+      "label": 91,
+      "name": "bee balm",
+      "precision": 0.72,
+      "recall": 0.5625,
+      "f1": 0.6316,
+      "support": 32
+    },
+    {
+      "label": 92,
+      "name": "pink quill",
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 7
+    },
+    {
+      "label": 93,
+      "name": "foxglove",
+      "precision": 0.4808,
+      "recall": 0.6098,
+      "f1": 0.5376,
+      "support": 41
+    },
+    {
+      "label": 94,
+      "name": "bougainvillea",
+      "precision": 0.4,
+      "recall": 0.3158,
+      "f1": 0.3529,
+      "support": 38
+    },
+    {
+      "label": 95,
+      "name": "camellia",
+      "precision": 0.4118,
+      "recall": 0.3784,
+      "f1": 0.3944,
+      "support": 37
+    },
+    {
+      "label": 96,
+      "name": "mallow",
+      "precision": 0.3684,
+      "recall": 0.2414,
+      "f1": 0.2917,
+      "support": 29
+    },
+    {
+      "label": 97,
+      "name": "mexican petunia",
+      "precision": 0.75,
+      "recall": 0.5,
+      "f1": 0.6,
+      "support": 12
+    },
+    {
+      "label": 98,
+      "name": "bromelia",
+      "precision": 0.5,
+      "recall": 0.4,
+      "f1": 0.4444,
+      "support": 10
+    },
+    {
+      "label": 99,
+      "name": "blanket flower",
+      "precision": 0.7,
+      "recall": 1.0,
+      "f1": 0.8235,
+      "support": 7
+    },
+    {
+      "label": 100,
+      "name": "trumpet creeper",
+      "precision": 0.5,
+      "recall": 0.3333,
+      "f1": 0.4,
+      "support": 9
+    },
+    {
+      "label": 101,
+      "name": "blackberry lily",
+      "precision": 0.6,
+      "recall": 0.4286,
+      "f1": 0.5,
+      "support": 7
+    },
+    {
+      "label": 102,
+      "name": "common tulip",
+      "precision": 0.6075,
+      "recall": 0.5702,
+      "f1": 0.5882,
+      "support": 114
+    },
+    {
+      "label": 103,
+      "name": "wild rose",
+      "precision": 0.6722,
+      "recall": 0.75,
+      "f1": 0.709,
+      "support": 216
+    }
+  ],
+  "worst_classes": [
+    {
+      "label": 44,
+      "name": "bolero deep blue",
+      "f1": 0.0
+    },
+    {
+      "label": 2,
+      "name": "canterbury bells",
+      "f1": 0.0
+    },
+    {
+      "label": 3,
+      "name": "sweet pea",
+      "f1": 0.0
+    },
+    {
+      "label": 38,
+      "name": "siam tulip",
+      "f1": 0.0
+    },
+    {
+      "label": 92,
+      "name": "pink quill",
+      "f1": 0.0
+    },
+    {
+      "label": 15,
+      "name": "globe-flower",
+      "f1": 0.0
+    },
+    {
+      "label": 34,
+      "name": "alpine sea holly",
+      "f1": 0.1818
+    },
+    {
+      "label": 31,
+      "name": "garden phlox",
+      "f1": 0.2222
+    },
+    {
+      "label": 83,
+      "name": "columbine",
+      "f1": 0.24
+    },
+    {
+      "label": 71,
+      "name": "azalea",
+      "f1": 0.2432
+    }
+  ],
+  "confused_pairs": [
+    {
+      "true": "common tulip",
+      "pred": "rose",
+      "count": 14
+    },
+    {
+      "true": "daisy",
+      "pred": "common dandelion",
+      "count": 12
+    },
+    {
+      "true": "carnation",
+      "pred": "rose",
+      "count": 11
+    },
+    {
+      "true": "wild geranium",
+      "pred": "iris",
+      "count": 10
+    },
+    {
+      "true": "azalea",
+      "pred": "poinsettia",
+      "count": 9
+    },
+    {
+      "true": "common tulip",
+      "pred": "sunflower",
+      "count": 8
+    },
+    {
+      "true": "wild rose",
+      "pred": "wild geranium",
+      "count": 8
+    },
+    {
+      "true": "wild rose",
+      "pred": "windflower",
+      "count": 8
+    },
+    {
+      "true": "rose",
+      "pred": "common dandelion",
+      "count": 8
+    },
+    {
+      "true": "iris",
+      "pred": "wild geranium",
+      "count": 8
+    }
+  ],
+  "samples": 3712,
+  "correct_predictions": 2300,
+  "matrices": {
+    "confusion_matrix": [
+      "/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/final/figures/dropout_0.3/full_res112_s0_adamw_plateau/confusion_matrix.png",
+      "/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/final/figures/dropout_0.3/full_res112_s0_adamw_plateau/confusion_matrix.pdf"
+    ],
+    "confusion_matrix_normalized": [
+      "/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/final/figures/dropout_0.3/full_res112_s0_adamw_plateau/confusion_matrix_normalized.png",
+      "/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/final/figures/dropout_0.3/full_res112_s0_adamw_plateau/confusion_matrix_normalized.pdf"
+    ]
+  },
+  "csv_directory": "/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/reports/final/experimentos/runs/dropout_0.3/full_res112_s0_adamw_plateau/evaluation",
+  "val_loss": 1.6271996333681304,
+  "model_path": "/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/final/dropout_0.3/full_res112_s0_adamw_plateau.keras",
+  "split": "val",
+  "img_size": 112
+}
