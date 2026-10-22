@@ -122,7 +122,8 @@ def write_table(path, caption, label, columns, header, rows, note=None, wide=Tru
     lines += [row + " \\\\" for row in rows]
     lines += ["\\bottomrule", "\\end{tabular}"]
     if note:
-        lines += ["\\par\\smallskip", f"\\parbox{{0.95\\textwidth}}{{\\footnotesize {note}}}"]
+        width = "\\textwidth" if wide else "\\columnwidth"  # en una columna, la nota no debe invadir la otra
+        lines += ["\\par\\smallskip", f"\\parbox{{0.95{width}}}{{\\footnotesize {note}}}"]
     lines.append(f"\\end{{{env}}}")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -191,8 +192,7 @@ def tables(table, counts, runs, out):
         "F1 10 menores/mayores: F1 promedio de las 10 clases con menos (18--19) y más (460--782) imágenes de "
         "entrenamiento. Pesos $w_c = N/(K\\,n_c)$: van de "
         f"{counts['train'].sum() / (104 * counts['train'].max()):.2f} (iris) a "
-        f"{counts['train'].sum() / (104 * counts['train'].min()):.2f} (las clases de 18 imágenes).",
-        wide=False)
+        f"{counts['train'].sum() / (104 * counts['train'].min()):.2f} (las clases de 18 imágenes).")
 
     avance4 = ROOT / "reports/entregable_4/avance4_2026-10-21/resultados.csv"
     if avance4.exists():
@@ -219,18 +219,22 @@ def tables(table, counts, runs, out):
     if "referencia" in runs:
         run = runs["referencia"]
         best, last = at_best(run), run["history"].iloc[-1]
-        metrics = [("Exactitud de entrenamiento (\\%)", "train_eval_accuracy", pct),
-                   ("F1 macro de entrenamiento", "train_f1_macro", lambda v: f"{v:.4f}"),
-                   ("Pérdida de entrenamiento", "train_eval_loss", lambda v: f"{v:.3f}"),
-                   ("Exactitud de validación (\\%)", "val_accuracy", pct),
-                   ("F1 macro de validación", "val_f1_macro", lambda v: f"{v:.4f}"),
-                   ("Pérdida de validación", "val_loss", lambda v: f"{v:.3f}")]
+        metrics = [("Entrenamiento", None, None),
+                   ("Exactitud (\\%)", "train_eval_accuracy", pct),
+                   ("F1 macro", "train_f1_macro", lambda v: f"{v:.4f}"),
+                   ("Pérdida", "train_eval_loss", lambda v: f"{v:.3f}"),
+                   ("Validación", None, None),
+                   ("Exactitud (\\%)", "val_accuracy", pct),
+                   ("F1 macro", "val_f1_macro", lambda v: f"{v:.4f}"),
+                   ("Pérdida", "val_loss", lambda v: f"{v:.3f}")]
         write_table(
             out / "ultima_epoca.tex", "CNN de referencia en la época elegida y al terminar el entrenamiento.",
             "tab:ultima-epoca", "lrr",
-            f"Métrica & Época elegida ({int(best.epoch) + 1}) & Última época ({int(last.epoch) + 1})",
-            [f"{name} & {fmt(best[key])} & {fmt(last[key])}" for name, key, fmt in metrics],
-            "Métricas de entrenamiento sobre 3,712 imágenes fijas sin aumento, en modo inferencia.", wide=False)
+            f"Métrica & Elegida ({int(best.epoch) + 1}) & Última ({int(last.epoch) + 1})",
+            [f"\\multicolumn{{3}}{{l}}{{\\textit{{{name}}}}}" if key is None else
+             f"\\quad {name} & {fmt(best[key])} & {fmt(last[key])}" for name, key, fmt in metrics],
+            "Entre paréntesis, la época. Entrenamiento: 3,712 imágenes fijas sin aumento, en modo inferencia.",
+            wide=False)
 
     distill = ROOT / "reports/resultados.csv"
     if distill.exists():
@@ -247,7 +251,7 @@ def tables(table, counts, runs, out):
             "tab:dm", "rrlrrr",
             "IPC & Imágenes & Conjunto & Exact. (\\%) & F1 macro & Destilación (min)", rows,
             "Promedio $\\pm$ desviación estándar de tres semillas de entrenamiento por condición. "
-            "Misma CNN, Adam $10^{-3}$, $112\\times112$. Datos: \\path{reports/resultados.csv}.", wide=False)
+            "Misma CNN, Adam $10^{-3}$, $112\\times112$. Datos: \\path{reports/resultados.csv}.")
 
     if "referencia" in runs and runs["referencia"]["eval"]:
         per_class = pd.DataFrame(runs["referencia"]["eval"]["per_class"]).set_index("label")
