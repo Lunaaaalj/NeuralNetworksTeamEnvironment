@@ -45,7 +45,11 @@ for c in (ta, va):
 
 i_best = df[vf].idxmax() if vf else df[va].idxmax()
 i_vlmin = df[vl].idxmin()
-ep_best = x[i_best]
+ep_best = 
+
+
+
+
 
 fig, ax = plt.subplots(1, 2, figsize=(9, 3.4))
 ax[0].plot(x, df[tl], label="Entrenamiento")

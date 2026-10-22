@@ -3,6 +3,7 @@
 import argparse
 import json
 from pathlib import Path
+import shutil
 
 import matplotlib
 matplotlib.use("Agg")
@@ -34,26 +35,29 @@ def save_figure(fig, path):
 def architecture_figures(output):
     common = [
         ("Entrada RGB", "112 × 112 × 3"),
-        ("Conv1: 32 filtros, 3×3 + ReLU → Pool 2×2", "56 × 56 × 32"),
-        ("Conv2: 64 filtros, 3×3 + ReLU → Pool 2×2", "28 × 28 × 64"),
-        ("Conv3: 128 filtros, 3×3 + ReLU → Pool 2×2", "14 × 14 × 128"),
-        ("Conv4: 256 filtros, 3×3 + ReLU → Pool 2×2", "7 × 7 × 256"),
+        ("Conv1: 3×3, 32 + ReLU + Pool", "56 × 56 × 32"),
+        ("Conv2: 3×3, 64 + ReLU + Pool", "28 × 28 × 64"),
+        ("Conv3: 3×3, 128 + ReLU + Pool", "14 × 14 × 128"),
+        ("Conv4: 3×3, 256 + ReLU + Pool", "7 × 7 × 256"),
         ("Global Average Pooling", "256 características"),
         ("Densa + ReLU", "256 neuronas"),
         ("Dropout", "p = 0.5"),
         ("Densa de salida (logits)", "104 clases"),
     ]
-    deep = common[:4] + [("Conv extra 1: 128 filtros, 3×3 + ReLU", "14 × 14 × 128")]
-    deep += common[4:5] + [("Conv extra 2: 256 filtros, 3×3 + ReLU", "7 × 7 × 256")] + common[5:]
+    deep = common[:4] + [("Conv extra 1: 3×3, 128 + ReLU", "14 × 14 × 128")]
+    deep += common[4:5] + [("Conv extra 2: 3×3, 256 + ReLU", "7 × 7 × 256")] + common[5:]
     mlp = [("Entrada RGB", "112 × 112 × 3"), ("Flatten (sin convoluciones)", "37,632 valores"),
            ("Densa + ReLU", "256 neuronas"), ("Dropout", "p = 0.5"),
            ("Densa de salida (logits)", "104 clases")]
     specs = [("mlp_referencia", mlp), ("cnn_original", common), ("cnn_dos_capas_extra", deep)]
-    fig, axes = plt.subplots(1, 3, figsize=(19, 12), layout="constrained")
+    fig, axes = plt.subplots(1, 3, figsize=(14, 11), layout="constrained")
     for ax, (key, blocks) in zip(axes, specs):
         ax.set(xlim=(0, 1), ylim=(0, 1))
         ax.axis("off")
-        ax.set_title(LABELS[key], fontsize=14, fontweight="bold", pad=20)
+        diagram_titles = {"mlp_referencia": "MLP\nReferencia reconstruida",
+                          "cnn_original": "CNN original\n4 convoluciones",
+                          "cnn_dos_capas_extra": "CNN ampliada\n6 convoluciones"}
+        ax.set_title(diagram_titles[key], fontsize=16, fontweight="bold", pad=16)
         height = min(0.068, (0.85 / (len(blocks) - 1)) * 0.65)
         positions = np.linspace(0.93, 0.08, len(blocks))
         for index, ((title, shape), y) in enumerate(zip(blocks, positions)):
@@ -63,7 +67,7 @@ def architecture_figures(output):
                                  edgecolor="#c06a20" if extra else COLORS[key],
                                  facecolor="#fff0dc" if extra else "#f0f4f8")
             ax.add_patch(box)
-            ax.text(0.5, y, f"{title}\n{shape}", ha="center", va="center", fontsize=10)
+            ax.text(0.5, y, f"{title}\n{shape}", ha="center", va="center", fontsize=14)
             if index:
                 ax.annotate("", xy=(0.5, y + height/2 + 0.009),
                             xytext=(0.5, positions[index-1] - height/2 - 0.009),
@@ -71,7 +75,7 @@ def architecture_figures(output):
         if key == "mlp_referencia":
             ax.text(0.5, 0.005, "Referencia reconstruida; no es el checkpoint del Avance 3.",
                     ha="center", fontsize=9)
-    fig.suptitle("Representación de los modelos: misma entrada y mismas 104 clases", fontsize=19)
+    fig.suptitle("Modelos: misma entrada y mismas 104 clases\nPool = MaxPooling 2×2; convoluciones con padding same", fontsize=17)
     save_figure(fig, output / "figures/arquitecturas")
     for key, blocks in specs:
         fig, ax = plt.subplots(figsize=(10, 7), layout="constrained")
@@ -139,6 +143,27 @@ def evaluate_run(output, key, summary, cfg):
     report.update(val_loss=loss_sum / total, split="val", seed=summary["seed"],
                   checkpoint_epoch=checkpoint["epoch"], keras_export_verified=True,
                   model_path=summary["model_path"])
+    from src.confusion import confusion_tables
+    counts, normalized = confusion_tables(y_true, y_pred, len(CLASSES))
+    errors = counts.copy()
+    np.fill_diagonal(errors, 0)
+    focus = np.sort(np.argsort(errors.sum(0) + errors.sum(1))[-12:])
+    view = normalized[np.ix_(focus, focus)]
+    fig, ax = plt.subplots(figsize=(12, 10), layout="constrained")
+    plot = ax.imshow(view, cmap="Blues", vmin=0, vmax=1)
+    ax.set_xticks(range(len(focus)), [CLASSES[c] for c in focus], rotation=60, ha="right")
+    ax.set_yticks(range(len(focus)), [CLASSES[c] for c in focus])
+    ax.set(xlabel="Clase predicha", ylabel="Clase real", title=LABELS[key] +
+           "\n12 clases con más participación en errores (submatriz)")
+    for row in range(len(focus)):
+        for col in range(len(focus)):
+            if view[row, col] > 0:
+                ax.text(col, row, f"{view[row,col]:.0%}", ha="center", va="center",
+                        color="white" if view[row,col] > 0.5 else "black", fontsize=10)
+    fig.colorbar(plot, ax=ax, label="Fracción sobre TODOS los casos reales de la clase")
+    fig.supxlabel("Las filas pueden sumar menos de 100%: se omiten las otras 92 clases.", fontsize=10)
+    save_figure(fig, output / "figures" / key / "confusiones_principales")
+    report["confusion_focus_labels"] = focus.tolist()
     pd.DataFrame({"sample_index": np.arange(total), "true_label": y_true, "predicted_label": y_pred,
                   "confidence": confidence, "correct": y_true == y_pred}).to_csv(
                       run_dir / "evaluation/validation_predictions.csv", index=False)
@@ -191,6 +216,11 @@ def plot_results(output, records):
             ax.legend()
         single.suptitle(LABELS[key])
         save_figure(single, output / "figures" / key / "curvas_entrenamiento_validacion")
+        rate_fig, rate_ax = plt.subplots(figsize=(10, 3), layout="constrained")
+        rate_ax.step(epochs, history.learning_rate, where="post", color=COLORS[key])
+        rate_ax.set(xlabel="Época", ylabel="Tasa de aprendizaje", yscale="log", title=LABELS[key])
+        rate_ax.grid(alpha=0.2)
+        save_figure(rate_fig, output / "figures" / key / "tasa_aprendizaje")
         best_row = history.iloc[best-1]
         rows.append({"experiment": key, "model": LABELS[key], "architecture": summary["architecture"],
                      "parameters": summary["parameters"], "train_images": summary["train_images"],
@@ -228,6 +258,18 @@ def main():
     args = parser.parse_args()
     output = args.output.resolve()
     architecture_figures(output)
+    historical = output / "figures/dm_historico"
+    historical.mkdir(parents=True, exist_ok=True)
+    for ipc in (1, 10):
+        source = ROOT / f"reports/figures/synthetic_ipc{ipc}_res112.png"
+        if source.exists():
+            shutil.copy2(source, historical / source.name)
+    (historical / "PROCEDENCIA.txt").write_text(
+        "Figuras DM históricas del repositorio (añadidas el 12 de octubre de 2026).\n"
+        "No fueron generadas por las nuevas CNN entrenadas en este avance.\n"
+        "IPC 1: 104 imágenes sintéticas; IPC 10: 1,040.\n"
+        "Ambos mosaicos muestran solo la primera imagen sintética de cada clase.\n",
+        encoding="utf-8")
     if args.diagrams_only:
         return
     from src.config import load_config

@@ -84,26 +84,23 @@ El notebook usa los módulos de este repositorio y sus dependencias (requirement
         for base in (output / "figures", output / "runs"):
             for file in base.rglob("*"):
                 if file.is_file() and file.suffix.lower() in {".png", ".pdf", ".csv", ".json"}:
-                    bundle.write(file, "evidencia/" + str(file.relative_to(output)).replace("\\", "/"))
+                    bundle.write(file, file.relative_to(ROOT).as_posix())
         for file in list(output.glob("*.yaml")) + list(output.glob("*.json")) + [output / "resultados.csv"]:
-            bundle.write(file, "evidencia/" + file.name)
+            bundle.write(file, file.relative_to(ROOT).as_posix())
         for directory in (ROOT / "src", ROOT / "scripts", ROOT / "configs"):
             for file in directory.glob("*"):
                 if file.is_file() and file.suffix in {".py", ".yaml"}:
-                    bundle.write(file, "repositorio/" + file.relative_to(ROOT).as_posix())
+                    bundle.write(file, file.relative_to(ROOT).as_posix())
         for filename in ("requirements.txt", "requirements-directml.txt"):
-            bundle.write(ROOT / filename, "repositorio/" + filename)
-        bundle.write(notebook, "repositorio/notebooks/" + notebook.name)
+            bundle.write(ROOT / filename, filename)
         for file in (ROOT / "reports").rglob("*.tex"):
             if output not in file.parents:
-                bundle.write(file, "repositorio/" + file.relative_to(ROOT).as_posix())
-        bundle.write(ROOT / "reports/references.bib", "repositorio/reports/references.bib")
+                bundle.write(file, file.relative_to(ROOT).as_posix())
+        bundle.write(ROOT / "reports/references.bib", "reports/references.bib")
         for file in (ROOT / "reports/figures").glob("*.png"):
-            bundle.write(file, "repositorio/reports/figures/" + file.name)
-        # Preserve report-relative figure paths when extracting the reproducible sources.
-        for file in (output / "figures").rglob("*"):
-            if file.is_file():
-                bundle.write(file, "repositorio/" + file.relative_to(ROOT).as_posix())
+            bundle.write(file, "reports/figures/" + file.name)
+        bundle.write(output / "figures/dm_historico/PROCEDENCIA.txt",
+                     (output / "figures/dm_historico/PROCEDENCIA.txt").relative_to(ROOT).as_posix())
     print(json.dumps({"delivery": str(delivery), "archive": str(archive),
                       "validated_runs": len(table)}, indent=2))
 

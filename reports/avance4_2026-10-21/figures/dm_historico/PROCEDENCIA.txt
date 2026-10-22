@@ -1,0 +1,4 @@
+Figuras DM históricas del repositorio (añadidas el 12 de octubre de 2026).
+No fueron generadas por las nuevas CNN entrenadas en este avance.
+IPC 1: 104 imágenes sintéticas; IPC 10: 1,040.
+Ambos mosaicos muestran solo la primera imagen sintética de cada clase.

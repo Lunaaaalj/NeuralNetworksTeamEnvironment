@@ -30,7 +30,8 @@ def prepare_configs(destination):
         serializable = deepcopy(cfg)
         serializable["paths"] = {key: str(value) for key, value in cfg["paths"].items()}
         path = destination / f"{label}.yaml"
-        path.write_text(yaml.safe_dump(serializable, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        if not path.exists():
+            path.write_text(yaml.safe_dump(serializable, allow_unicode=True, sort_keys=False), encoding="utf-8")
         configs.append((label, path))
     return configs
 
