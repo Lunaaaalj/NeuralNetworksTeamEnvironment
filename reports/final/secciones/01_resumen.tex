@@ -1,0 +1,17 @@
+\begin{abstract}
+Se comparan una red totalmente conectada de referencia, una CNN original de cuatro
+convoluciones, una variante con dos convoluciones adicionales y una intervención
+de regularización con AdamW y ajuste de tasa. Se utilizan 12,753 imágenes reales
+de entrenamiento y 3,712 de validación de 104 categorías de flores, con entrada
+$112\times112$. Se incluyen representaciones de las arquitecturas, curvas de
+entrenamiento y validación, matrices de confusión y predicciones ilustrativas.
+El modelo elegido por F1 macro de validación es CNN + AdamW + LR, con F1 macro 0.5745 y exactitud 64.44\%. 
+La red totalmente conectada es una referencia reconstruida, no un checkpoint
+histórico identificado del Avance 3. Los resultados corresponden a una sola
+semilla y no se presentan como evaluación sobre prueba independiente.
+\end{abstract}
+
+\begin{keywords}
+Clasificación de imágenes \sep Redes neuronales convolucionales \sep
+Regularización \sep F1 macro \sep Flores
+\end{keywords}

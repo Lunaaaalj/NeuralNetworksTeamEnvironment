@@ -1,0 +1,106 @@
+\section{Análisis}
+\label{sec:analisis}
+
+\subsection{Por qué la CNN supera a la MLP}
+
+La diferencia entre la MLP (F1 0.018) y la CNN de referencia (F1 0.578) no es de
+grado sino de tipo: la MLP no logra ajustar ni siquiera el entrenamiento
+(F1 de entrenamiento 0.019), mientras que la CNN sí lo ajusta y luego
+generaliza parcialmente. La causa está en cómo cada red trata la imagen.
+
+\begin{itemize}
+\item \textbf{La MLP no comparte pesos.} Aplana la imagen en 37,632 valores y
+conecta cada uno con cada neurona oculta: el 99.7\% de sus 9.66 millones de
+parámetros está en esa primera capa. Un pétalo en la esquina superior y el mismo
+pétalo en el centro activan pesos distintos, así que la red tendría que aprender
+cada patrón por separado en cada posición. Con 122 imágenes por clase en
+promedio, no hay datos suficientes para eso.
+\item \textbf{La CNN codifica supuestos correctos sobre imágenes.} Sus filtros
+de $3\times3$ miran vecindarios locales y se aplican en toda la imagen (pesos
+compartidos), las capas sucesivas combinan bordes en texturas y texturas en
+partes, y el \emph{pooling} global hace que la predicción dependa de qué hay en
+la imagen y no de dónde está. Con 20 veces menos parámetros (480,936) aprovecha
+mucho mejor los mismos datos.
+\item \textbf{La MLP se refugia en las clases grandes.} Solo predice 11 clases y
+su F1 por clase sí depende fuertemente del tamaño de la clase (Spearman 0.51,
+frente a 0.12 en la CNN): sin poder distinguir flores, lo mejor que encuentra es
+favorecer las clases más frecuentes. Además es inestable: con la tasa de
+$10^{-3}$ de la CNN colapsa a una sola clase, por lo que necesitó $10^{-4}$.
+\end{itemize}
+
+La comparación no aísla por completo el efecto de las convoluciones: las dos redes
+difieren también en número de parámetros y la MLP usa una tasa de aprendizaje
+diez veces menor. Aun así, una diferencia de 0.56 puntos de F1 macro con la
+misma política de entrenamiento, los mismos datos y el mismo aumento no se
+explica por la tasa: con la tasa de la CNN, la MLP es todavía peor.
+
+Los regularizadores no son el problema de la MLP: su curva con aumento y dropout
+(gris en la Figura~\ref{fig:curvas-modelos}) es todavía peor que la limpia, y su
+brecha es nula. Regularizar más una red que infraajusta no la ayudaría.
+
+\subsection{Por qué la CNN más profunda empeoró}
+
+Agregar dos convoluciones (de 480,936 a 1,218,600 parámetros) bajó el F1 de
+0.578 a 0.566. Con una sola semilla, una diferencia de 0.012 es pequeña, pero
+coincide con el Avance~4 (0.574 contra 0.550) y las curvas explican por qué la
+red más grande no mejora:
+
+\begin{itemize}
+\item \textbf{Más capacidad sin más datos.} La red ampliada ajusta el
+entrenamiento mucho más rápido: en la época 41 su F1 de entrenamiento es 0.794,
+contra 0.638 de la referencia, pero su F1 de validación se estanca en 0.564. La
+capacidad extra se usa para memorizar detalles del entrenamiento, sobre todo en
+las clases con 18--30 imágenes, no para aprender rasgos que generalicen.
+\item \textbf{El sobreajuste aparece antes.} Su pérdida de validación toca su
+mínimo en la época 34 (frente a la 54 de la referencia) y después sube, y tiene
+seis clases con F1 = 0 en vez de cinco.
+\item \textbf{La regularización estaba calibrada para la red pequeña.} Ambas
+usan dropout 0.5 y decaimiento de pesos de 0.01. Para una red con 2.5 veces más
+parámetros, esa misma regularización es relativamente más débil.
+\item \textbf{Más profundidad no agrega información a $112\times112$.} Las dos
+capas nuevas operan sobre mapas ya reducidos; a esa resolución, los detalles
+finos que distinguen flores parecidas (\emph{carnation} contra \emph{rose}) ya se
+perdieron en la entrada, y ninguna capa extra los recupera.
+\end{itemize}
+
+En resumen, el cuello de botella de este problema no es la capacidad del modelo
+sino la cantidad de datos por clase. Por eso los cambios que atacan la falta de
+datos, como el aumento, tienen más efecto que hacer la red más grande.
+
+\subsection{Qué aporta la regularización}
+
+Los tres experimentos de regularización apuntan en la misma dirección: quitar
+regularización (Sección~\ref{sec:res-regularizacion}) o reducirla (dropout 0.3)
+sube el F1 de entrenamiento o lo deja igual, pero baja el de validación y abre
+la brecha. Con 12,753 imágenes y 480,936 parámetros, la CNN tiene capacidad de
+sobra para memorizar el entrenamiento; la regularización es la que le permite
+generalizar. Su efecto conjunto vale 0.045 puntos de F1 macro.
+
+La regularización no elimina el sobreajuste: la referencia conserva una brecha
+de 0.235. Las curvas muestran que la brecha se estabiliza alrededor de la época
+60, justo cuando la reducción automática de la tasa lleva el aprendizaje casi a
+cero. A partir de ahí la red deja de cambiar, en vez de seguir memorizando. Esto
+también explica por qué la referencia toma su mejor checkpoint tan tarde (época
+91): son ajustes finos con una tasa de $10^{-5}$.
+
+\subsection{Sensibilidad a los hiperparámetros}
+
+La tasa de aprendizaje es, de lejos, el hiperparámetro más sensible: bajarla a
+$3\times10^{-4}$ cuesta 0.118 de F1, más que quitar toda la regularización. La
+causa es la interacción con la reducción en meseta: una tasa inicial baja hace
+que el calendario la lleve al mínimo antes de que la red aprenda lo suficiente.
+Con este calendario, $10^{-3}$ es la elección correcta. El dropout es menos
+sensible: entre 0.3 y 0.5 la diferencia es de 0.019, a favor de 0.5.
+
+% PENDIENTE: desbalance (class_weight)
+
+\subsection{Limitaciones}
+
+Cada configuración se entrenó con una sola semilla, por lo que diferencias de
+menos de unas centésimas de F1 no deben tomarse como concluyentes. La
+validación se usó para elegir el checkpoint de cada corrida, lo que sesga sus
+métricas ligeramente hacia arriba; los puntajes de Kaggle
+(Sección~\ref{sec:kaggle}) son la única medida sobre datos nunca vistos. La
+corrida de la CNN ampliada se interrumpió en la época 50. Todas las redes se
+entrenaron desde cero a $112\times112$; no se evaluó transferencia de
+aprendizaje desde modelos preentrenados.
