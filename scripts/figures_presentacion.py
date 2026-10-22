@@ -15,6 +15,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 import numpy as np
 import pandas as pd
 
@@ -24,6 +25,8 @@ from src.config import ROOT
 BLUE, ORANGE, GREEN = "#1d6fb5", "#cc5a2e", "#2e8b57"
 INK, INK_2, MUTED, GRID = "#1e3a2f", "#4a5c54", "#8a9a92", "#d5ddd8"
 SIZE = (12, 6.75)  # 16:9
+# Secuencial de un solo tono (claro -> oscuro) para proporciones de la matriz de confusión.
+SEQUENTIAL = LinearSegmentedColormap.from_list("azul", ["#f3f7fb", "#9cc3e6", BLUE, "#0b355c"])
 
 plt.rcParams.update({
     "font.family": "DejaVu Sans", "font.size": 15, "axes.titlesize": 17, "axes.titlecolor": INK,
@@ -180,6 +183,70 @@ def regularization(runs, out):
     save(fig, out, "regularizacion")
 
 
+def confusion_counts(run):
+    return pd.read_csv(run["dir"] / "evaluation" / "confusion_matrix.csv", index_col=0)
+
+
+def confusion_global(runs, out, labels=("referencia", "mlp")):
+    """Matrices completas lado a lado: el patrón (diagonal contra columnas) es el mensaje, no las celdas."""
+    labels = [label for label in labels if label in runs]
+    fig, axes = plt.subplots(1, len(labels), figsize=SIZE)
+    fig.subplots_adjust(left=0.05, right=0.86, wspace=0.12, bottom=0.1, top=0.88)
+    for ax, label in zip(np.atleast_1d(axes), labels):
+        counts = confusion_counts(runs[label]).to_numpy()
+        normalized = counts / counts.sum(1, keepdims=True)
+        image = ax.imshow(normalized, cmap=SEQUENTIAL, vmin=0, vmax=1, interpolation="nearest")
+        predicted = int((counts.sum(0) > 0).sum())
+        accuracy = np.trace(counts) / counts.sum()
+        ax.set_title(f"{PLAIN[label]}\nexactitud {accuracy:.1%} · usa {predicted} de 104 clases", fontsize=15)
+        ax.set(xticks=[], yticks=[], xlabel="Clase predicha", ylabel="Clase real")
+        ax.grid(False)
+        for spine in ax.spines.values():
+            spine.set_visible(True)
+            spine.set_color(MUTED)
+    bar = fig.colorbar(image, cax=fig.add_axes([0.89, 0.18, 0.015, 0.62]))
+    bar.set_label("Proporción de la clase real", color=INK_2)
+    bar.outline.set_visible(False)
+    fig.text(0.45, 0.03, "Diagonal = aciertos · columnas oscuras = una clase que el modelo predice para casi todo",
+             ha="center", fontsize=12, color=INK_2)
+    save(fig, out, "confusion_global")
+
+
+def confusion_focus(runs, out, label="referencia", k=12):
+    """Submatriz legible: clases de los pares más confundidos, en el orden en que aparecen, para que
+    cada par quede junto."""
+    counts = confusion_counts(runs[label])
+    names = [name.split(": ", 1)[1] for name in counts.index]
+    values = counts.to_numpy()
+    errors = values.copy()
+    np.fill_diagonal(errors, 0)
+    focus = []
+    for flat in np.argsort(errors, axis=None)[::-1]:
+        for c in np.unravel_index(flat, errors.shape):
+            if c not in focus and len(focus) < k:
+                focus.append(int(c))
+        if len(focus) == k:
+            break
+    view = values[np.ix_(focus, focus)] / values[focus].sum(1, keepdims=True)
+    fig, ax = plt.subplots(figsize=SIZE)
+    ax.imshow(view, cmap=SEQUENTIAL, vmin=0, vmax=1, aspect="auto")  # celdas anchas: llena el 16:9
+    for row in range(k):
+        for col in range(k):
+            if view[row, col] >= 0.02:
+                ax.text(col, row, f"{view[row, col]:.0%}", ha="center", va="center", fontsize=13,
+                        color="white" if view[row, col] > 0.45 else INK)
+    ax.set_xticks(range(k), [names[c] for c in focus], rotation=30, ha="right", fontsize=12)
+    ax.set_yticks(range(k), [f"{names[c]} (n={values[c].sum()})" for c in focus], fontsize=12)
+    ax.set(xlabel="Clase predicha", ylabel="Clase real")
+    ax.grid(False)
+    ax.set_title(f"{PLAIN[label]}: las {k} clases de los pares más confundidos", fontsize=15)
+    fig.text(0.99, 0.02, "% de las imágenes de validación de cada clase real; las filas no suman 100% porque "
+             "se omiten las otras 92 clases.\nn = imágenes de validación de la clase.", ha="right",
+             fontsize=11, color=INK_2)
+    fig.tight_layout(rect=(0, 0.06, 1, 1))
+    save(fig, out, "confusion_foco")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--out", type=Path, default=ROOT / "reports/final/figures/presentacion")
@@ -195,6 +262,8 @@ def main():
     per_class(runs, counts, args.out)
     comparison(table, args.out)
     regularization(runs, args.out)
+    confusion_global(runs, args.out)
+    confusion_focus(runs, args.out)
     print(f"Figuras en {args.out}")
 
 

@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from scripts.prepare_avance4 import architecture_figures
 from scripts.run_final import EXPERIMENTS
 from src.config import ROOT
 
@@ -351,6 +352,9 @@ def per_class_figure(runs, counts, out):
         ax.scatter(counts["train"], per_class["f1"], s=22, color=color, edgecolor="white", linewidth=0.8,
                    label=PLAIN[label], zorder=3)
     ax.set_xscale("log")
+    # Ticks en números enteros: los menores de la escala log (3×10¹, 4×10¹…) se enciman.
+    ax.set_xticks([20, 50, 100, 200, 500], ["20", "50", "100", "200", "500"])
+    ax.minorticks_off()
     ax.set_xlabel("Imágenes de entrenamiento de la clase (escala log)")
     ax.set_ylabel("F1 de la clase (validación)")
     ax.set_ylim(-0.03, 1.03)
@@ -388,6 +392,7 @@ def main():
 
     figures = args.report / "figures"
     class_distribution(counts, figures)
+    architecture_figures(args.report, final=True)
     curves(runs, ["mlp", "referencia", "cnn_ampliada"], figures, "curvas_modelos")
     regularization_curves(runs, figures)
     per_class_figure(runs, counts, figures)
