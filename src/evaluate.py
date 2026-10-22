@@ -13,7 +13,7 @@ import keras
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from sklearn.metrics import confusion_matrix, f1_score
+from sklearn.metrics import confusion_matrix, f1_score, precision_recall_fscore_support
 
 from src.classes import CLASSES
 from src.config import load_config
@@ -33,9 +33,14 @@ def error_report(y_true, y_pred, num_classes=104, top_k=10):
     flat = np.argsort(cm, axis=None)[::-1][:top_k]
     pairs = [np.unravel_index(i, cm.shape) for i in flat]
 
+    precision, recall, _, support = precision_recall_fscore_support(
+        y_true, y_pred, labels=labels, zero_division=0)
     return {
         "f1_macro": round(f1_macro(y_true, y_pred), 4),
         "accuracy": round(float(np.mean(y_true == y_pred)), 4),
+        "per_class": [{"label": int(c), "name": CLASSES[c], "precision": round(float(precision[c]), 4),
+                       "recall": round(float(recall[c]), 4), "f1": round(float(per_class[c]), 4),
+                       "support": int(support[c])} for c in labels],
         "worst_classes": [{"label": c, "name": CLASSES[c], "f1": round(float(per_class[c]), 4)} for c in worst],
         "confused_pairs": [
             {"true": CLASSES[t], "pred": CLASSES[p], "count": int(cm[t, p])}
@@ -66,7 +71,7 @@ def main():
 
     cfg = load_config(args.config)
     img_size = cfg["data"]["img_size"]
-    model = keras.models.load_model(args.model)
+    model = keras.models.load_model(args.model, compile=False)  # solo inferencia
 
     val_ds = build_dataset(cfg["paths"]["tfrecords"], "val", img_size, 128)
     y_true, y_pred, val_loss = predict_labels(model, val_ds)

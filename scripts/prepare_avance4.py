@@ -32,7 +32,8 @@ def save_figure(fig, path):
     plt.close(fig)
 
 
-def architecture_figures(output):
+def architecture_figures(output, final=False):
+    """final=True: solo la figura conjunta, sin las notas propias del Avance 4 (la usa analyze_final)."""
     common = [
         ("Entrada RGB", "112 × 112 × 3"),
         ("Conv1: 3×3, 32 + ReLU + Pool", "56 × 56 × 32"),
@@ -54,7 +55,7 @@ def architecture_figures(output):
     for ax, (key, blocks) in zip(axes, specs):
         ax.set(xlim=(0, 1), ylim=(0, 1))
         ax.axis("off")
-        diagram_titles = {"mlp_referencia": "MLP\nReferencia reconstruida",
+        diagram_titles = {"mlp_referencia": "MLP\nLínea base" if final else "MLP\nReferencia reconstruida",
                           "cnn_original": "CNN original\n4 convoluciones",
                           "cnn_dos_capas_extra": "CNN ampliada\n6 convoluciones"}
         ax.set_title(diagram_titles[key], fontsize=16, fontweight="bold", pad=16)
@@ -72,11 +73,13 @@ def architecture_figures(output):
                 ax.annotate("", xy=(0.5, y + height/2 + 0.009),
                             xytext=(0.5, positions[index-1] - height/2 - 0.009),
                             arrowprops={"arrowstyle": "->", "color": COLORS[key]})
-        if key == "mlp_referencia":
+        if key == "mlp_referencia" and not final:
             ax.text(0.5, 0.005, "Referencia reconstruida; no es el checkpoint del Avance 3.",
                     ha="center", fontsize=9)
     fig.suptitle("Modelos: misma entrada y mismas 104 clases\nPool = MaxPooling 2×2; convoluciones con padding same", fontsize=17)
     save_figure(fig, output / "figures/arquitecturas")
+    if final:
+        return
     for key, blocks in specs + [("cnn_regularizada", common)]:
         fig, ax = plt.subplots(figsize=(10, 7), layout="constrained")
         ax.axis("off")

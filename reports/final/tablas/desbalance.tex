@@ -1,0 +1,16 @@
+\begin{table*}[htbp]
+\centering
+\caption{Pérdida ponderada por clase frente a la pérdida sin ponderar.}
+\label{tab:desbalance}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Entrenamiento & Exact. (\%) & F1 10 menores & F1 10 mayores & Clases F1 = 0 & F1 macro \\
+\midrule
+CNN de referencia & 64.06 & 0.3607 & 0.7034 & 5 & \textbf{0.5784} \\
+Pesos por clase & 48.87 & 0.3281 & 0.5050 & 2 & 0.4881 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\parbox{0.95\textwidth}{\footnotesize F1 10 menores/mayores: F1 promedio de las 10 clases con menos (18--19) y más (460--782) imágenes de entrenamiento. Pesos $w_c = N/(K\,n_c)$: van de 0.16 (iris) a 6.81 (las clases de 18 imágenes).}
+\end{table*}

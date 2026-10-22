@@ -1,0 +1,42 @@
+paths:
+  tfrecords: data/raw/tpu-getting-started/tfrecords-jpeg-224x224
+  processed: data/processed
+  models: models/final/sin_weight_decay
+  runs: reports/final/experimentos/runs/sin_weight_decay
+  figures: models/final/figures/sin_weight_decay
+  results: reports/final/resultados.csv
+model:
+  architecture: baseline
+  dropout: 0.5
+  l2: 0.0
+data:
+  img_size: 112
+  num_classes: 104
+  batch_size: 64
+  cache: ram
+  augment: true
+train:
+  optimizer: adam
+  weight_decay: 0.0
+  lr: 0.001
+  lr_schedule:
+    type: plateau
+    factor: 0.5
+    patience: 2
+    min_lr: 1.0e-05
+  label_smoothing: 0.0
+  class_weight: none
+  train_eval_images: 3712
+  epochs_full: 150
+  epochs_small: 300
+  eval_every_small: 10
+  patience: 12
+wandb:
+  enabled: false
+  project: flower-cnn
+  entity: null
+  mode: online
+experiment:
+  label: sin_weight_decay
+  group: regularizacion
+  description: Adam sin weight decay

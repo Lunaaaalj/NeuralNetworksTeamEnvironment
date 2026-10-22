@@ -1,0 +1,59 @@
+\documentclass[a4paper,fleqn]{cas-dc}
+
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=apa,natbib=true]{biblatex}
+\addbibresource{references.bib}
+% URL largas en columna angosta: sin justificar no quedan huecos (https : / /)
+\AtBeginBibliography{\raggedright}
+\usepackage{float}
+% cas-dc ya carga graphicx, amsmath, amssymb, booktabs y hyperref
+\graphicspath{{figures/}}
+\hypersetup{
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=blue
+}
+
+% Localización de textos fijos de cas-dc
+\ExplSyntaxOn
+\cs_set:Npn \__first_footerline: { \small\sffamily TC2035~--~Reporte~final }
+\RenewDocumentCommand \printorcid { } { } % evita la línea "ORCID(s):" vacía
+\RenewDocumentEnvironment { keywords } { O{ Palabras~clave } }
+   {
+     \tex_global:D \tex_setbox:D \g_stm_key_box = \vtop \bgroup
+     \hsize=.25 \textwidth
+     \cs_set:Npn \sep { \par }
+     \parindent = 0pt
+     I\,N\,F\,O\,R\,M\,A\,C\,I\,Ó\,N \par \skip_vertical:n { -3pt }
+     \rule{.25 \textwidth}{.2pt}\par\footnotesize
+     \noindent \textit { #1 }:  \par
+   }
+   { \egroup }
+\ExplSyntaxOff
+
+\begin{document}
+\let\WriteBookmarks\relax
+\def\floatpagepagefraction{1}
+\def\textpagefraction{.001}
+\input{secciones/00_portada}
+\input{secciones/01_resumen}
+
+\maketitle
+
+{\small\tableofcontents}
+
+\input{secciones/01_objetivos}
+\input{secciones/02_contexto}
+\input{secciones/03_dataset}
+\input{secciones/04_algoritmos}
+\input{secciones/05_metodologia}
+\input{secciones/06_protocolo}
+\input{secciones/07_resultados}
+\input{secciones/08_analisis}
+\input{secciones/09_conclusiones}
+
+\clearpage
+\printbibliography[title={Referencias}]
+\end{document}

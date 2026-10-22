@@ -1,0 +1,69 @@
+\section{Protocolo experimental}
+
+\subsection{Condiciones comunes}
+
+Todos los experimentos usan los mismos 12,753 ejemplos de entrenamiento y 3,712
+de validación de las 104 clases, la semilla 0 y lotes de 64 imágenes. La
+\emph{referencia} es la CNN de cuatro convoluciones elegida en el Avance~4:
+dropout de 0.5 antes de la salida, aumento de datos solo en entrenamiento
+(volteo horizontal, rotación, zoom y contraste), AdamW con decaimiento de pesos
+de 0.01 \autocite{loshchilov2019adamw}, tasa inicial de $10^{-3}$ reducida a la
+mitad cuando la pérdida de validación no mejora en dos épocas (mínimo
+$10^{-5}$), entrada de $112\times112$ y hasta 150 épocas. El entrenamiento se
+detiene tras 12 evaluaciones sin mejorar el F1 macro de validación y se conserva
+el checkpoint con mayor F1 macro; todas las métricas reportadas corresponden a
+ese checkpoint, no a la última época.
+
+\subsection{Un cambio a la vez}
+
+Para atribuir cada diferencia a una causa, cada experimento modifica un solo
+factor respecto a la referencia: la arquitectura (MLP o CNN ampliada), la pérdida (pesos por clase), la regularización o un
+hiperparámetro (tasa de aprendizaje o dropout). Hay dos excepciones declaradas.
+La MLP usa una tasa inicial de $10^{-4}$, porque con $10^{-3}$ colapsó a predecir
+una sola clase en el Avance~4. La variante \emph{sin regularización} retira a la
+vez dropout, aumento y decaimiento de pesos (Adam en lugar de AdamW), para medir
+su efecto conjunto.
+
+\subsection{Métricas de entrenamiento comparables con validación}
+
+Las métricas que reporta el ciclo de entrenamiento se calculan con aumento y
+dropout activos, por lo que no son comparables con validación. Para medir la
+brecha de generalización, en cada época se evalúan además 3,712 imágenes fijas de
+entrenamiento (el mismo tamaño que validación) sin aumento y con la red en modo
+inferencia. Con ellas se calculan la pérdida, la exactitud y el F1 macro de
+entrenamiento. La \emph{brecha F1} es el F1 macro de ese subconjunto menos el de
+validación, ambos en la época del checkpoint.
+
+\subsection{Alcance de la evaluación}
+
+La validación se usa para elegir el checkpoint y comparar configuraciones; sus
+métricas no son una estimación independiente de generalización. Como el
+conjunto de prueba de Kaggle no tiene etiquetas locales, la medida de prueba se
+obtiene enviando las predicciones a la competencia
+(Sección~\ref{sec:kaggle}). Cada configuración se entrenó con una sola semilla,
+por lo que diferencias de pocas milésimas de F1 macro no se interpretan como
+mejoras. Los resultados de este documento se generaron con TensorFlow~2.18 en una
+GPU Apple M4 (\texttt{tensorflow-metal}); las corridas del Avance~4 se hicieron
+con PyTorch/DirectML, por lo que sus cifras no se mezclan con las de este reporte.
+
+\subsection{Reproducibilidad}
+\label{sec:repo}
+
+El código, las configuraciones y los resultados están en el repositorio público
+del equipo:
+\begin{center}
+\small\url{https://github.com/Lunaaaalj/NeuralNetworksTeamEnvironment}
+\end{center}
+El
+\texttt{README} explica la instalación y los comandos. El notebook
+\path{notebooks/reporte_final.ipynb} reconstruye de principio a fin la tabla de
+resultados (\path{reports/final/resultados.csv}), las tablas y las figuras de
+este documento, a partir de los \texttt{history.csv}, \texttt{summary.json} y
+\texttt{eval\_report.json} versionados de cada experimento; con
+\texttt{RUN\_TRAINING = True} también vuelve a entrenarlos. La matriz de
+experimentos está en \path{scripts/run_final.py} y la configuración de referencia
+en \path{configs/final.yaml}.
+El código puede registrar cada corrida en Weights \& Biases
+\autocite{biewald2020wandb}, pero en las corridas de este reporte ese registro
+estuvo desactivado: las métricas por época se guardan en los \texttt{history.csv}
+del repositorio, para que cualquiera pueda consultarlas sin una cuenta externa.

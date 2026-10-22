@@ -1,0 +1,22 @@
+\section{Resumen y objetivos}
+
+Este reporte final compara, con la misma partición de validación, una CNN de
+referencia contra variantes que cambian un solo factor cada una. El objetivo es
+responder cinco preguntas sobre la clasificación de 104 categorías de flores:
+
+\begin{enumerate}
+\item Si extraer patrones espaciales mejora la clasificación, comparando la CNN
+con una red totalmente conectada (MLP) sobre las mismas imágenes.
+\item Si una CNN más profunda generaliza mejor que la original.
+\item Cuánto aportan la regularización (dropout, aumento de datos y decaimiento
+de pesos) a la generalización.
+\item Si ponderar la pérdida por clase compensa el desbalance del conjunto.
+\item Qué tan sensible es el modelo a la tasa de aprendizaje y al dropout.
+\end{enumerate}
+
+Además de exactitud y F1 macro, se reportan curvas de pérdida, exactitud y F1
+de entrenamiento y validación, el F1 por clase, el desbalance de los datos y
+matrices de confusión. Para que la brecha de generalización sea comparable,
+las métricas de entrenamiento se miden sobre imágenes sin aumento y con la red
+en modo inferencia. Todas las cifras se reconstruyen con un notebook a partir de
+los historiales versionados de cada corrida (Sección~\ref{sec:repo}).

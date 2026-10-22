@@ -36,9 +36,12 @@ class ValidationMonitor(keras.callbacks.Callback):
     - Lleva el tiempo de evaluación aparte para reportar el tiempo de entrenamiento puro.
     """
 
-    def __init__(self, val_ds, checkpoint_path, every=1, patience=None):
+    def __init__(self, val_ds, checkpoint_path, every=1, patience=None, train_eval_ds=None):
         super().__init__()
         self.val_ds = val_ds
+        # Subconjunto fijo de train sin aumentos ni dropout: las métricas de entrenamiento de
+        # fit() se miden con aumentos y dropout activos y no son comparables con val.
+        self.train_eval_ds = train_eval_ds
         self.checkpoint_path = str(checkpoint_path)
         self.every = every
         self.patience = patience
@@ -53,10 +56,16 @@ class ValidationMonitor(keras.callbacks.Callback):
         last = epoch + 1 == self.params.get("epochs")
         if not (epoch == 0 or (epoch + 1) % self.every == 0 or last):
             logs.update(val_loss=math.nan, val_accuracy=math.nan, val_f1_macro=math.nan)
+            if self.train_eval_ds is not None:
+                logs.update(train_eval_loss=math.nan, train_eval_accuracy=math.nan, train_f1_macro=math.nan)
             return
 
         start = time.perf_counter()
         y_true, y_pred, loss = predict_labels(self.model, self.val_ds)
+        if self.train_eval_ds is not None:
+            t_true, t_pred, t_loss = predict_labels(self.model, self.train_eval_ds)
+            logs.update(train_eval_loss=t_loss, train_eval_accuracy=float(np.mean(t_true == t_pred)),
+                        train_f1_macro=f1_macro(t_true, t_pred))
         self.eval_seconds += time.perf_counter() - start
         f1 = f1_macro(y_true, y_pred)
         logs.update(val_loss=loss, val_accuracy=float(np.mean(y_true == y_pred)), val_f1_macro=f1)

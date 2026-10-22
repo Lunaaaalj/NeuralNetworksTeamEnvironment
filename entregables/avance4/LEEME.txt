@@ -5,12 +5,12 @@ El ZIP acompaña las figuras y la evidencia; no contiene los datos originales ni
 
 Figuras: arquitecturas, curvas por modelo, comparación, matrices de confusión y ejemplos de predicciones.
 Métricas: resultados.csv, históricos por época, eval_report.json y predicciones individuales.
-Los modelos .pt y .keras se conservan en reports/avance4_2026-10-21/models/.
+Los modelos .pt y .keras se conservan en reports/entregable_4/avance4_2026-10-21/models/.
 
 La MLP está identificada como referencia reconstruida: no se encontró el artefacto exacto del Avance 3.
 Las métricas corresponden a una semilla y a validación, no a prueba independiente.
 Se atendió la observación compartida sobre representaciones; no se recibió el texto completo de la retroalimentación.
 
 Reproducir: ejecutar las celdas del notebook; activar RUN_TRAINING para nuevas ejecuciones.
-Construir PDF desde reports/: tectonic equipo_proyecto_avance4.tex.
+Construir PDF desde reports/entregable_4/: tectonic equipo_proyecto_avance4.tex.
 El notebook usa los módulos de este repositorio y sus dependencias (requirements-directml.txt).

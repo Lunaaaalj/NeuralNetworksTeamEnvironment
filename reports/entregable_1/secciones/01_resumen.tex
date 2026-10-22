@@ -1,0 +1,15 @@
+\begin{abstract}
+Este trabajo aborda el problema de clasificación automática de imágenes de flores utilizando técnicas de aprendizaje automático y redes neuronales profundas. Se utiliza el conjunto de datos de la competencia \textit{Petals to the Metal -- Flower Classification on TPU} de Kaggle, compuesto por 23,847 imágenes RGB distribuidas entre 104 clases distintas de flores. El conjunto presenta variaciones importantes en tamaño, color, iluminación, orientación y composición de las imágenes, además de un desbalance en la cantidad de ejemplos disponibles para cada clase.
+
+La tarea consiste en desarrollar un modelo capaz de identificar correctamente la clase de una flor a partir de una imagen. Debido a la similitud visual entre algunas categorías y a la variabilidad dentro de una misma clase, se considera principalmente el uso de redes neuronales convolucionales (CNN), ya que permiten extraer automáticamente características relevantes como formas, bordes, colores y patrones visuales. También se consideran arquitecturas previamente desarrolladas, como ResNet, AlexNet e Inception, así como métodos tradicionales de aprendizaje automático, entre ellos KNN, bosques aleatorios y máquinas de vectores de soporte, con el objetivo de comparar distintas alternativas para la solución del problema.
+
+Para evaluar el desempeño se considera especialmente la métrica F1 macro utilizada por Kaggle, ya que asigna la misma importancia a cada una de las 104 clases independientemente de la cantidad de imágenes disponibles. De esta forma, el proyecto busca seleccionar y posteriormente implementar una estrategia de clasificación que logre un buen desempeño general sin favorecer únicamente a las clases con mayor cantidad de ejemplos.
+\end{abstract}
+
+\begin{keywords}
+Clasificación de imágenes \sep
+Redes neuronales convolucionales \sep
+Aprendizaje profundo \sep
+F1 macro \sep
+Kaggle
+\end{keywords}

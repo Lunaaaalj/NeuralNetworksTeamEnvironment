@@ -43,7 +43,7 @@ def package(output):
         if cell.cell_type == "code":
             assert cell.execution_count is not None, "Execute all notebook cells before packaging"
             assert not any(item.output_type == "error" for item in cell.outputs)
-    pdf = ROOT / "reports/equipo_proyecto_avance4.pdf"
+    pdf = ROOT / "reports/entregable_4/equipo_proyecto_avance4.pdf"
     assert pdf.is_file() and pdf.stat().st_size > 20000
     delivery = ROOT / "entregables/avance4"
     delivery.mkdir(parents=True, exist_ok=True)
@@ -56,14 +56,14 @@ El ZIP acompaña las figuras y la evidencia; no contiene los datos originales ni
 
 Figuras: arquitecturas, curvas por modelo, comparación, matrices de confusión y ejemplos de predicciones.
 Métricas: resultados.csv, históricos por época, eval_report.json y predicciones individuales.
-Los modelos .pt y .keras se conservan en reports/avance4_2026-10-21/models/.
+Los modelos .pt y .keras se conservan en reports/entregable_4/avance4_2026-10-21/models/.
 
 La MLP está identificada como referencia reconstruida: no se encontró el artefacto exacto del Avance 3.
 Las métricas corresponden a una semilla y a validación, no a prueba independiente.
 Se atendió la observación compartida sobre representaciones; no se recibió el texto completo de la retroalimentación.
 
 Reproducir: ejecutar las celdas del notebook; activar RUN_TRAINING para nuevas ejecuciones.
-Construir PDF desde reports/: tectonic equipo_proyecto_avance4.tex.
+Construir PDF desde reports/entregable_4/: tectonic equipo_proyecto_avance4.tex.
 El notebook usa los módulos de este repositorio y sus dependencias (requirements-directml.txt).
 """
     (delivery / "LEEME.txt").write_text(instructions, encoding="utf-8")
@@ -106,13 +106,13 @@ El notebook usa los módulos de este repositorio y sus dependencias (requirement
                     bundle.write(file, file.relative_to(ROOT).as_posix())
         for filename in ("requirements.txt", "requirements-directml.txt"):
             bundle.write(ROOT / filename, filename)
-        for file in (ROOT / "reports").rglob("*.tex"):
+        for file in (ROOT / "reports/entregable_4").rglob("*.tex"):
             if output not in file.parents:
                 bundle.write(file, file.relative_to(ROOT).as_posix())
-        bundle.write(ROOT / "reports/references.bib", "reports/references.bib")
+        bundle.write(ROOT / "reports/entregable_4/references.bib", "reports/entregable_4/references.bib")
         for name in ("cnn_diagram.png", "ejemplos_flores.png"):
-            file = ROOT / "reports/figures" / name
-            bundle.write(file, "reports/figures/" + file.name)
+            file = ROOT / "reports/entregable_4/figures" / name
+            bundle.write(file, "reports/entregable_4/figures/" + file.name)
         bundle.write(output / "figures/dm_historico/PROCEDENCIA.txt",
                      (output / "figures/dm_historico/PROCEDENCIA.txt").relative_to(ROOT).as_posix())
     print(json.dumps({"delivery": str(delivery), "archive": str(archive),

@@ -1,0 +1,18 @@
+\begin{table*}[htbp]
+\centering
+\caption{Selección aleatoria frente a destilación con Distribution Matching (DM).}
+\label{tab:dm}
+\small
+\begin{tabular}{rrlrrr}
+\toprule
+IPC & Imágenes & Conjunto & Exact. (\%) & F1 macro & Destilación (min) \\
+\midrule
+1 & 104 & Sintéticas (DM) & 9.85 & 0.0672 $\pm$ 0.0052 & 16 \\
+1 & 104 & Reales aleatorias & 5.75 & 0.0514 $\pm$ 0.0029 & -- \\
+10 & 1,040 & Sintéticas (DM) & 20.55 & 0.2044 $\pm$ 0.0235 & 25 \\
+10 & 1,040 & Reales aleatorias & 25.86 & 0.2575 $\pm$ 0.0082 & -- \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\parbox{0.95\textwidth}{\footnotesize Promedio $\pm$ desviación estándar de tres semillas de entrenamiento por condición. Misma CNN, Adam $10^{-3}$, $112\times112$. Datos: \path{reports/resultados.csv}.}
+\end{table*}

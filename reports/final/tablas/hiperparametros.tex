@@ -1,0 +1,17 @@
+\begin{table*}[htbp]
+\centering
+\caption{Efecto de un hiperparámetro a la vez, con el conjunto completo.}
+\label{tab:hiperparametros}
+\small
+\begin{tabular}{lcccrrrrr}
+\toprule
+Configuración & LR & Dropout & Resolución & Época & Exact. (\%) & Brecha F1 & Tiempo (min) & F1 macro \\
+\midrule
+CNN de referencia & 0.001 & 0.5 & 112 & 91/103 & 64.06 & +0.2354 & 19.7 & \textbf{0.5784} \\
+LR $3\times10^{-4}$ & 0.0003 & 0.5 & 112 & 98/110 & 54.18 & +0.0936 & 22.5 & 0.4605 \\
+Dropout 0.3 & 0.001 & 0.3 & 112 & 61/73 & 61.96 & +0.2561 & 15.0 & 0.5596 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\parbox{0.95\textwidth}{\footnotesize Cada fila cambia un solo valor respecto a la referencia (LR $10^{-3}$, dropout 0.5, 112$\times$112).}
+\end{table*}

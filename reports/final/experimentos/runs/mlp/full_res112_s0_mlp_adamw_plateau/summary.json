@@ -1,0 +1,33 @@
+{
+  "run": "full_res112_s0_mlp_adamw_plateau",
+  "data": "full",
+  "ipc": null,
+  "seed": 0,
+  "img_size": 112,
+  "train_images": null,
+  "epochs_run": 74,
+  "best_epoch": 62,
+  "val_f1_macro": 0.0178,
+  "val_accuracy": 0.1436,
+  "train_seconds": 414.4,
+  "distill_seconds": null,
+  "distill_iterations": null,
+  "architecture": "mlp",
+  "parameters": 9660776,
+  "optimizer": "adamw",
+  "weight_decay": 0.01,
+  "lr_schedule": {
+    "type": "plateau",
+    "factor": 0.5,
+    "patience": 2,
+    "min_lr": 1e-06
+  },
+  "final_learning_rate": 9.999999974752427e-07,
+  "augment": true,
+  "dropout": 0.5,
+  "l2": 0.0,
+  "label_smoothing": 0.0,
+  "class_weight": "none",
+  "lr": 0.0001,
+  "model_path": "/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/final/mlp/full_res112_s0_mlp_adamw_plateau.keras"
+}

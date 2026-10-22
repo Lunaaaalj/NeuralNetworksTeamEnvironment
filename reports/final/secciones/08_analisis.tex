@@ -1,0 +1,148 @@
+\section{Análisis}
+\label{sec:analisis}
+
+\subsection{Por qué la CNN supera a la MLP}
+
+La diferencia entre la MLP (F1 0.018) y la CNN de referencia (F1 0.578) no es de
+grado sino de tipo: la MLP no logra ajustar ni siquiera el entrenamiento
+(F1 de entrenamiento 0.019), mientras que la CNN sí lo ajusta y luego
+generaliza parcialmente. La causa está en cómo cada red trata la imagen.
+
+\begin{itemize}
+\item \textbf{La MLP no comparte pesos.} Aplana la imagen en 37,632 valores y
+conecta cada uno con cada neurona oculta: el 99.7\% de sus 9.66 millones de
+parámetros está en esa primera capa. Un pétalo en la esquina superior y el mismo
+pétalo en el centro activan pesos distintos, así que la red tendría que aprender
+cada patrón por separado en cada posición. Con 122 imágenes por clase en
+promedio, no hay datos suficientes para eso.
+\item \textbf{La CNN codifica supuestos correctos sobre imágenes.} Sus filtros
+de $3\times3$ miran vecindarios locales y se aplican en toda la imagen (pesos
+compartidos), las capas sucesivas combinan bordes en texturas y texturas en
+partes, y el \emph{pooling} global hace que la predicción dependa de qué hay en
+la imagen y no de dónde está. Con 20 veces menos parámetros (480,936) aprovecha
+mucho mejor los mismos datos.
+\item \textbf{La MLP se refugia en las clases grandes.} Solo predice 11 clases y
+su F1 por clase sí depende fuertemente del tamaño de la clase (Spearman 0.51,
+frente a 0.12 en la CNN): sin poder distinguir flores, lo mejor que encuentra es
+favorecer las clases más frecuentes. Además es inestable: con la tasa de
+$10^{-3}$ de la CNN colapsa a una sola clase, por lo que necesitó $10^{-4}$.
+\end{itemize}
+
+La comparación no aísla por completo el efecto de las convoluciones: las dos redes
+difieren también en número de parámetros y la MLP usa una tasa de aprendizaje
+diez veces menor. Aun así, una diferencia de 0.56 puntos de F1 macro con la
+misma política de entrenamiento, los mismos datos y el mismo aumento no se
+explica por la tasa: con la tasa de la CNN, la MLP es todavía peor.
+
+Los regularizadores no son el problema de la MLP: su curva con aumento y dropout
+(gris en la Figura~\ref{fig:curvas-modelos}) es todavía peor que la limpia, y su
+brecha es nula. Regularizar más una red que infraajusta no la ayudaría.
+
+\subsection{Por qué la CNN más profunda empeoró}
+
+Agregar dos convoluciones (de 480,936 a 1,218,600 parámetros) bajó el F1 de
+0.578 a 0.566. Con una sola semilla, una diferencia de 0.012 es pequeña, pero
+coincide con el Avance~4 (0.574 contra 0.550) y las curvas explican por qué la
+red más grande no mejora:
+
+\begin{itemize}
+\item \textbf{Más capacidad sin más datos.} La red ampliada ajusta el
+entrenamiento mucho más rápido: en la época 41 su F1 de entrenamiento es 0.794,
+contra 0.638 de la referencia, pero su F1 de validación se estanca en 0.564. La
+capacidad extra se usa para memorizar detalles del entrenamiento, sobre todo en
+las clases con 18--30 imágenes, no para aprender rasgos que generalicen.
+\item \textbf{El sobreajuste aparece antes.} Su pérdida de validación toca su
+mínimo en la época 34 (frente a la 54 de la referencia) y después sube, y tiene
+seis clases con F1 = 0 en vez de cinco.
+\item \textbf{La regularización estaba calibrada para la red pequeña.} Ambas
+usan dropout 0.5 y decaimiento de pesos de 0.01. Para una red con 2.5 veces más
+parámetros, esa misma regularización es relativamente más débil.
+\item \textbf{Más profundidad no agrega información a $112\times112$.} Las dos
+capas nuevas operan sobre mapas ya reducidos; a esa resolución, los detalles
+finos que distinguen flores parecidas (\emph{carnation} contra \emph{rose}) ya se
+perdieron en la entrada, y ninguna capa extra los recupera.
+\end{itemize}
+
+En resumen, el cuello de botella de este problema no es la capacidad del modelo
+sino la cantidad de datos por clase. Por eso los cambios que atacan la falta de
+datos, como el aumento, tienen más efecto que hacer la red más grande.
+
+\subsection{Qué aporta la regularización}
+
+Los tres experimentos de regularización apuntan en la misma dirección: quitar
+regularización (Sección~\ref{sec:res-regularizacion}) o reducirla (dropout 0.3)
+sube el F1 de entrenamiento o lo deja igual, pero baja el de validación y abre
+la brecha. Con 12,753 imágenes y 480,936 parámetros, la CNN tiene capacidad de
+sobra para memorizar el entrenamiento; la regularización es la que le permite
+generalizar. Su efecto conjunto vale 0.045 puntos de F1 macro.
+
+La regularización no elimina el sobreajuste: la referencia conserva una brecha
+de 0.235. Las curvas muestran que la brecha se estabiliza alrededor de la época
+60, justo cuando la reducción automática de la tasa lleva el aprendizaje casi a
+cero. A partir de ahí la red deja de cambiar, en vez de seguir memorizando. Esto
+también explica por qué la referencia toma su mejor checkpoint tan tarde (época
+91): son ajustes finos con una tasa de $10^{-5}$.
+
+\subsection{Sensibilidad a los hiperparámetros}
+
+La tasa de aprendizaje es, de lejos, el hiperparámetro más sensible: bajarla a
+$3\times10^{-4}$ cuesta 0.118 de F1, más que quitar toda la regularización. La
+causa es la interacción con la reducción en meseta: una tasa inicial baja hace
+que el calendario la lleve al mínimo antes de que la red aprenda lo suficiente.
+Con este calendario, $10^{-3}$ es la elección correcta. El dropout es menos
+sensible: entre 0.3 y 0.5 la diferencia es de 0.019, a favor de 0.5.
+
+\subsection{Por qué los pesos por clase no ayudaron}
+
+Ponderar la pérdida con $w_c = N/(K\,n_c)$ equivale a entrenar como si todas las
+clases fueran igual de frecuentes. Pero validación conserva exactamente el
+desbalance de entrenamiento. Ante una imagen ambigua entre
+\emph{iris} (782 imágenes) y una clase de 20, lo más probable es que sea
+\emph{iris}; la red sin pesos aprende esa preferencia y la red con pesos la
+pierde. Por eso la sensibilidad macro no cambia (0.56) y la precisión baja (de
+0.63 a 0.46): la red no gana capacidad para distinguir flores, solo desplaza sus
+predicciones hacia las clases raras, que reciben el doble de predicciones de las
+que les corresponden.
+
+El costo para el F1 macro es asimétrico. Las 24 clases con menos de 30 imágenes
+ganan poco (0.026 de F1 medio), porque casi todas las imágenes que reciben de
+más son errores. Las 62 clases con 60 o más imágenes pierden mucho (más de 0.1),
+porque sus imágenes se van a las clases raras. Como el F1 macro promedia por
+clase y las clases medianas y grandes son mayoría, el saldo es negativo.
+
+A esto se suma que la red aprende más despacio. Con pesos de 0.16 a 6.8, las
+clases grandes aportan poco a la pérdida y cada lote depende mucho de unas
+cuantas imágenes raras con peso alto, de modo que los gradientes son más
+ruidosos. La pérdida de validación, que no lleva pesos, queda más alta y
+estancada (su mínimo es 1.93, contra 1.46 en la referencia), y el calendario en
+meseta, que la vigila, reduce la tasa antes. Las tres corridas lo confirman:
+llegan a la época 40 por debajo de la referencia, y la que redujo la tasa antes
+terminó más abajo.
+
+Los resultados sugieren que el problema de las clases raras no es que la red
+las ignore por ser raras, sino que tiene muy pocas fotos para aprenderlas. Las
+alternativas más prometedoras, que no se probaron, atacan una cosa o la otra:
+pesos más suaves (por ejemplo, $w_c \propto 1/\sqrt{n_c}$), corregir los
+umbrales de decisión después de entrenar sin pesos (para no perder la
+preferencia por las clases frecuentes) o, sobre todo, más información por
+imagen mediante transferencia de aprendizaje.
+
+\subsection{Limitaciones}
+
+Cada configuración se entrenó con una sola semilla, por lo que diferencias de
+menos de unas centésimas de F1 no deben tomarse como concluyentes. La única
+estimación del ruido viene de las tres corridas de pesos por clase: con la
+misma semilla y configuración, su mejor F1 varió en unas 0.04, porque la GPU no
+es determinista y el calendario en meseta amplifica pequeñas diferencias. Por
+eso la diferencia entre la referencia y la CNN ampliada (0.012) y la del
+dropout (0.019) no son concluyentes. La de la regularización (0.045) está en el
+límite del ruido por sí sola, aunque la respaldan la brecha y las curvas de
+pérdida, que se comportan como se espera del sobreajuste. Las de la tasa de
+aprendizaje (0.118), los pesos por clase (0.090) y la MLP (0.56) son claramente
+mayores. La
+validación se usó para elegir el checkpoint de cada corrida, lo que sesga sus
+métricas ligeramente hacia arriba; los puntajes de Kaggle
+(Sección~\ref{sec:kaggle}) son la única medida sobre datos nunca vistos. La
+corrida de la CNN ampliada se interrumpió en la época 50. Todas las redes se
+entrenaron desde cero a $112\times112$; no se evaluó transferencia de
+aprendizaje desde modelos preentrenados.

@@ -1,0 +1,16 @@
+\begin{table*}[htbp]
+\centering
+\caption{La misma CNN con y sin regularización (semilla 0, mismas épocas máximas).}
+\label{tab:regularizacion}
+\small
+\begin{tabular}{lcccrrrrr}
+\toprule
+Variante & Dropout & Aumento & Pesos & Época & Exact. (\%) & F1 entr. & Brecha F1 & F1 macro \\
+\midrule
+CNN de referencia & 0.5 & sí & WD 0.01 & 91/103 & 64.06 & 0.8138 & +0.2354 & \textbf{0.5784} \\
+Sin regularización & 0 & no & -- & 34/46 & 59.64 & 0.8767 & +0.3435 & 0.5332 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\parbox{0.95\textwidth}{\footnotesize Pesos: WD = weight decay desacoplado de AdamW; -- = Adam sin decaimiento. Ambas comparten arquitectura, tasa de aprendizaje inicial, reducción de LR en meseta, paciencia de 12 evaluaciones y tope de 150 épocas.}
+\end{table*}

@@ -1,0 +1,46 @@
+paths:
+  tfrecords: data/raw/tpu-getting-started/tfrecords-jpeg-224x224
+  processed: data/processed
+  models: models/final/efficientnetb0
+  runs: reports/final/experimentos/runs/efficientnetb0
+  figures: models/final/figures/efficientnetb0
+  results: reports/final/resultados.csv
+model:
+  architecture: efficientnetb0
+  dropout: 0.2
+  l2: 0.0
+data:
+  img_size: 224
+  num_classes: 104
+  batch_size: 32
+  cache: false
+  augment: true
+train:
+  optimizer: adamw
+  weight_decay: 0.01
+  lr: 0.001
+  lr_schedule:
+    type: plateau
+    factor: 0.5
+    patience: 2
+    min_lr: 1.0e-05
+  label_smoothing: 0.0
+  class_weight: none
+  train_eval_images: 3712
+  epochs_full: 8
+  epochs_small: 300
+  eval_every_small: 10
+  patience: 6
+  fine_tune:
+    frozen_epochs: 3
+    unfreeze_last: 40
+    lr: 0.0001
+wandb:
+  enabled: false
+  project: flower-cnn
+  entity: null
+  mode: online
+experiment:
+  label: efficientnetb0
+  group: transfer
+  description: 'EfficientNetB0 (ImageNet) a 224x224: 3 épocas congelada + 5 de fine-tuning'
