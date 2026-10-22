@@ -28,6 +28,32 @@ python -m scripts.run_experiments --config configs/local.yaml               # ba
 
 En [docs/USAGE.md](docs/USAGE.md) está la guía completa: local vs. Kaggle, cómo funciona DM, el diseño de experimentos y los problemas conocidos.
 
+## Reproducir el reporte final
+
+El notebook [notebooks/reporte_final.ipynb](notebooks/reporte_final.ipynb) reconstruye de principio a fin la
+tabla de resultados ([reports/final/resultados.csv](reports/final/resultados.csv)), las tablas LaTeX y las
+figuras del reporte. Por defecto no entrena: lee los `history.csv`, `summary.json` y `eval_report.json`
+versionados en [reports/final/experimentos/runs/](reports/final/experimentos/runs/).
+
+```bash
+uv venv --python 3.12 .venv && source .venv/bin/activate
+uv pip install -r requirements.txt
+python scripts/download_data.py                       # TFRecords 224 px; requiere token de Kaggle
+
+python -m scripts.run_final --list                    # experimentos disponibles: cada uno cambia una cosa
+python -m scripts.run_final                           # entrena y evalúa los que falten (corta una corrida si deja de avanzar 10 min)
+python -m scripts.run_final --only referencia mlp     # o solo algunos (el reporte usa 7; ver reports/final/README.md)
+python -m scripts.analyze_final                       # resultados.csv, tablas/ y figures/
+jupyter nbconvert --to notebook --execute --inplace notebooks/reporte_final.ipynb
+
+cd reports/final && latexmk -pdf main.tex             # PDF del reporte
+```
+
+La referencia es [configs/final.yaml](configs/final.yaml) (CNN de 4 convoluciones, dropout 0.5, aumento de
+datos, AdamW, LR 1e-3 con reducción en meseta, 112×112, semilla 0). `run_final` deriva un YAML por
+experimento en `reports/final/experimentos/configs/`. Los checkpoints `.keras` quedan en `models/final/`
+(no se versionan).
+
 Para ver gráficas de entrenamiento en **Weights & Biases**, ejecuta `wandb login` en
 el entorno del proyecto y agrega `--wandb` al comando de `src.train`. El proyecto
 predeterminado es `flower-cnn`; los pasos para Windows/CMD están en la guía de uso.
@@ -54,10 +80,10 @@ pendiente de que el equipo ejecute sus pruebas y entrenamiento.
 ├── data/               # raw/ (TFRecords) y processed/ (cachés y conjuntos destilados); no se versionan
 ├── docs/USAGE.md       # guía de uso y decisiones de diseño
 ├── models/             # checkpoints .keras (no se versionan)
-├── notebooks/          # 01_eda.ipynb y kaggle_runner.ipynb
+├── notebooks/          # 01_eda, kaggle_runner, equipo_proyecto_avance4 y reporte_final (reproduce resultados)
 ├── references/         # reporte del proyecto
 ├── reports/            # entregable_1/, entregable_4/, final/ (reportes) + runs/, figures/ y resultados.csv (pipeline)
-├── scripts/            # download_data.sh y run_experiments.py
+├── scripts/            # descarga, run_experiments (DM), run_final + analyze_final (reporte final)
 ├── src/
 │   ├── data.py         # TFRecord → tf.data, x/255, augmentación, caché por clase
 │   ├── model.py        # CNN de la Tabla 3 y extractor para DM
