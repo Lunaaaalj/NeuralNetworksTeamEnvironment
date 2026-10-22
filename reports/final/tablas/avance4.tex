@@ -1,0 +1,17 @@
+\begin{table*}[htbp]
+\centering
+\caption{Avance 4 frente al reporte final: la brecha medida con aumento subestima el sobreajuste.}
+\label{tab:avance4}
+\small
+\begin{tabular}{llrrrrr}
+\toprule
+Modelo & Política en Avance 4 & F1 A4 & Brecha exact. A4 & F1 final & Brecha exact. & Brecha F1 \\
+\midrule
+CNN de referencia & AdamW + LR adaptable & 0.5745 & +0.1051 & 0.5784 & +0.1894 & +0.2354 \\
+CNN ampliada (6 conv.) & Adam, LR fijo & 0.5502 & +0.1687 & 0.5663 & +0.1926 & +0.2273 \\
+MLP & Adam, LR fijo & 0.0280 & -0.0346 & 0.0178 & +0.0140 & +0.0014 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\parbox{0.95\textwidth}{\footnotesize A4: PyTorch/DirectML; su exactitud de entrenamiento se midió durante el ciclo, con aumento y dropout activos. Final: TensorFlow/Metal, todas con AdamW + LR adaptable; brechas medidas sobre 3,712 imágenes de entrenamiento sin aumento y en modo inferencia, en la época del checkpoint.}
+\end{table*}
