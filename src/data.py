@@ -125,6 +125,23 @@ def build_dataset(tfrecord_dir, split, img_size=NATIVE_SIZE, batch_size=32,
     return ds.prefetch(AUTOTUNE)
 
 
+def class_counts(tfrecord_dir, split, num_classes=104):
+    """Imágenes por clase de un split, leyendo solo la etiqueta (sin decodificar JPEG)."""
+    labels = tf.data.TFRecordDataset(list_tfrecords(tfrecord_dir, split)).map(
+        lambda ex: tf.io.parse_single_example(ex, {"class": LABELED_FEATURES["class"]})["class"],
+        num_parallel_calls=AUTOTUNE).batch(4096)
+    counts = np.zeros(num_classes, dtype=np.int64)
+    for batch in labels:
+        counts += np.bincount(batch.numpy(), minlength=num_classes)
+    return counts
+
+
+def balanced_class_weight(counts):
+    """w_c = N / (K · n_c), el criterio 'balanced' de sklearn: la clase media pesa 1."""
+    counts = np.asarray(counts, dtype=np.float64)
+    return {c: float(counts.sum() / (len(counts) * n)) for c, n in enumerate(counts) if n > 0}
+
+
 def arrays_dataset(images, labels, batch_size=32, use_dsa=True, seed=0):
     """tf.data a partir de arreglos en memoria (subconjunto aleatorio o conjunto destilado).
 

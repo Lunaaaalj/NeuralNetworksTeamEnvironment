@@ -7,7 +7,9 @@ Uso:
 """
 
 import argparse
+import faulthandler
 import json
+import signal
 import time
 from pathlib import Path
 
@@ -15,10 +17,11 @@ import keras
 import numpy as np
 
 from src.config import get_strategy, load_config, run_name, set_seed
-from src.data import ClassCache, arrays_dataset, build_dataset, cache_path
+from src.data import (ClassCache, arrays_dataset, balanced_class_weight, build_dataset, cache_path,
+                      class_counts)
 from src.distill import load_synthetic, synthetic_path
 from src.metrics import ValidationMonitor
-from src.model import build_cnn, compile_cnn, model_architecture
+from src.model import build_model, compile_cnn, model_architecture
 from src.tracking import WandbEpochLogger, track_training
 from src.training_policy import keras_scheduler, optimizer_options, training_suffix
 
@@ -28,7 +31,8 @@ def load_train_data(cfg, data, ipc, seed):
     img_size, batch = cfg["data"]["img_size"], cfg["data"]["batch_size"]
     paths = cfg["paths"]
     if data == "full":
-        ds = build_dataset(paths["tfrecords"], "train", img_size, batch, augment=True, shuffle=True,
+        ds = build_dataset(paths["tfrecords"], "train", img_size, batch,
+                           augment=cfg["data"].get("augment", True), shuffle=True,
                            seed=seed, cache=cfg["data"].get("cache", False),
                            cache_dir=Path(paths["processed"]) / "tfdata_cache")
         return ds, None, {}
@@ -76,35 +80,87 @@ def run(cfg, data, ipc=None, seed=0, epochs=None, val_ds=None):
                                cache=cfg["data"].get("cache", False),
                                cache_dir=Path(cfg["paths"]["processed"]) / "tfdata_cache")
 
+    optimizer, decay = optimizer_options(tcfg)
+    smoothing = float(tcfg.get("label_smoothing", 0.0))
     with get_strategy().scope():
-        optimizer, decay = optimizer_options(tcfg)
-        model = compile_cnn(build_cnn(cfg["data"]["num_classes"], architecture=architecture), tcfg["lr"],
-                            optimizer=optimizer, weight_decay=decay)
+        model = compile_cnn(build_model(cfg), tcfg["lr"], optimizer=optimizer, weight_decay=decay,
+                            label_smoothing=smoothing)
 
-    monitor = ValidationMonitor(val_ds, model_path, every=every, patience=tcfg["patience"])
+    class_weight = None
+    if tcfg.get("class_weight") == "balanced":
+        if data != "full":
+            raise ValueError("class_weight solo aplica a --data full (los subconjuntos ya están balanceados)")
+        class_weight = balanced_class_weight(
+            class_counts(cfg["paths"]["tfrecords"], "train", cfg["data"]["num_classes"]))
+    elif tcfg.get("class_weight") not in (None, "none"):
+        raise ValueError("train.class_weight debe ser balanced o none")
+
+    train_eval_ds = None
+    if tcfg.get("train_eval_images"):
+        # Primeras N imágenes de train en orden fijo, sin aumentos: mismo tamaño que val.
+        # take() antes de cache(): cachear el split completo y cortarlo deja la caché a medias,
+        # TF la descarta y vuelve a decodificar todo en cada época.
+        train_eval_ds = build_dataset(cfg["paths"]["tfrecords"], "train", img_size, 128,
+                                      ).unbatch().take(int(tcfg["train_eval_images"])).batch(128)
+        if cfg["data"].get("cache"):
+            train_eval_ds = train_eval_ds.cache()
+
+    monitor = ValidationMonitor(val_ds, model_path, every=every, patience=tcfg["patience"],
+                                train_eval_ds=train_eval_ds)
     callbacks = [monitor]
     schedule = keras_scheduler(tcfg)
     if schedule is not None:
         callbacks.append(schedule)
-    callbacks.append(keras.callbacks.CSVLogger(str(run_dir / "history.csv")))
+    callbacks.append(keras.callbacks.CSVLogger(str(run_dir / "history.csv"), append=True))
+    (run_dir / "history.csv").unlink(missing_ok=True)
 
+    fine_tune = tcfg.get("fine_tune")
     with track_training(cfg, name, data, ipc, seed, epochs) as tracking_run:
         if tracking_run is not None:
             callbacks.append(WandbEpochLogger(tracking_run))
 
         start = time.perf_counter()
-        history = model.fit(train_ds, epochs=epochs, callbacks=callbacks, verbose=2, shuffle=False)
+        if fine_tune:
+            # Fase 1: solo la cabeza nueva. Fase 2: últimas capas de la red base con LR menor;
+            # BatchNorm sigue congelada para no romper las estadísticas de ImageNet.
+            backbone = model.get_layer("backbone")
+            backbone.trainable = False
+            model = compile_cnn(model, tcfg["lr"], optimizer=optimizer, weight_decay=decay,
+                                label_smoothing=smoothing)
+            frozen = min(int(fine_tune["frozen_epochs"]), epochs)
+            first = model.fit(train_ds, epochs=frozen, callbacks=callbacks, verbose=2, shuffle=False,
+                              class_weight=class_weight)
+            epochs_done = len(first.epoch)
+            if not model.stop_training:
+                backbone.trainable = True
+                for layer in backbone.layers[:-int(fine_tune["unfreeze_last"])]:
+                    layer.trainable = False
+                for layer in backbone.layers:
+                    if isinstance(layer, keras.layers.BatchNormalization):
+                        layer.trainable = False
+                model = compile_cnn(model, float(fine_tune["lr"]), optimizer=optimizer, weight_decay=decay,
+                                    label_smoothing=smoothing)
+                second = model.fit(train_ds, initial_epoch=frozen, epochs=epochs, callbacks=callbacks,
+                                   verbose=2, shuffle=False, class_weight=class_weight)
+                epochs_done += len(second.epoch)
+        else:
+            history = model.fit(train_ds, epochs=epochs, callbacks=callbacks, verbose=2, shuffle=False,
+                                class_weight=class_weight)
+            epochs_done = len(history.epoch)
         total = time.perf_counter() - start
 
         summary = {
             "run": name, "data": data, "ipc": ipc if small else None, "seed": seed, "img_size": img_size,
-            "train_images": n_images, "epochs_run": len(history.epoch),
+            "train_images": n_images, "epochs_run": epochs_done,
             "best_epoch": monitor.best_epoch, "val_f1_macro": round(monitor.best_f1, 4),
             "val_accuracy": round(monitor.best_accuracy, 4), "train_seconds": round(total - monitor.eval_seconds, 1),
             "distill_seconds": None, "distill_iterations": None,  # columnas fijas para resultados.csv
             "architecture": architecture, "parameters": model.count_params(),
             "optimizer": optimizer, "weight_decay": decay, "lr_schedule": tcfg.get("lr_schedule"),
             "final_learning_rate": float(model.optimizer.learning_rate.numpy()),
+            "augment": cfg["data"].get("augment", True), "dropout": cfg.get("model", {}).get("dropout"),
+            "l2": cfg.get("model", {}).get("l2", 0.0), "label_smoothing": smoothing,
+            "class_weight": tcfg.get("class_weight"), "lr": tcfg["lr"],
             "model_path": str(model_path), **extra,
         }
         with open(run_dir / "summary.json", "w") as f:
@@ -124,6 +180,8 @@ def run(cfg, data, ipc=None, seed=0, epochs=None, val_ds=None):
 
 
 def main():
+    # SIGUSR1 imprime la pila de todos los hilos: run_final lo usa antes de matar una corrida colgada.
+    faulthandler.register(signal.SIGUSR1, all_threads=True)
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--config", default="configs/local.yaml")
     parser.add_argument("--data", choices=["full", "random", "distilled"], required=True)
