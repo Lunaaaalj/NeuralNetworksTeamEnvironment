@@ -13,6 +13,7 @@ import keras
 import numpy as np
 import torch
 from torch import nn
+import yaml
 
 from src.config import load_config, set_seed
 from src.data import build_dataset
@@ -43,8 +44,12 @@ def build_keras_mlp(img_size=112, num_classes=104):
     ], name="flower_mlp_reference")
 
 
-def run(config, destination, *, seed=0, epochs=150):
+def run(config, destination, *, seed=0, epochs=150, lr=None, patience=None, min_epochs=0):
     cfg = load_config(config)
+    if lr is not None:
+        cfg["train"]["lr"] = lr
+    if patience is not None:
+        cfg["train"]["patience"] = patience
     destination = Path(destination).resolve()
     name = f"full_res{cfg['data']['img_size']}_s{seed}_mlp_reference_directml"
     run_dir = destination / "runs/mlp_referencia" / name
@@ -53,6 +58,13 @@ def run(config, destination, *, seed=0, epochs=150):
     model_dir.mkdir(parents=True, exist_ok=True)
     if (run_dir / "summary.json").exists():
         return json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
+    effective = {**cfg, "model": {"architecture": "mlp_reference", "hidden_units": 256},
+                 "train": {**cfg["train"], "min_epochs": min_epochs}}
+    effective["paths"] = {key: str(value) for key, value in cfg["paths"].items()}
+    effective["paths"].update(runs=str(destination / "runs/mlp_referencia"), models=str(model_dir),
+                              figures=str(destination / "figures/mlp_referencia"))
+    (destination / "mlp_referencia.yaml").write_text(
+        yaml.safe_dump(effective, allow_unicode=True, sort_keys=False), encoding="utf-8")
     set_seed(seed)
     torch.manual_seed(seed)
     device, device_name = select_device()
@@ -97,7 +109,7 @@ def run(config, destination, *, seed=0, epochs=150):
             output.flush()
             print(f"MLP epoch {epoch + 1}/{epochs} - {steps} batches - "
                   + " - ".join(f"{k}: {v:.4f}" for k, v in metrics.items()), flush=True)
-            if bad_evals >= cfg["train"]["patience"]:
+            if epoch + 1 >= min_epochs and bad_evals >= cfg["train"]["patience"]:
                 break
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
     exported = build_keras_mlp(size, classes)
@@ -115,6 +127,7 @@ def run(config, destination, *, seed=0, epochs=150):
         "checkpoint_path": str(checkpoint_path), "architecture": "mlp_reference",
         "parameters": sum(p.numel() for p in model.parameters()), "device": device_name,
         "optimizer": type(optimizer).__name__, "weight_decay": 0.0,
+        "learning_rate": cfg["train"]["lr"], "patience": cfg["train"]["patience"], "min_epochs": min_epochs,
         "provenance": "Reconstructed fully connected reference, not the original Avance 3 model",
     }
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
@@ -127,5 +140,9 @@ if __name__ == "__main__":
     parser.add_argument("--config", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--epochs", type=int, default=150)
+    parser.add_argument("--lr", type=float)
+    parser.add_argument("--patience", type=int)
+    parser.add_argument("--min-epochs", type=int, default=0)
     options = parser.parse_args()
-    run(options.config, options.output, epochs=options.epochs)
+    run(options.config, options.output, epochs=options.epochs, lr=options.lr,
+        patience=options.patience, min_epochs=options.min_epochs)

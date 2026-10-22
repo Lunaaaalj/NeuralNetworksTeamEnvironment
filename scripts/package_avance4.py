@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+from importlib.metadata import version
 import json
 from pathlib import Path
 import shutil
@@ -71,17 +72,28 @@ El notebook usa los módulos de este repositorio y sus dependencias (requirement
     manifest["teacher_feedback"] = "User reports missing model representations; full written feedback not provided"
     manifest["fully_connected_avance3"] = "Reconstructed reference; original Avance 3 artifact not identified"
     source_files = list((ROOT / "src").glob("*.py")) + [ROOT / "scripts" / name for name in
-                    ("run_avance4.py", "prepare_avance4.py", "build_avance4_report.py", "package_avance4.py")]
+                    ("run_avance4.py", "prepare_avance4.py", "build_avance4_report.py", "package_avance4.py",
+                     "execute_avance4_notebook.py")]
     manifest["packaged_source_sha256"] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                           for p in source_files}
     manifest["validated"] = {"runs": 4, "samples_each": 3712, "confusion_shape": [104, 104],
                               "notebook_executed_without_errors": True, "checkpoint_export_parity": True}
+    manifest["package_versions"] = {package: version(package) for package in
+                                    ("tensorflow", "torch", "torch-directml", "keras", "numpy",
+                                     "scikit-learn", "matplotlib", "nbformat", "nbclient")}
+    data_root = ROOT / "data/raw/tpu-getting-started/tfrecords-jpeg-224x224"
+    manifest["dataset_sha256"] = {}
+    for split in ("train", "val"):
+        for path in sorted((data_root / split).glob("*.tfrec")):
+            with path.open("rb") as stream:
+                digest = hashlib.file_digest(stream, "sha256").hexdigest()
+            manifest["dataset_sha256"][path.relative_to(ROOT).as_posix()] = digest
     manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
     archive = delivery / "equipo_proyecto_avance4.zip"
     with ZipFile(archive, "w", ZIP_DEFLATED) as bundle:
         for file in (delivery / pdf.name, delivery / notebook.name, delivery / "LEEME.txt"):
             bundle.write(file, file.name)
-        for base in (output / "figures", output / "runs"):
+        for base in (output / "figures", output / "runs", output / "diagnosticos"):
             for file in base.rglob("*"):
                 if file.is_file() and file.suffix.lower() in {".png", ".pdf", ".csv", ".json"}:
                     bundle.write(file, file.relative_to(ROOT).as_posix())
@@ -97,7 +109,8 @@ El notebook usa los módulos de este repositorio y sus dependencias (requirement
             if output not in file.parents:
                 bundle.write(file, file.relative_to(ROOT).as_posix())
         bundle.write(ROOT / "reports/references.bib", "reports/references.bib")
-        for file in (ROOT / "reports/figures").glob("*.png"):
+        for name in ("cnn_diagram.png", "ejemplos_flores.png"):
+            file = ROOT / "reports/figures" / name
             bundle.write(file, "reports/figures/" + file.name)
         bundle.write(output / "figures/dm_historico/PROCEDENCIA.txt",
                      (output / "figures/dm_historico/PROCEDENCIA.txt").relative_to(ROOT).as_posix())

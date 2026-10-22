@@ -1,0 +1,33 @@
+{
+  "run": "full_res112_s0_adamw_plateau_directml",
+  "data": "full",
+  "ipc": null,
+  "seed": 0,
+  "img_size": 112,
+  "train_images": 12753,
+  "epochs_run": 73,
+  "best_epoch": 61,
+  "val_f1_macro": 0.5745,
+  "val_accuracy": 0.6444,
+  "train_seconds": 605.6,
+  "distill_seconds": null,
+  "distill_iterations": null,
+  "model_path": "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\models\\cnn_regularizada\\full_res112_s0_adamw_plateau_directml.keras",
+  "backend": "directml",
+  "device": "AMD Radeon RX 6700S",
+  "checkpoint_path": "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\models\\cnn_regularizada\\full_res112_s0_adamw_plateau_directml.pt",
+  "input_pipeline": "dlpack_prefetch",
+  "checkpoint_seconds": 0.305,
+  "export_seconds": 0.609,
+  "architecture": "baseline",
+  "parameters": 480936,
+  "optimizer": "DirectMLAdamW",
+  "weight_decay": 0.01,
+  "lr_schedule": {
+    "type": "plateau",
+    "factor": 0.5,
+    "patience": 2,
+    "min_lr": 1e-05
+  },
+  "final_learning_rate": 1e-05
+}

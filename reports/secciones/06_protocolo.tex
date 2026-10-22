@@ -6,9 +6,13 @@ Se usan los mismos 12,753 ejemplos reales de entrenamiento y 3,712 de validació
 104 clases, entrada $112\times112$, lote de 64 y semilla 0. Se permiten hasta 150
 épocas. Se guarda el checkpoint con el mayor F1 macro de validación; por ello,
 la exactitud final reportada corresponde a ese mismo checkpoint y no al máximo
-independiente de exactitud. La referencia totalmente conectada y las dos CNN
-comparadas por profundidad comparten optimizador, aumentos, dropout y paciencia
-de cinco evaluaciones sin mejora. La intervención combinada de regularización
+independiente de exactitud. Las dos CNN comparadas por profundidad comparten
+optimizador, aumentos, dropout y paciencia de cinco evaluaciones sin mejora.
+La referencia totalmente conectada conserva los mismos datos, aumentos y dropout,
+pero usa una tasa menor ($10^{-4}$), paciencia de diez evaluaciones y un mínimo
+de diez épocas, tras diagnosticar el colapso de su primer intento con $10^{-3}$.
+Ese intento se conserva en la carpeta de diagnósticos; no se oculta como si
+fuera una ejecución inexistente. La intervención combinada de regularización
 permite una paciencia mayor y cambia el optimizador y su tasa; no es una ablación
 aislada de cada técnica.
 

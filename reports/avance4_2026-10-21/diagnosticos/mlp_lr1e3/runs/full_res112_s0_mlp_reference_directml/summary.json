@@ -1,0 +1,23 @@
+{
+  "run": "full_res112_s0_mlp_reference_directml",
+  "data": "full",
+  "ipc": null,
+  "seed": 0,
+  "img_size": 112,
+  "train_images": 12753,
+  "epochs_run": 6,
+  "best_epoch": 1,
+  "val_accuracy": 0.05818965517241379,
+  "val_f1_macro": 0.00105749647501175,
+  "train_seconds": 24.7,
+  "model_path": "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\diagnosticos\\mlp_lr1e3\\models\\full_res112_s0_mlp_reference_directml.keras",
+  "checkpoint_path": "C:\\Users\\andre\\Documents\\Tec escuela\\redes neuronales\\NeuralNetworksTeamEnvironment\\reports\\avance4_2026-10-21\\diagnosticos\\mlp_lr1e3\\models\\full_res112_s0_mlp_reference_directml.pt",
+  "architecture": "mlp_reference",
+  "parameters": 9660776,
+  "device": "AMD Radeon RX 6700S",
+  "optimizer": "DirectMLAdam",
+  "weight_decay": 0.0,
+  "provenance": "Reconstructed fully connected reference, not the original Avance 3 model",
+  "learning_rate": 0.001,
+  "diagnosis": "Collapsed to a single predicted class; retained as failed optimization trial"
+}

@@ -65,8 +65,10 @@ L=-\log\left(\frac{\exp(z_c)}{\sum_{k=1}^{104}\exp(z_k)}\right),
 donde $c$ es la clase verdadera. Para visualizar la confianza se transforma la
 salida mediante softmax; esta confianza no constituye una evaluación de calibración.
 
-La referencia totalmente conectada y ambas CNN sin la intervención adicional
-usan Adam con tasa inicial $10^{-3}$ y lotes de 64 imágenes. La variante
+Ambas CNN sin la intervención adicional usan Adam con tasa inicial $10^{-3}$.
+La referencia totalmente conectada utiliza Adam con $10^{-4}$ después de que
+un primer intento con $10^{-3}$ colapsó a predecir una sola clase. Todos los
+modelos utilizan lotes de 64 imágenes. La variante
 regularizada usa AdamW y un ajuste de tasa que se detalla en la sección 7.
 Se entrena con PyTorch/DirectML en la GPU AMD Radeon RX 6700S, conservando el
 cargador y los aumentos de TensorFlow. El mejor checkpoint se exporta a Keras

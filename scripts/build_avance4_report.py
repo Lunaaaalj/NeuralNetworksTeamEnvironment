@@ -62,10 +62,18 @@ que aumenta revela errores más confiados aunque la exactitud cambie poco.
 
 \begin{figure*}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{""" + figure_root + r"""/comparacion_curvas.png}
-\caption{Curvas reales por época. El entrenamiento usa aumentos y dropout; la
+\includegraphics[width=\textwidth,keepaspectratio]{""" + figure_root + r"""/comparacion_original_ampliada.pdf}
+\caption{CNN original y CNN ampliada: curvas reales por época. El entrenamiento usa aumentos y dropout; la
 validación no. Las líneas verticales marcan el mejor checkpoint por F1 macro.}
 \label{fig:curvas-av4}
+\end{figure*}
+
+\begin{figure*}[p]
+\centering
+\includegraphics[width=\textwidth,keepaspectratio]{""" + figure_root + r"""/comparacion_referencia_regularizada.pdf}
+\caption{Curvas de la referencia totalmente conectada y la CNN con la intervención
+combinada de regularización. Se mantienen separados sus checkpoints y métricas.}
+\label{fig:curvas-ref-reg-av4}
 \end{figure*}
 
 \subsection{Técnicas aplicadas y efecto medido}
@@ -94,11 +102,20 @@ aportó el decaimiento, el ajuste de tasa o la paciencia.
         f"{baseline.val_f1_macro:.4f} a {regularized.val_f1_macro:.4f} "
         f"({f1_change:+.4f}). Ambos valores se obtienen de los respectivos checkpoints "
         "seleccionados por F1 macro sobre la misma validación.\n\n"
+        + ("La diferencia de F1 macro es pequeña. Con una sola semilla no se considera "
+           "evidencia de una mejora robusta o estadísticamente significativa.\n\n"
+           if abs(f1_change) < 0.01 else "") +
         "Una mejora de exactitud acompañada de una caída de F1 macro no se interpreta "
         "como mejora general: el criterio prioritario es el desempeño equilibrado entre "
         "las 104 clases. Tampoco se afirma que el sobreajuste desaparezca; se compara "
         "la evidencia de las curvas y se conserva el checkpoint que generaliza mejor "
         "según la validación disponible.\n")
+    regularization += (
+        "\n\\begin{figure*}[htbp]\n\\centering\n"
+        f"\\includegraphics[width=\\textwidth]{{{figure_root}/cnn_regularizada/tasa_aprendizaje.pdf}}\n"
+        "\\caption{Tasa de aprendizaje realmente utilizada en cada época de la variante "
+        "regularizada. Las reducciones responden al estancamiento de la pérdida de validación.}\n"
+        "\\label{fig:lr-av4}\n\\end{figure*}\n")
     results = r"""\section{Resultados y evaluación}
 
 \subsection{Comparación de modelos}
@@ -158,7 +175,11 @@ determina por F1 macro y puede diferir del que maximiza la exactitud.}
         "La comparación solicitada con el modelo exacto entregado en el Avance 3 "
         "queda limitada por la ausencia de ese artefacto identificado. El experimento "
         "reconstruido permite comparar familias de modelos en condiciones comunes, "
-        "sin inventar resultados históricos.\n\n"
+        "sin inventar resultados históricos. El primer intento con Adam a $10^{-3}$ "
+        "predijo una sola clase (5.82\\% de exactitud, F1 macro 0.0011); se conserva "
+        "como diagnóstico. La referencia final utiliza $10^{-4}$ y mayor paciencia. "
+        "Esta adaptación de optimización se declara para no atribuir exclusivamente "
+        "a la arquitectura todas las diferencias observadas.\n\n"
         "\\subsection{Efecto de agregar dos convoluciones}\n\n"
         f"La versión de seis convoluciones obtuvo {deep.val_accuracy*100:.2f}\\% "
         f"de exactitud y F1 macro {deep.val_f1_macro:.4f}. Frente a la CNN original, "
@@ -178,6 +199,13 @@ determina por F1 macro y puede diferir del que maximiza la exactitud.}
         "recall por clase; los valores fuera de ella son errores. Se entregan además "
         "la matriz de conteos, los CSV de ambas matrices y las predicciones individuales.\n\n")
     selected_eval = evaluations[best.experiment]
+    results += (
+        "\\begin{figure*}[p]\n\\centering\n"
+        f"\\includegraphics[width=\\textwidth]{{{figure_root}/{best.experiment}/confusiones_principales.pdf}}\n"
+        "\\caption{Vista legible de las 12 clases con mayor participación en errores. "
+        "Es una submatriz de la matriz completa: los porcentajes se calculan sobre "
+        "todos los ejemplos reales de cada clase y las filas mostradas pueden sumar "
+        "menos de 100\\%.}\n\\label{fig:confusiones-foco-av4}\n\\end{figure*}\n\n")
     results += (
         "\\begin{figure*}[p]\n\\centering\n"
         f"\\includegraphics[width=\\textwidth,height=0.85\\textheight,keepaspectratio]"
@@ -264,12 +292,15 @@ print("Proyecto:", ROOT)
 print("Evidencia de ejecuciones:", OUTPUT)'''),
         nbf.new_markdown_cell("""## 1. Datos y protocolo
 
-Se usan 12,753 imágenes de entrenamiento y 3,712 de validación, 104 clases, resolución efectiva 112×112, lote 64 y semilla 0. Las etiquetas son enteras y los píxeles se normalizan a [0,1]. Solo entrenamiento usa aumentos. El mejor checkpoint se selecciona por F1 macro. La CNN original, la profunda y la MLP usan Adam, dropout 0.5 y paciencia 5. La intervención combinada usa AdamW, reducción del LR y paciencia 12.
+Se usan 12,753 imágenes de entrenamiento y 3,712 de validación, 104 clases, resolución efectiva 112×112, lote 64 y semilla 0. Las etiquetas son enteras y los píxeles se normalizan a [0,1]. Solo entrenamiento usa aumentos. El mejor checkpoint se selecciona por F1 macro. Las dos CNN sin la intervención adicional usan Adam a 1e-3, dropout 0.5 y paciencia 5. La MLP usa Adam a 1e-4, paciencia 10 y mínimo 10 épocas, tras el colapso del primer intento a 1e-3. Ese ensayo se conserva en diagnósticos. La intervención combinada usa AdamW, reducción del LR y paciencia 12.
 
 Una sola semilla no permite afirmar significancia estadística. La validación usada para selección no es un test final independiente."""),
         nbf.new_code_cell('''from src.config import load_config
 cfg = load_config(OUTPUT / "cnn_original.yaml")
 display({"data": cfg["data"], "train": cfg["train"], "runtime": cfg["runtime"]})
+for key in ["cnn_original", "cnn_dos_capas_extra", "cnn_regularizada", "mlp_referencia"]:
+    profile = load_config(OUTPUT / f"{key}.yaml")
+    display({"experiment": key, "model": profile.get("model", {"architecture": "baseline"}), "train": profile["train"]})
 manifest = json.loads((OUTPUT / "manifest.json").read_text(encoding="utf-8"))
 print("Commit:", manifest["git_commit"])
 print("Checkpoint elegido por:", manifest["selection_metric"])'''),
@@ -289,7 +320,7 @@ La CNN original y la ampliada se entrenan primero. Se añade la variante regular
         nbf.new_code_cell('''NEW_OUTPUT = ROOT / "reports" / "avance4_repeticion"
 if RUN_TRAINING:
     subprocess.run([sys.executable, "-u", "-m", "scripts.run_avance4", "--output", str(NEW_OUTPUT)], cwd=ROOT, check=True)
-    subprocess.run([sys.executable, "-u", "-m", "src.train_mlp_reference", "--config", str(NEW_OUTPUT / "cnn_original.yaml"), "--output", str(NEW_OUTPUT)], cwd=ROOT, check=True)
+    subprocess.run([sys.executable, "-u", "-m", "src.train_mlp_reference", "--config", str(NEW_OUTPUT / "cnn_original.yaml"), "--output", str(NEW_OUTPUT), "--lr", "0.0001", "--patience", "10", "--min-epochs", "10"], cwd=ROOT, check=True)
     subprocess.run([sys.executable, "-u", "-m", "scripts.prepare_avance4", "--output", str(NEW_OUTPUT)], cwd=ROOT, check=True)
     OUTPUT = NEW_OUTPUT
 else:

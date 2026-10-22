@@ -77,7 +77,7 @@ def architecture_figures(output):
                     ha="center", fontsize=9)
     fig.suptitle("Modelos: misma entrada y mismas 104 clases\nPool = MaxPooling 2×2; convoluciones con padding same", fontsize=17)
     save_figure(fig, output / "figures/arquitecturas")
-    for key, blocks in specs:
+    for key, blocks in specs + [("cnn_regularizada", common)]:
         fig, ax = plt.subplots(figsize=(10, 7), layout="constrained")
         ax.axis("off")
         table = ax.table(cellText=[[i+1, title, shape] for i, (title, shape) in enumerate(blocks)],
@@ -179,7 +179,7 @@ def evaluate_run(output, key, summary, cfg):
         correct = y_true[index] == y_pred[index]
         ax.set_title(f"Real: {CLASSES[y_true[index]]}\nPred.: {CLASSES[y_pred[index]]}\n"
                      f"Confianza: {confidence[index]:.1%}",
-                     color="#12805c" if correct else "#b52b32", fontsize=9)
+                     color="#12805c" if correct else "#b52b32", fontsize=12)
         ax.axis("off")
         selected_rows.append({"sample_index": int(index), "correct": bool(correct)})
     for ax in axes.flat[len(selected):]:
@@ -206,7 +206,7 @@ def plot_results(output, records):
             ax.set(title=LABELS[key], xlabel="Época", ylabel="Exactitud" if metric == "accuracy" else "Entropía cruzada")
             ax.grid(alpha=0.2)
             ax.legend(fontsize=8)
-        single, single_axes = plt.subplots(1, 2, figsize=(13, 4), layout="constrained")
+        single, single_axes = plt.subplots(1, 2, figsize=(10, 4), layout="constrained")
         for ax, metric in zip(single_axes, ("accuracy", "loss")):
             ax.plot(epochs, history[metric], label="Entrenamiento", color=COLORS[key])
             ax.plot(epochs, history[f"val_{metric}"], label="Validación", color="#c43d43")
@@ -233,6 +233,20 @@ def plot_results(output, records):
                      "train_seconds": summary["train_seconds"], "seed": summary["seed"],
                      "model_path": summary["model_path"]})
     save_figure(fig, output / "figures/comparacion_curvas")
+    record_map = {record[0]: record for record in records}
+    for filename, keys in (("comparacion_original_ampliada", ("cnn_original", "cnn_dos_capas_extra")),
+                           ("comparacion_referencia_regularizada", ("mlp_referencia", "cnn_regularizada"))):
+        pair_fig, pair_axes = plt.subplots(2, 2, figsize=(10, 7.5), layout="constrained")
+        for index, key in enumerate(keys):
+            _, summary, _, history = record_map[key]
+            for ax, metric in zip(pair_axes[index], ("accuracy", "loss")):
+                ax.plot(history.epoch+1, history[metric], color=COLORS[key], label="Entrenamiento")
+                ax.plot(history.epoch+1, history[f"val_{metric}"], color="#c43d43", label="Validación")
+                ax.axvline(summary["best_epoch"], ls=":", color="black", label="Checkpoint")
+                ax.set(title=LABELS[key], xlabel="Época", ylabel="Exactitud" if metric == "accuracy" else "Pérdida")
+                ax.grid(alpha=0.2)
+                ax.legend(fontsize=9)
+        save_figure(pair_fig, output / "figures" / filename)
     table = pd.DataFrame(rows)
     table.to_csv(output / "resultados.csv", index=False, encoding="utf-8-sig")
     table.to_json(output / "resultados.json", orient="records", indent=2, force_ascii=False)
@@ -274,7 +288,7 @@ def main():
         return
     from src.config import load_config
     configs = {key: load_config(output / f"{key}.yaml") for key in LABELS if key != "mlp_referencia"}
-    configs["mlp_referencia"] = configs["cnn_original"]
+    configs["mlp_referencia"] = load_config(output / "mlp_referencia.yaml")
     records = []
     for key in LABELS:
         summaries = list((output / "runs" / key).glob("*/summary.json"))
