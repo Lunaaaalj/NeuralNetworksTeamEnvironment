@@ -56,7 +56,7 @@ pendiente de que el equipo ejecute sus pruebas y entrenamiento.
 ├── models/             # checkpoints .keras (no se versionan)
 ├── notebooks/          # 01_eda.ipynb y kaggle_runner.ipynb
 ├── references/         # reporte del proyecto
-├── reports/            # figures/ (imágenes destiladas), runs/ (logs) y resultados.csv
+├── reports/            # entregable_1/, entregable_4/, final/ (reportes) + runs/, figures/ y resultados.csv (pipeline)
 ├── scripts/            # download_data.sh y run_experiments.py
 ├── src/
 │   ├── data.py         # TFRecord → tf.data, x/255, augmentación, caché por clase

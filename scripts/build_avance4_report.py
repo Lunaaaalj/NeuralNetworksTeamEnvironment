@@ -23,7 +23,7 @@ def write_sections(output, table):
     baseline, deep, regularized, mlp = [by_key.loc[key] for key in
         ("cnn_original", "cnn_dos_capas_extra", "cnn_regularizada", "mlp_referencia")]
     best = table.sort_values("val_f1_macro", ascending=False).iloc[0]
-    figure_root = output.relative_to(ROOT / "reports").as_posix() + "/figures"
+    figure_root = output.relative_to(ROOT / "reports/entregable_4").as_posix() + "/figures"
     histories, evaluations = {}, {}
     for key in table.experiment:
         directory = next((output / "runs" / key).glob("*/summary.json")).parent
@@ -241,7 +241,7 @@ determina por F1 macro y puede diferir del que maximiza la exactitud.}
         "semilla y no se dispone de etiquetas de prueba locales. Harían falta varias "
         "semillas, ablaciones controladas y una evaluación independiente para "
         "cuantificar incertidumbre y separar el efecto de cada técnica.\n")
-    sections = ROOT / "reports/secciones"
+    sections = ROOT / "reports/entregable_4/secciones"
     (sections / "07_regularizacion.tex").write_text(regularization, encoding="utf-8")
     (sections / "08_resultados.tex").write_text(results, encoding="utf-8")
     selected = {"experiment": best.experiment, "selection_metric": "val_f1_macro",
@@ -320,7 +320,7 @@ display(Image(filename=str(OUTPUT / "figures/arquitecturas.png"), width=1100))''
 Estos comandos utilizan el mismo código que produjo los resultados guardados. Se usa una carpeta nueva para conservar las ejecuciones anteriores. Cambie `RUN_TRAINING=True` para ejecutarlos; una revisión normal del notebook carga los resultados existentes.
 
 La CNN original y la ampliada se entrenan primero. Se añade la variante regularizada y se entrena la referencia totalmente conectada con el cargador y el ciclo existentes."""),
-        nbf.new_code_cell('''NEW_OUTPUT = ROOT / "reports" / "avance4_repeticion"
+        nbf.new_code_cell('''NEW_OUTPUT = ROOT / "reports" / "entregable_4" / "avance4_repeticion"
 if RUN_TRAINING:
     subprocess.run([sys.executable, "-u", "-m", "scripts.run_avance4", "--output", str(NEW_OUTPUT)], cwd=ROOT, check=True)
     subprocess.run([sys.executable, "-u", "-m", "src.train_mlp_reference", "--config", str(NEW_OUTPUT / "cnn_original.yaml"), "--output", str(NEW_OUTPUT), "--lr", "0.0001", "--patience", "10", "--min-epochs", "10"], cwd=ROOT, check=True)
