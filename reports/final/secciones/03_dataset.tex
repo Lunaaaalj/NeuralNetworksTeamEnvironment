@@ -25,9 +25,9 @@ Total         & 23,847 & 100.0 & \\
 \end{tabular}
 \end{table}
 
-Cada partición viene en 4 resoluciones: $192\times192$, $224\times224$, $331\times331$ y $512\times512$ píxeles, con 16 archivos TFRecord por partición, por lo que la base de datos trae 192 archivos TFRecord (4 resoluciones $\times$ 3 particiones $\times$ 16 archivos) más \texttt{sample\_submission.csv}. Tener varias resoluciones nos conviene porque no todas las arquitecturas se diseñaron para el mismo tamaño de entrada: ResNet50, DenseNet201 y EfficientNetB0 hacen uso de $224\times224$, mientras que las EfficientNet más grandes usan resoluciones mayores. Para dimensionar el problema, una sola imágen de $224\times224$ ya tiene 150,528 valores.
+Cada partición viene en 4 resoluciones: $192\times192$, $224\times224$, $331\times331$ y $512\times512$ píxeles, con 16 archivos TFRecord por partición, por lo que la base de datos trae 192 archivos TFRecord (4 resoluciones $\times$ 3 particiones $\times$ 16 archivos) más \texttt{sample\_submission.csv}. Tener varias resoluciones nos conviene porque no todas las arquitecturas se diseñaron para el mismo tamaño de entrada: ResNet50, DenseNet201 y EfficientNetB0 hacen uso de $224\times224$, mientras que las EfficientNet más grandes usan resoluciones mayores. Para dimensionar el problema, una sola imagen de $224\times224$ ya tiene 150,528 valores.
 
-En las ejecuciones de este avance se leen los TFRecord de $224\times224$, pero
+En las ejecuciones de este trabajo se leen los TFRecord de $224\times224$, pero
 se redimensionan las imágenes a $112\times112$ antes de entrar a cualquiera de
 los modelos. La resolución de origen y la entrada efectiva de entrenamiento
 son, por tanto, distintas. Se conservan las particiones y etiquetas originales.
@@ -82,5 +82,4 @@ F1_c=\frac{2\,P_c\,R_c}{P_c+R_c}, \qquad F1_{\text{macro}}=\frac{1}{104}\sum_{c=
 donde $TP_c$, $FP_c$ y $FN_c$ son los verdaderos positivos, falsos positivos, y falsos negativos de la clase $c$ . Así todas las clases pesan lo mismo, sin importar cuántas imágenes tengan. 
 
 \subsection{Implicaciones para el proyecto}
-Como Kaggle ya separa entrenamiento y validación, no necesitamos hacer nuestra propia partición: entrenaremos con \texttt{train}, elegiremos modelos e hiperparámetros con \texttt{val} y usaremos \texttt{test} solo para la predicción final. Las imagenes vienen en JPEG con valores de 0 a 255, así que habrá que decodificarlas y escalarlas (a $[0,1]$ o con el preprocesamiento que pida cada red preentrenada). Como las etiquetas son enteros,  la red producirá 104 valores de salida, uno por cada clase, que podrán transformarse en probabilidades mediante Softmax. El entrenamiento se
-realizará utilizando entropía cruzada categórica dispersa.
+Como Kaggle ya separa entrenamiento y validación, no hizo falta crear una partición propia: entrenamos con \texttt{train}, elegimos modelos e hiperparámetros con \texttt{val} y reservamos \texttt{test} para la predicción final. Las imágenes vienen en JPEG con valores de 0 a 255, por lo que se decodifican y se escalan a $[0,1]$ (Sección~\ref{sec:metodologia}). Como las etiquetas son enteros, cada red produce 104 valores de salida, uno por clase, que se convierten en probabilidades con Softmax, y se entrena con entropía cruzada categórica dispersa.

@@ -1,17 +1,22 @@
 \begin{abstract}
-Se comparan una red totalmente conectada de referencia, una CNN original de cuatro
-convoluciones, una variante con dos convoluciones adicionales y una intervención
-de regularización con AdamW y ajuste de tasa. Se utilizan 12,753 imágenes reales
-de entrenamiento y 3,712 de validación de 104 categorías de flores, con entrada
-$112\times112$. Se incluyen representaciones de las arquitecturas, curvas de
-entrenamiento y validación, matrices de confusión y predicciones ilustrativas.
-El modelo elegido por F1 macro de validación es CNN + AdamW + LR, con F1 macro 0.5745 y exactitud 64.44\%. 
-La red totalmente conectada es una referencia reconstruida, no un checkpoint
-histórico identificado del Avance 3. Los resultados corresponden a una sola
-semilla y no se presentan como evaluación sobre prueba independiente.
+Se clasifican 104 categorías de flores de la competencia \textit{Petals to the
+Metal} con redes entrenadas desde cero a $112\times112$, usando 12,753 imágenes
+de entrenamiento y 3,712 de validación, con un desbalance de 18 a 782 imágenes
+por clase. A partir de una CNN de referencia de cuatro convoluciones, se cambia
+un factor a la vez: una MLP como línea base, una CNN con dos convoluciones más,
+la eliminación de la regularización, pesos por clase en la pérdida, una tasa de
+aprendizaje menor y menos dropout. La CNN de referencia es la mejor, con F1 macro
+de 0.5784 y exactitud de 64.06\% en validación. La MLP no logra aprender (F1 de
+0.018) y la red más profunda no mejora (0.566). Sin regularización, la brecha de
+F1 entre entrenamiento y validación sube de 0.235 a 0.344, y los pesos por clase
+bajan el F1 a 0.488 porque sacrifican las clases frecuentes por las raras. Los
+resultados indican que la limitación principal es la cantidad de datos por clase,
+no la capacidad de la red. Cada configuración usa una sola semilla; el código,
+los historiales y un notebook que reproduce los resultados están en un
+repositorio público.
 \end{abstract}
 
 \begin{keywords}
 Clasificación de imágenes \sep Redes neuronales convolucionales \sep
-Regularización \sep F1 macro \sep Flores
+Regularización \sep Desbalance de clases \sep F1 macro \sep Flores
 \end{keywords}

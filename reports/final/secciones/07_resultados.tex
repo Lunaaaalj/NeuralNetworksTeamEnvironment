@@ -171,7 +171,60 @@ validación (104 clases).}
 \subsection{Pesos por clase}
 \label{sec:res-class-weight}
 
-% PENDIENTE: class_weight
+La variante con pesos por clase cambia solo la pérdida (Sección~\ref{sec:pesos}): misma
+arquitectura, semilla, aumento, dropout y calendario de la tasa. No mejora a la
+referencia (Tabla~\ref{tab:desbalance}). Su F1 macro baja de 0.5784 a 0.4881 y
+su exactitud de 64.06\% a 48.87\%; 83 de las 104 clases empeoran y solo 17
+mejoran.
+
+Los pesos sí hacen lo que se espera de ellos, pero el resultado neto es
+negativo. La sensibilidad (\emph{recall}) macro queda igual, 0.56 en ambas
+redes, mientras que la precisión macro cae de 0.63 a 0.46: la red no reconoce
+mejor las flores, solo reparte sus predicciones de otra manera. Por grupos de
+tamaño se ve el intercambio:
+
+\begin{itemize}
+\item \textbf{Clases con menos de 30 imágenes (24 clases).} Su sensibilidad
+sube de 0.42 a 0.61 y su F1 medio de 0.461 a 0.487. Las clases con F1 = 0
+bajan de cinco a dos (\emph{bolero deep blue} y \emph{sweet pea}), y la red
+llega a predecir las 104 clases (la referencia nunca predice tres). Pero las
+predice de más: a las 10 clases más pequeñas les asigna 112 imágenes de
+validación, cuando solo tienen 56 (la referencia les asignaba 25). Su precisión
+baja de 0.58 a 0.42, y en esas 10 clases el F1 medio incluso baja un poco (de
+0.361 a 0.328), aunque con 5 imágenes de validación por clase esa diferencia
+está dentro del ruido.
+\item \textbf{Clases con 60 o más imágenes (62 clases).} Pagan el costo. En las
+nueve clases de 300 imágenes o más, la sensibilidad cae de 0.72 a 0.40 y el F1
+de 0.690 a 0.481; \emph{iris}, por ejemplo, pasa de reconocer 82\% de sus
+imágenes a 47\%. Las 44 clases de 60 a 149 imágenes, el grupo más grande, bajan
+de 0.530 a 0.405. Como estas clases son mayoría, dominan el promedio macro.
+\end{itemize}
+
+Las confusiones cambian de dirección. En la referencia, la flor rara se
+confundía con la frecuente (\emph{carnation} $\to$ \emph{rose}, 13 imágenes);
+con pesos, ocurre al revés (\emph{rose} $\to$ \emph{carnation}, 15). Los pares
+más confundidos son ahora \emph{wild rose} $\to$ \emph{windflower} (28),
+\emph{wild geranium} $\to$ \emph{iris} (21) e \emph{iris} $\to$
+\emph{wild geranium} (17). La correlación entre tamaño de clase y F1 pasa de
+0.12 a $-0.06$ (Figura~\ref{fig:f1-tamano}): la dependencia del tamaño
+desaparece, pero porque las clases grandes bajaron, no porque las pequeñas
+subieran.
+
+La red con pesos también aprende más despacio. En la época 40, su F1 de
+validación es 0.434, contra 0.514 de la referencia, y en el checkpoint (época
+70 de 82) su F1 de entrenamiento es 0.638, contra 0.814. Por eso su brecha es
+menor (0.150 contra 0.235): no generaliza mejor, ajusta peor el entrenamiento.
+
+Esta configuración se lanzó tres veces; las dos primeras corridas se
+interrumpieron por bloqueos de la GPU en las épocas 64 y 68, con un mejor F1 de
+0.528 y 0.531. Las tres curvas coinciden hasta la época 40 (F1 de 0.436, 0.429 y
+0.434). La corrida completa, que es la que se reporta, recibió su primera
+reducción de la tasa en la época 34, contra la 41--42 de las otras dos, y con
+ello quedó por debajo. La GPU no es determinista aun con semilla fija, así que
+una diferencia de unas 0.04 entre corridas idénticas da una idea del ruido de
+una sola semilla. Con cualquiera de las tres, la conclusión es la misma: los
+pesos por clase quedan entre 0.05 y 0.09 puntos de F1 por debajo de la
+referencia.
 
 \input{tablas/desbalance}
 
@@ -238,7 +291,8 @@ tasa de aprendizaje (0.118) es clara.
 \label{sec:res-dm}
 
 Como experimento independiente de los anteriores, se evaluó si un conjunto
-pequeño de imágenes sintéticas generado con Distribution Matching (DM) conserva
+pequeño de imágenes sintéticas generado con Distribution Matching (DM)
+\autocite{zhao2023dm} conserva
 más información que el mismo número de imágenes reales elegidas al azar
 (Tabla~\ref{tab:dm}). Con una imagen por clase (IPC 1, 104 imágenes), DM supera
 a la selección aleatoria (F1 0.067 frente a 0.051). Con diez por clase

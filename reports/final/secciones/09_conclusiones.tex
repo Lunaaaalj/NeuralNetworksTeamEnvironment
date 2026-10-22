@@ -1,2 +1,58 @@
 \section{Conclusiones}
-% PENDIENTE
+\label{sec:conclusiones}
+
+El mejor modelo de este trabajo es la CNN de referencia: cuatro convoluciones,
+480,936 parámetros, dropout de 0.5, aumento de datos, AdamW y reducción de la
+tasa en meseta. En validación alcanza un F1 macro de 0.5784 y una exactitud de
+64.06\%. Ninguno de los seis cambios evaluados, cada uno aislado respecto a ella,
+la superó.
+
+Las preguntas que planteaba el trabajo tienen respuestas claras:
+
+\begin{itemize}
+\item \textbf{¿Ayuda extraer patrones espaciales?} Sí, y de forma decisiva. La
+MLP, con 20 veces más parámetros, no logra ajustar ni el entrenamiento (F1 de
+0.018). Compartir filtros locales en toda la imagen es lo que hace aprendible el
+problema con unas cien imágenes por clase.
+\item \textbf{¿Ayuda una red más profunda?} No. La CNN ampliada memoriza el
+entrenamiento más rápido, pero su validación se estanca en el mismo nivel (F1
+de 0.566). Con una sola semilla, su diferencia con la referencia está dentro del
+ruido; lo que sí muestra es que la capacidad no es el cuello de botella.
+\item \textbf{¿Ayuda la regularización?} Sí. Sin dropout, aumento ni
+decaimiento de pesos, la brecha de F1 sube de 0.235 a 0.344 y el F1 de
+validación baja 0.045, con la mayor pérdida en las clases pequeñas. Reducir el
+dropout a 0.3 va en la misma dirección.
+\item \textbf{¿Ayuda compensar el desbalance con pesos por clase?} No. Sube la
+sensibilidad de las clases raras, pero a costa de predecirlas de más y de
+perder las clases medianas y grandes, que son mayoría; el F1 macro baja a
+0.488.
+\item \textbf{¿Qué tan sensibles son los hiperparámetros?} La tasa de
+aprendizaje es el más sensible: con $3\times10^{-4}$, el calendario en meseta la
+lleva al mínimo antes de que la red aprenda, y el F1 baja a 0.461.
+\end{itemize}
+
+En conjunto, los experimentos apuntan a la misma limitación: faltan datos por
+clase, no capacidad. Lo que ataca esa falta, como el aumento de datos, ayuda; lo
+que agrega capacidad o solo redistribuye las predicciones, no. El análisis de
+errores lo confirma: los fallos se concentran en flores parecidas entre sí
+(\emph{carnation} y \emph{rose}, \emph{wild rose} y \emph{windflower}) y en las
+24 clases con menos de 30 imágenes, donde a $112\times112$ los detalles que las
+distinguen se pierden.
+
+Frente al Avance~4, este reporte corrige la forma de medir el sobreajuste. Al
+evaluar el entrenamiento sin aumento ni dropout, la brecha real de la referencia
+resulta casi el doble de la reportada antes. Además, todo el proceso es
+reproducible: el notebook reconstruye la tabla de resultados, las tablas y las
+figuras a partir de los historiales versionados de cada corrida.
+
+\subsection{Trabajo futuro}
+
+El paso con más potencial es la transferencia de aprendizaje: una red
+preentrenada en ImageNet (por ejemplo, EfficientNetB0 o ResNet50) a
+$224\times224$ aporta rasgos aprendidos de millones de imágenes, que es justo lo
+que falta aquí, y la resolución mayor conserva los detalles que separan flores
+parecidas. Para el desbalance, conviene probar pesos más suaves o corregir los
+umbrales de decisión después de entrenar, en lugar de pesos inversamente
+proporcionales al tamaño. Por último, repetir cada configuración con varias
+semillas permitiría decidir las diferencias pequeñas que hoy quedan dentro del
+ruido, como las de la CNN ampliada y el dropout.

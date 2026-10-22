@@ -92,12 +92,54 @@ que el calendario la lleve al mínimo antes de que la red aprenda lo suficiente.
 Con este calendario, $10^{-3}$ es la elección correcta. El dropout es menos
 sensible: entre 0.3 y 0.5 la diferencia es de 0.019, a favor de 0.5.
 
-% PENDIENTE: desbalance (class_weight)
+\subsection{Por qué los pesos por clase no ayudaron}
+
+Ponderar la pérdida con $w_c = N/(K\,n_c)$ equivale a entrenar como si todas las
+clases fueran igual de frecuentes. Pero validación conserva exactamente el
+desbalance de entrenamiento. Ante una imagen ambigua entre
+\emph{iris} (782 imágenes) y una clase de 20, lo más probable es que sea
+\emph{iris}; la red sin pesos aprende esa preferencia y la red con pesos la
+pierde. Por eso la sensibilidad macro no cambia (0.56) y la precisión baja (de
+0.63 a 0.46): la red no gana capacidad para distinguir flores, solo desplaza sus
+predicciones hacia las clases raras, que reciben el doble de predicciones de las
+que les corresponden.
+
+El costo para el F1 macro es asimétrico. Las 24 clases con menos de 30 imágenes
+ganan poco (0.026 de F1 medio), porque casi todas las imágenes que reciben de
+más son errores. Las 62 clases con 60 o más imágenes pierden mucho (más de 0.1),
+porque sus imágenes se van a las clases raras. Como el F1 macro promedia por
+clase y las clases medianas y grandes son mayoría, el saldo es negativo.
+
+A esto se suma que la red aprende más despacio. Con pesos de 0.16 a 6.8, las
+clases grandes aportan poco a la pérdida y cada lote depende mucho de unas
+cuantas imágenes raras con peso alto, de modo que los gradientes son más
+ruidosos. La pérdida de validación, que no lleva pesos, queda más alta y
+estancada (su mínimo es 1.93, contra 1.46 en la referencia), y el calendario en
+meseta, que la vigila, reduce la tasa antes. Las tres corridas lo confirman:
+llegan a la época 40 por debajo de la referencia, y la que redujo la tasa antes
+terminó más abajo.
+
+Los resultados sugieren que el problema de las clases raras no es que la red
+las ignore por ser raras, sino que tiene muy pocas fotos para aprenderlas. Las
+alternativas más prometedoras, que no se probaron, atacan una cosa o la otra:
+pesos más suaves (por ejemplo, $w_c \propto 1/\sqrt{n_c}$), corregir los
+umbrales de decisión después de entrenar sin pesos (para no perder la
+preferencia por las clases frecuentes) o, sobre todo, más información por
+imagen mediante transferencia de aprendizaje.
 
 \subsection{Limitaciones}
 
 Cada configuración se entrenó con una sola semilla, por lo que diferencias de
-menos de unas centésimas de F1 no deben tomarse como concluyentes. La
+menos de unas centésimas de F1 no deben tomarse como concluyentes. La única
+estimación del ruido viene de las tres corridas de pesos por clase: con la
+misma semilla y configuración, su mejor F1 varió en unas 0.04, porque la GPU no
+es determinista y el calendario en meseta amplifica pequeñas diferencias. Por
+eso la diferencia entre la referencia y la CNN ampliada (0.012) y la del
+dropout (0.019) no son concluyentes. La de la regularización (0.045) está en el
+límite del ruido por sí sola, aunque la respaldan la brecha y las curvas de
+pérdida, que se comportan como se espera del sobreajuste. Las de la tasa de
+aprendizaje (0.118), los pesos por clase (0.090) y la MLP (0.56) son claramente
+mayores. La
 validación se usó para elegir el checkpoint de cada corrida, lo que sesga sus
 métricas ligeramente hacia arriba; los puntajes de Kaggle
 (Sección~\ref{sec:kaggle}) son la única medida sobre datos nunca vistos. La

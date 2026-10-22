@@ -1,4 +1,5 @@
 ﻿\section{Metodología}
+\label{sec:metodologia}
 
 \subsection{Representación de las arquitecturas implementadas}
 
@@ -19,7 +20,7 @@ La variante regularizada conserva la arquitectura de la CNN original.}
 
 La red \textbf{totalmente conectada de referencia} aplana los $112\times112\times3$
 valores de entrada en un vector de 37,632 componentes. Aplica una capa densa de
-256 unidades con ReLU, dropout de 0.5 y una salida de 104 logits. No contiene
+256 unidades con ReLU, dropout \autocite{srivastava2014dropout} de 0.5 y una salida de 104 logits. No contiene
 convoluciones ni pooling. Utiliza el mismo cargador, aumentos y ciclo de entrenamiento que la CNN.
 
 La \textbf{CNN original} emplea cuatro convoluciones de $3\times3$, padding
@@ -33,6 +34,40 @@ La \textbf{CNN ampliada} agrega dos capas convolucionales ocultas: una de 128
 filtros después del tercer pooling y otra de 256 después del cuarto. Ambas usan
 kernel $3\times3$, padding \textit{same} y ReLU, sin pooling adicional. Por tanto,
 esta versión tiene seis convoluciones. No se trata de dos capas densas nuevas.
+
+La Tabla~\ref{tab:parametros} desglosa los parámetros por capa. En una
+convolución de $3\times3$ con $C_{\text{in}}$ canales de entrada y
+$C_{\text{out}}$ filtros hay $(9\,C_{\text{in}}+1)\,C_{\text{out}}$ parámetros, y
+en una capa densa $(n_{\text{in}}+1)\,n_{\text{out}}$; el pooling no tiene
+parámetros. En la CNN original, el 61\% de los parámetros está en la última
+convolución, y las dos capas extra de la ampliada (737,664 parámetros) más que
+duplican el total. En la MLP, en cambio, la primera capa densa concentra
+$(37{,}632+1)\times256 = 9{,}634{,}048$ parámetros, el 99.7\% del total.
+
+\begin{table}[htbp]
+\centering
+\caption{Parámetros entrenables por capa de las dos CNN.}
+\label{tab:parametros}
+\small
+\begin{tabular}{llrr}
+\toprule
+Capa & Salida & Original & Ampliada \\
+\midrule
+Conv $3\times3$, 32 & $112\times112\times32$ & 896 & 896 \\
+Conv $3\times3$, 64 & $56\times56\times64$ & 18,496 & 18,496 \\
+Conv $3\times3$, 128 & $28\times28\times128$ & 73,856 & 73,856 \\
+Conv $3\times3$, 128 (extra) & $14\times14\times128$ & -- & 147,584 \\
+Conv $3\times3$, 256 & $14\times14\times256$ & 295,168 & 295,168 \\
+Conv $3\times3$, 256 (extra) & $7\times7\times256$ & -- & 590,080 \\
+Densa 256 (tras GAP) & 256 & 65,792 & 65,792 \\
+Salida & 104 & 26,728 & 26,728 \\
+\midrule
+Total & & 480,936 & 1,218,600 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\parbox{0.95\columnwidth}{\footnotesize Cada convolución va seguida de max pooling de $2\times2$ (sin parámetros), salvo las dos extra. La salida indicada es la de la convolución, antes del pooling.}
+\end{table}
 
 La convolución comparte los pesos del filtro entre posiciones y analiza
 vecindarios de píxeles. Así puede aprender bordes, texturas y partes de pétalos
@@ -73,6 +108,7 @@ lotes de 64 imágenes y se entrenan con TensorFlow~2.18 sobre la GPU de una Mac
 M4 (\texttt{tensorflow-metal}).
 
 \subsection{Pesos por clase}
+\label{sec:pesos}
 
 Para contrarrestar el desbalance (Sección~\ref{sec:desbalance}), una variante
 pondera la pérdida de cada imagen según su clase \autocite{he2009imbalanced}:

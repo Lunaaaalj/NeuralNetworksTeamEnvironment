@@ -1,6 +1,44 @@
 \section{Contexto del problema}
-Muchas categorías de flores son visualmente parecidas y distinguirlas puede requerir conocimiento especializado. Identificarlas de forma manual es lento cuando se tienen miles de fotografías. Por eso resulta útil contar con modelos que reconozcan la clase de una flor a partir de una imagen.
 
-Este proyecto parte de la competencia "Petals to the Metal", encontrado en Kaggle, cuyo reto es construir un modelo que identifique el tipo de flor en un conjunto de imágenes. La competencia se limita a 104 clases de flores, y consiste en un problema de clasificación multiclase de imágenes en el que el modelo debe tener la capacidad de identificar valores finos como la forma, estructura y color para distinguir entre categorías cercanas. 
+Poder identificar una flor a partir de una fotografía tiene aplicaciones reales.
+Una de ellas es el apoyo a plataformas de ciencia ciudadana y de monitoreo de
+biodiversidad. Por ejemplo, iNaturalist ha acumulado más de 300 millones de
+observaciones hechas por personas comunes y utiliza un modelo de visión por
+computadora, entrenado con esas mismas observaciones, para sugerir la especie a
+partir de una fotografía \autocite{inaturalist}. Sin este apoyo automático, cada
+observación dependería de que una persona la revisara detenidamente, lo que
+haría el proceso lento y difícil de escalar. Automatizar parte de la tarea
+mejora la eficiencia y aporta en gran medida a la obtención de datos sobre
+biodiversidad. Otra aplicación es la educativa, por ejemplo, en aplicaciones
+para estudiantes o visitantes de jardines botánicos que permitan reconocer
+flores y consultar información sobre ellas. También existe un interés
+comercial: en México la floricultura es una actividad económica importante, y
+el Estado de México es el principal productor de clavel y de crisantemo, con el
+81.4\% del valor nacional de las flores de la temporada de otoño de 2021
+\autocite{sader2022flores}. Este proyecto es una versión a menor escala de este
+tipo de sistemas.
 
-Este problema tiene varias dificultades que lo hacen relevante desde un enfoque de redes neuronales. Primeramente, las clases son heterogéneas, ya que algunas de ellas solo tienen un subtipo de flor y otras agrupan muchas subvariedades. Además, las imágenes de las flores no fueron capturadas en el mismo entorno, dando más variedad a las mismas. Por último, el número de imágenes por cada clase tampoco es uniforme, por lo que, considerando la métrica de evaluación, es un punto fuerte a tomar en cuenta que el modelo funcione de manera efectiva tanto para clases con pocos ejemplos como también para aquellas con muchos. 
+El reto es que la diversidad del mundo natural es enorme: se estima que existen
+más de 5,000 especies de mamíferos, 10,000 de aves y 30,000 de peces, pero hay
+más de 400,000 tipos de flores \autocite{kagglePetalsMetal}. Distinguir entre
+ellas llega a requerir conocimiento especializado y, incluso para una persona
+con experiencia, muchas flores son visualmente muy parecidas entre sí.
+Identificarlas de forma manual es lento y no es escalable cuando se tienen miles
+de fotografías, por lo que resulta valioso contar con modelos de clasificación
+de imágenes que reconozcan el tipo de flor de forma automática
+\autocite{ibmWhatImage}.
+
+Este proyecto parte de la competencia \textit{Petals to the Metal}, de Kaggle,
+cuyo reto es construir un modelo que identifique el tipo de flor en un conjunto
+de imágenes. La competencia se limita a 104 clases de flores y consiste en un
+problema de clasificación multiclase de imágenes en el que el modelo debe
+identificar rasgos finos como la forma, la estructura y el color para distinguir
+entre categorías cercanas.
+
+Este problema tiene varias dificultades que lo hacen relevante desde un enfoque
+de redes neuronales. Primero, las clases son heterogéneas, ya que algunas solo
+tienen un subtipo de flor y otras agrupan muchas subvariedades. Además, las
+imágenes no fueron capturadas en el mismo entorno, lo que les da más variedad.
+Por último, el número de imágenes por clase tampoco es uniforme, por lo que,
+considerando la métrica de evaluación, es importante que el modelo funcione bien
+tanto en clases con pocos ejemplos como en aquellas con muchos.
