@@ -6,7 +6,9 @@ This is a reconstructed comparison, not an undocumented Avance 3 checkpoint.
 import argparse
 import csv
 import json
+import os
 from pathlib import Path
+import tempfile
 import time
 
 import keras
@@ -42,6 +44,28 @@ def build_keras_mlp(img_size=112, num_classes=104):
         keras.layers.Dropout(0.5, name="dropout"),
         keras.layers.Dense(num_classes, name="logits"),
     ], name="flower_mlp_reference")
+
+
+def save_portable_checkpoint(payload, path, *, retries=100, delay=0.1):
+    """Keep the old checkpoint intact if an indexer temporarily locks it on Windows."""
+    path = Path(path)
+    descriptor, temporary = tempfile.mkstemp(prefix="." + path.stem + "_", suffix=".tmp", dir=path.parent)
+    temporary = Path(temporary)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            torch.save(payload, stream)
+            stream.flush()
+            os.fsync(stream.fileno())
+        for attempt in range(retries):
+            try:
+                os.replace(temporary, path)
+                break
+            except PermissionError:
+                if attempt + 1 == retries:
+                    raise
+                time.sleep(delay)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def run(config, destination, *, seed=0, epochs=150, lr=None, patience=None, min_epochs=0):
@@ -100,7 +124,7 @@ def run(config, destination, *, seed=0, epochs=150, lr=None, patience=None, min_
                        "next_learning_rate": cfg["train"]["lr"]}
             if metrics["val_f1_macro"] > best_f1:
                 best_f1, best_epoch, bad_evals = metrics["val_f1_macro"], epoch + 1, 0
-                torch.save({"model_state": {k: v.detach().cpu() for k, v in model.state_dict().items()},
+                save_portable_checkpoint({"model_state": {k: v.detach().cpu() for k, v in model.state_dict().items()},
                             "epoch": best_epoch, "metrics": metrics, "architecture": "mlp_reference",
                             "img_size": size, "num_classes": classes}, checkpoint_path)
             else:

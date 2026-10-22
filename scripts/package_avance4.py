@@ -95,9 +95,10 @@ El notebook usa los módulos de este repositorio y sus dependencias (requirement
             bundle.write(file, file.name)
         for base in (output / "figures", output / "runs", output / "diagnosticos"):
             for file in base.rglob("*"):
-                if file.is_file() and file.suffix.lower() in {".png", ".pdf", ".csv", ".json"}:
+                if file.is_file() and file.suffix.lower() in {".png", ".pdf", ".csv", ".json", ".yaml"}:
                     bundle.write(file, file.relative_to(ROOT).as_posix())
-        for file in list(output.glob("*.yaml")) + list(output.glob("*.json")) + [output / "resultados.csv"]:
+        for file in (list(output.glob("*.yaml")) + list(output.glob("*.json")) + list(output.glob("*.csv"))
+                     + [output / "resumen_presentacion.txt"]):
             bundle.write(file, file.relative_to(ROOT).as_posix())
         for directory in (ROOT / "src", ROOT / "scripts", ROOT / "configs"):
             for file in directory.glob("*"):

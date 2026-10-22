@@ -250,6 +250,17 @@ def plot_results(output, records):
     table = pd.DataFrame(rows)
     table.to_csv(output / "resultados.csv", index=False, encoding="utf-8-sig")
     table.to_json(output / "resultados.json", orient="records", indent=2, force_ascii=False)
+    presentation = table[["model", "parameters", "best_epoch", "val_accuracy", "val_f1_macro"]].copy()
+    presentation["val_accuracy"] = (100*presentation.val_accuracy).round(2)
+    presentation = presentation.rename(columns={"model": "Modelo", "parameters": "Parametros",
+        "best_epoch": "Epoca_checkpoint", "val_accuracy": "Exactitud_porcentaje", "val_f1_macro": "F1_macro"})
+    presentation.to_csv(output / "resultados_presentacion.csv", index=False, encoding="utf-8-sig")
+    (output / "resumen_presentacion.txt").write_text(
+        "NUEVAS EJECUCIONES - AVANCE 4\nValidación: 3,712 imágenes reales, 104 clases, semilla 0.\n\n"
+        + presentation.to_string(index=False) + "\n\n"
+        "La MLP es una referencia reconstruida. Los modelos se eligen por F1 macro.\n"
+        "Son métricas de validación; no son un resultado independiente de prueba.\n"
+        "Las imágenes DM históricas están separadas en figures/dm_historico.\n", encoding="utf-8")
     fig, axes = plt.subplots(1, 2, figsize=(14, 5), layout="constrained")
     short = {"mlp_referencia": "MLP (referencia)", "cnn_original": "CNN original",
              "cnn_dos_capas_extra": "CNN +2 convoluciones", "cnn_regularizada": "CNN + AdamW + LR"}
@@ -284,6 +295,18 @@ def main():
         "IPC 1: 104 imágenes sintéticas; IPC 10: 1,040.\n"
         "Ambos mosaicos muestran solo la primera imagen sintética de cada clase.\n",
         encoding="utf-8")
+    for history_path in (output / "diagnosticos").glob("*/runs/*/history.csv"):
+        history = pd.read_csv(history_path)
+        label = history_path.parents[2].name
+        fig, axes = plt.subplots(1, 2, figsize=(10, 4), layout="constrained")
+        for ax, metric in zip(axes, ("accuracy", "loss")):
+            ax.plot(history.epoch+1, history[metric], label="Entrenamiento")
+            ax.plot(history.epoch+1, history[f"val_{metric}"], label="Validación")
+            ax.set(xlabel="Época", ylabel=metric)
+            ax.legend()
+            ax.grid(alpha=0.2)
+        fig.suptitle(f"Diagnóstico: {label}\nEnsayo excluido de la comparación final")
+        save_figure(fig, output / "figures/diagnosticos" / label / "curvas")
     if args.diagrams_only:
         return
     from src.config import load_config
