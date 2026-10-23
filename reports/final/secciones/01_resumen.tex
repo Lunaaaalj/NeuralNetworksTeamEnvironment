@@ -9,9 +9,12 @@ aprendizaje menor y menos dropout. La CNN de referencia es la mejor, con F1 macr
 de 0.5784 y exactitud de 64.06\% en validación. La MLP no logra aprender (F1 de
 0.018) y la red más profunda no mejora (0.566). Sin regularización, la brecha de
 F1 entre entrenamiento y validación sube de 0.235 a 0.344, y los pesos por clase
-bajan el F1 a 0.488 porque sacrifican las clases frecuentes por las raras. Los
-resultados indican que la limitación principal es la cantidad de datos por clase,
-no la capacidad de la red. Cada configuración usa una sola semilla; el código,
+bajan el F1 a 0.488 porque sacrifican las clases frecuentes por las raras. Todas las CNN
+se estancan cerca de 64\% de exactitud por dos límites que actúan juntos: la
+capacidad de una red pequeña entrenada desde cero a $112\times112$, que no
+alcanza a separar flores parecidas, y los pocos datos por clase, que impiden
+aprovechar más capacidad: dos convoluciones más aceleran la memorización del
+entrenamiento, pero no mejoran la validación. Cada configuración usa una sola semilla; el código,
 los historiales y un notebook que reproduce los resultados están en un
 repositorio público.
 \end{abstract}

@@ -18,10 +18,8 @@ ese checkpoint, no a la última época.
 
 Para atribuir cada diferencia a una causa, cada experimento modifica un solo
 factor respecto a la referencia: la arquitectura (MLP o CNN ampliada), la pérdida (pesos por clase), la regularización o un
-hiperparámetro (tasa de aprendizaje o dropout). Hay dos excepciones declaradas.
-La MLP usa una tasa inicial de $10^{-4}$, porque con $10^{-3}$ colapsó a predecir
-una sola clase en el Avance~4. La variante \emph{sin regularización} retira a la
-vez dropout, aumento y decaimiento de pesos (Adam en lugar de AdamW), para medir
+hiperparámetro (tasa de aprendizaje o dropout). La única excepción declarada
+es la variante \emph{sin regularización}, que retira a la vez dropout, aumento y decaimiento de pesos (Adam en lugar de AdamW), para medir
 su efecto conjunto.
 
 \subsection{Métricas de entrenamiento comparables con validación}
@@ -37,10 +35,10 @@ validación, ambos en la época del checkpoint.
 \subsection{Alcance de la evaluación}
 
 La validación se usa para elegir el checkpoint y comparar configuraciones; sus
-métricas no son una estimación independiente de generalización. Como el
-conjunto de prueba de Kaggle no tiene etiquetas locales, la medida de prueba se
-obtiene enviando las predicciones a la competencia
-(Sección~\ref{sec:kaggle}). Cada configuración se entrenó con una sola semilla,
+métricas no son una estimación independiente de generalización. Todas las
+métricas de este reporte se calculan sobre validación, que sí tiene etiquetas.
+El conjunto de prueba no trae etiquetas (solo las tiene Kaggle) y no se enviaron
+predicciones a la competencia, por lo que no se reporta un puntaje de prueba. Cada configuración se entrenó con una sola semilla,
 por lo que diferencias de pocas milésimas de F1 macro no se interpretan como
 mejoras. Los resultados de este documento se generaron con TensorFlow~2.18 en una
 GPU Apple M4 (\texttt{tensorflow-metal}); las corridas del Avance~4 se hicieron

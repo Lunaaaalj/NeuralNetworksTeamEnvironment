@@ -27,8 +27,15 @@ La \textbf{CNN original} emplea cuatro convoluciones de $3\times3$, padding
 \textit{same}, ReLU y 32, 64, 128 y 256 filtros. Cada convolución va seguida de
 max pooling de $2\times2$. Las salidas de esos bloques son
 $56\times56\times32$, $28\times28\times64$, $14\times14\times128$ y
-$7\times7\times256$. Después aplica global average pooling (GAP), una capa densa
-de 256 unidades con ReLU, dropout de 0.5 y 104 logits de salida.
+$7\times7\times256$. Después aplica \textit{global average pooling} (GAP)
+\autocite{lin2014nin}, que promedia cada uno de los 256 mapas de $7\times7$ en
+un solo número. El resultado es un vector de 256 valores, uno por filtro, que
+indica cuánto se activó ese rasgo en la imagen sin importar en qué posición
+apareció. GAP no tiene parámetros y, a diferencia de aplanar los
+$7\times7\times256=12{,}544$ valores, deja la capa densa siguiente en 65,792
+parámetros en lugar de unos 3.2 millones, lo que reduce el riesgo de
+sobreajuste. Le siguen una capa densa de 256 unidades con ReLU, dropout de 0.5
+y 104 logits de salida.
 
 La \textbf{CNN ampliada} agrega dos capas convolucionales ocultas: una de 128
 filtros después del tercer pooling y otra de 256 después del cuarto. Ambas usan
@@ -102,11 +109,7 @@ salida mediante softmax; esta confianza no constituye una evaluación de calibra
 Todas las redes se optimizan con AdamW \autocite{loshchilov2019adamw}
 (decaimiento de pesos desacoplado de 0.01, sin aplicarlo a los sesgos) y una
 tasa inicial de $10^{-3}$ que se reduce a la mitad cuando la pérdida de
-validación no mejora en dos épocas, hasta $10^{-5}$. La MLP es la excepción en
-la tasa: usa $10^{-4}$ (mínimo $10^{-6}$), porque en el Avance~4 un primer
-intento con $10^{-3}$ colapsó a predecir una sola clase. Todos los modelos usan
-lotes de 64 imágenes y se entrenan con TensorFlow~2.18 sobre la GPU de una Mac
-M4 (\texttt{tensorflow-metal}).
+validación no mejora en dos épocas, hasta $10^{-5}$.
 
 \subsection{Pesos por clase}
 \label{sec:pesos}

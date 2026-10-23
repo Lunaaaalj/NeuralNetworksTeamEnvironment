@@ -17,7 +17,8 @@ problema con unas cien imágenes por clase.
 \item \textbf{¿Ayuda una red más profunda?} No. La CNN ampliada memoriza el
 entrenamiento más rápido, pero su validación se estanca en el mismo nivel (F1
 de 0.566). Con una sola semilla, su diferencia con la referencia está dentro del
-ruido; lo que sí muestra es que la capacidad no es el cuello de botella.
+ruido; lo que sí muestra es que, con estos datos, agregar capas no basta para subir
+el techo.
 \item \textbf{¿Ayuda la regularización?} Sí. Sin dropout, aumento ni
 decaimiento de pesos, la brecha de F1 sube de 0.235 a 0.344 y el F1 de
 validación baja 0.045, con la mayor pérdida en las clases pequeñas. Reducir el
@@ -31,9 +32,11 @@ aprendizaje es el más sensible: con $3\times10^{-4}$, el calendario en meseta l
 lleva al mínimo antes de que la red aprenda, y el F1 baja a 0.461.
 \end{itemize}
 
-En conjunto, los experimentos apuntan a la misma limitación: faltan datos por
-clase, no capacidad. Lo que ataca esa falta, como el aumento de datos, ayuda; lo
-que agrega capacidad o solo redistribuye las predicciones, no. El análisis de
+En conjunto, los experimentos muestran un techo cercano a 64\% de exactitud con
+dos causas que actúan juntas: la capacidad limitada de una CNN pequeña entrenada
+desde cero y la falta de datos por clase, que impide que más capas se traduzcan
+en rasgos útiles. Lo que ataca la falta de datos, como el aumento, ayuda; lo que
+agrega capas sin más datos o solo redistribuye las predicciones, no. El análisis de
 errores lo confirma: los fallos se concentran en flores parecidas entre sí
 (\emph{carnation} y \emph{rose}, \emph{wild rose} y \emph{windflower}) y en las
 24 clases con menos de 30 imágenes, donde a $112\times112$ los detalles que las

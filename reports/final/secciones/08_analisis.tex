@@ -54,18 +54,24 @@ las clases con 18--30 imágenes, no para aprender rasgos que generalicen.
 \item \textbf{El sobreajuste aparece antes.} Su pérdida de validación toca su
 mínimo en la época 34 (frente a la 54 de la referencia) y después sube, y tiene
 seis clases con F1 = 0 en vez de cinco.
-\item \textbf{La regularización estaba calibrada para la red pequeña.} Ambas
-usan dropout 0.5 y decaimiento de pesos de 0.01. Para una red con 2.5 veces más
-parámetros, esa misma regularización es relativamente más débil.
+\item \textbf{La regularización estaba calibrada para la CNN de referencia.}
+Ambas usan dropout 0.5 y decaimiento de pesos de 0.01, valores elegidos para la
+CNN de cuatro convoluciones (480,936 parámetros). Para la CNN ampliada, con 2.5
+veces más parámetros, esa misma regularización es relativamente más débil.
 \item \textbf{Más profundidad no agrega información a $112\times112$.} Las dos
 capas nuevas operan sobre mapas ya reducidos; a esa resolución, los detalles
 finos que distinguen flores parecidas (\emph{carnation} contra \emph{rose}) ya se
 perdieron en la entrada, y ninguna capa extra los recupera.
 \end{itemize}
 
-En resumen, el cuello de botella de este problema no es la capacidad del modelo
-sino la cantidad de datos por clase. Por eso los cambios que atacan la falta de
-datos, como el aumento, tienen más efecto que hacer la red más grande.
+En resumen, el techo de cerca de 64\% de exactitud refleja dos límites que
+actúan juntos. Uno es de capacidad: una CNN pequeña entrenada desde cero a
+$112\times112$ no aprende rasgos suficientemente finos para separar flores
+parecidas. El otro es de datos: con pocas imágenes por clase, agregar capas no
+compra rasgos mejores, solo memorización. Por eso hacer la red más grande no
+ayudó, mientras que el aumento de datos sí, y por eso el paso con más potencial
+es aportar capacidad ya entrenada con otros datos (transferencia de
+aprendizaje).
 
 \subsection{Qué aporta la regularización}
 
@@ -141,8 +147,8 @@ pérdida, que se comportan como se espera del sobreajuste. Las de la tasa de
 aprendizaje (0.118), los pesos por clase (0.090) y la MLP (0.56) son claramente
 mayores. La
 validación se usó para elegir el checkpoint de cada corrida, lo que sesga sus
-métricas ligeramente hacia arriba; los puntajes de Kaggle
-(Sección~\ref{sec:kaggle}) son la única medida sobre datos nunca vistos. La
+métricas ligeramente hacia arriba, y no se cuenta con una medida sobre datos
+nunca vistos porque no se enviaron predicciones de prueba a Kaggle. La
 corrida de la CNN ampliada se interrumpió en la época 50. Todas las redes se
 entrenaron desde cero a $112\times112$; no se evaluó transferencia de
 aprendizaje desde modelos preentrenados.
