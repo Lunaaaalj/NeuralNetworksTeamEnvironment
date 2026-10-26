@@ -1,0 +1,42 @@
+# Configuración con la que se generaron los resultados del Avance 3 (commit e327742).
+# Las rutas relativas se resuelven contra la raíz del repositorio. Las salidas de una
+# re-ejecución van a carpetas *_reproducidos para no sobrescribir la evidencia original.
+paths:
+  tfrecords: data/raw/tpu-getting-started/tfrecords-jpeg-224x224
+  processed: data/processed
+  models: models/avance3_reproducidos
+  runs: reports/entregable_3/runs_reproducidos
+  figures: reports/entregable_3/figures
+  results: reports/entregable_3/resultados_reproducidos.csv
+
+data:
+  img_size: 112
+  num_classes: 104
+  batch_size: 32
+
+distill:
+  ipc: 10
+  iterations: 500
+  real_batch: 64
+  classes_per_step: 8
+  lr_img: 0.01
+  log_every: 25
+
+train:
+  lr: 0.001
+  epochs_full: 50
+  epochs_small: 300
+  eval_every_small: 10
+  patience: 5
+
+wandb:
+  enabled: false
+  project: flower-cnn
+  entity: null
+  mode: offline
+
+experiments:
+  data: [random, distilled]
+  ipcs: [1, 10]
+  seeds: [0, 1, 2]
+  include_full: true

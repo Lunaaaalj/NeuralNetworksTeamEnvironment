@@ -1,0 +1,61 @@
+\section{Metodología}
+
+\subsection{Arquitectura de la red}
+Para clasificar las 104 clases de flores se utiliza una red neuronal convolucional (CNN), ya que este tipo de red está diseñado para trabajar con imágenes y aprende automáticamente características espaciales como bordes, texturas, colores y formas.
+
+Los experimentos se realizaron con imágenes RGB de $112\times112$ píxeles, obtenidas al redimensionar los archivos originales de $224\times224$; por tanto, la entrada de la red es de $112\times112\times3$. La Tabla~\ref{tab:arquitectura_cnn} resume la arquitectura. Se usan filtros de $3\times3$ porque analizan regiones pequeñas de la imagen: las primeras capas aprenden características simples, como bordes o cambios de color, y las posteriores las combinan para representar estructuras más complejas de las flores. El número de filtros aumenta de 32 a 256 mientras el \textit{max pooling} reduce el tamaño espacial.
+
+\begin{table*}[htbp]
+\centering
+\caption{Arquitectura de la CNN (480,936 parámetros entrenables).}
+\label{tab:arquitectura_cnn}
+\small
+\begin{tabular}{p{0.22\textwidth}p{0.46\textwidth}p{0.22\textwidth}}
+\toprule
+Capa & Configuración & Dimensión de salida \\
+\midrule
+Entrada & Imagen RGB & $112\times112\times3$ \\
+Convolución 1 & 32 filtros de $3\times3$, \textit{padding same} + ReLU & $112\times112\times32$ \\
+Max Pooling 1 & Ventana de $2\times2$ & $56\times56\times32$ \\
+Convolución 2 & 64 filtros de $3\times3$, \textit{padding same} + ReLU & $56\times56\times64$ \\
+Max Pooling 2 & Ventana de $2\times2$ & $28\times28\times64$ \\
+Convolución 3 & 128 filtros de $3\times3$, \textit{padding same} + ReLU & $28\times28\times128$ \\
+Max Pooling 3 & Ventana de $2\times2$ & $14\times14\times128$ \\
+Convolución 4 & 256 filtros de $3\times3$, \textit{padding same} + ReLU & $14\times14\times256$ \\
+Max Pooling 4 & Ventana de $2\times2$ & $7\times7\times256$ \\
+Global Average Pooling & Promedio de cada mapa de características & 256 \\
+Capa densa & 256 neuronas + ReLU & 256 \\
+Dropout & Tasa de 0.5 & 256 \\
+Salida & 104 neuronas (\textit{logits}), una por clase & 104 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Preprocesamiento}
+Cada registro TFRecord de $224\times224$ se decodifica como imagen RGB de tres canales, se redimensiona a $112\times112$ y se normaliza al intervalo $[0,1]$ mediante
+\begin{equation}
+x_{\text{norm}} = \frac{x}{255}.
+\end{equation}
+La reducción de resolución disminuye el costo de entrenamiento y conserva la forma y el color de las flores.
+
+En el conjunto completo se aplica aumento de datos solo durante el entrenamiento: volteo horizontal, rotación de hasta $\pm18^\circ$, acercamiento o alejamiento de hasta 10\,\% y variación de contraste de hasta 10\,\%. Estas transformaciones generan versiones distintas de una misma imagen sin modificar su clase. A validación y prueba no se les aplica ninguna transformación aleatoria, para evaluar siempre las mismas imágenes.
+
+\subsection{Función de pérdida y entrenamiento}
+Cada imagen pertenece a una sola de las 104 clases, por lo que se utiliza la entropía cruzada categórica dispersa. La red produce 104 \textit{logits} $z_k$, que Softmax convierte en probabilidades:
+\begin{equation}
+\hat{y}_k = \frac{e^{z_k}}{\sum_{j=1}^{104} e^{z_j}}.
+\end{equation}
+Para una imagen de clase $c$, la pérdida es $L = -\log(\hat{y}_c)$: es pequeña si el modelo asigna alta probabilidad a la clase correcta y grande si se equivoca con confianza. Se usa la versión dispersa porque las etiquetas son enteros de 0 a 103 y no hace falta convertirlas a vectores \textit{one-hot}.
+
+Los gradientes se calculan con retropropagación y los parámetros se actualizan con Adam, con una tasa de aprendizaje de $10^{-3}$ y minilotes de 32 imágenes mezcladas en cada época. Después de cada evaluación se calcula el F1 macro de validación, se guarda el modelo con el mejor F1 (\textit{checkpoint}) y el entrenamiento se detiene tras cinco evaluaciones consecutivas sin mejora (parada temprana).
+
+\subsection{Destilación de datos mediante Distribution Matching}
+Además del entrenamiento convencional, se implementó la destilación de datos mediante \textit{Distribution Matching} (DM) \parencite{zhao2023dm}. Su objetivo es generar un conjunto reducido de imágenes sintéticas que conserve las características representativas del conjunto original.
+
+El método utiliza una red convolucional como extractor de características. En cada iteración se inicializan nuevos pesos aleatorios y se obtienen las representaciones de imágenes reales y sintéticas de cada clase. La función objetivo minimiza la distancia cuadrática entre los promedios de estas representaciones:
+\begin{equation}
+L_{DM} = \sum_{c=0}^{103} \left\lVert \mu_c^{\text{real}} - \mu_c^{\text{sint}} \right\rVert_2^2,
+\end{equation}
+donde $\mu_c^{\text{real}}$ y $\mu_c^{\text{sint}}$ son los vectores promedio de características de las imágenes reales y sintéticas de la clase $c$. Solo se optimizan los píxeles de las imágenes sintéticas; los pesos del extractor permanecen fijos durante cada paso.
+
+Se utilizó Adam con una tasa de aprendizaje de 0.01 sobre los píxeles durante 500 iteraciones completas, con transformaciones diferenciables de aumento de datos (DSA) \parencite{zhao2021dsa} sobre las imágenes reales y sintéticas. Se generaron conjuntos de una y diez imágenes por clase (IPC = 1 e IPC = 10), que después se usaron para entrenar la CNN; durante ese entrenamiento también se aplica DSA.

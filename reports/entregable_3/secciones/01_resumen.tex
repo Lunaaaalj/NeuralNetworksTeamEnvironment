@@ -1,0 +1,15 @@
+\begin{abstract}
+Este trabajo aborda la clasificación automática de 104 tipos de flores mediante redes neuronales convolucionales (CNN) y técnicas de destilación de datos. Se utiliza el conjunto de imágenes de la competencia \textit{Petals to the Metal} de Kaggle, compuesto por 23,847 fotografías RGB distribuidas entre entrenamiento, validación y prueba. La similitud visual entre algunas clases, las variaciones de iluminación y el desbalance de los datos representan desafíos importantes para la clasificación.
+
+Se implementó una CNN de cuatro bloques convolucionales (480,936 parámetros), entrenada mediante retropropagación con el optimizador Adam, parada temprana por F1 macro y guardado del mejor modelo. Además, se aplicó \textit{Distribution Matching} (DM) para generar conjuntos reducidos de imágenes sintéticas, y se comparó el entrenamiento con el conjunto completo, con subconjuntos aleatorios de imágenes reales y con conjuntos destilados de una y diez imágenes por clase.
+
+Con el conjunto completo, el modelo alcanzó un F1 macro de 0.5538 y una exactitud de 61.61\,\% en validación. Las curvas de aprendizaje muestran que, a partir de la época 25, la pérdida de validación se estanca mientras la de entrenamiento sigue bajando, y que los conjuntos reducidos memorizan sus pocas imágenes. Con el conjunto completo se evaluaron tres variaciones de hiperparámetros (tasa de aprendizaje, \textit{dropout} y regularización): reducir la tasa de aprendizaje a $3\times10^{-4}$ produjo subajuste (F1 de 0.4605) y quitar la regularización aumentó el sobreajuste (F1 de 0.5332), mientras que la configuración de referencia obtuvo el mejor F1, 0.5784. Todas las tablas y figuras se reproducen con el notebook público del proyecto.
+\end{abstract}
+
+\begin{keywords}
+Clasificación de imágenes \sep
+Redes neuronales convolucionales \sep
+Curvas de aprendizaje \sep
+Destilación de datos \sep
+F1 macro
+\end{keywords}

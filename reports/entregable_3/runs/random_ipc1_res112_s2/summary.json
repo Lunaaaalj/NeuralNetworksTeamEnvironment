@@ -1,0 +1,16 @@
+{
+  "run": "random_ipc1_res112_s2",
+  "data": "random",
+  "ipc": 1,
+  "seed": 2,
+  "img_size": 112,
+  "train_images": 104,
+  "epochs_run": 300,
+  "best_epoch": 270,
+  "val_f1_macro": 0.054,
+  "val_accuracy": 0.0649,
+  "train_seconds": 39.8,
+  "distill_seconds": null,
+  "distill_iterations": null,
+  "model_path": "/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/random_ipc1_res112_s2.keras"
+}

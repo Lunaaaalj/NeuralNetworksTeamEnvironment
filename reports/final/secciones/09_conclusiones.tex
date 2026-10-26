@@ -10,26 +10,26 @@ la superó.
 Las preguntas que planteaba el trabajo tienen respuestas claras:
 
 \begin{itemize}
-\item \textbf{¿Ayuda extraer patrones espaciales?} Sí, y de forma decisiva. La
-MLP, con 20 veces más parámetros, no logra ajustar ni el entrenamiento (F1 de
-0.018). Compartir filtros locales en toda la imagen es lo que hace aprendible el
-problema con unas cien imágenes por clase.
-\item \textbf{¿Ayuda una red más profunda?} No. La CNN ampliada memoriza el
-entrenamiento más rápido, pero su validación se estanca en el mismo nivel (F1
-de 0.566). Con una sola semilla, su diferencia con la referencia está dentro del
-ruido; lo que sí muestra es que, con estos datos, agregar capas no basta para subir
-el techo.
-\item \textbf{¿Ayuda la regularización?} Sí. Sin dropout, aumento ni
-decaimiento de pesos, la brecha de F1 sube de 0.235 a 0.344 y el F1 de
-validación baja 0.045, con la mayor pérdida en las clases pequeñas. Reducir el
-dropout a 0.3 va en la misma dirección.
-\item \textbf{¿Ayuda compensar el desbalance con pesos por clase?} No. Sube la
-sensibilidad de las clases raras, pero a costa de predecirlas de más y de
-perder las clases medianas y grandes, que son mayoría; el F1 macro baja a
-0.488.
-\item \textbf{¿Qué tan sensibles son los hiperparámetros?} La tasa de
-aprendizaje es el más sensible: con $3\times10^{-4}$, el calendario en meseta la
-lleva al mínimo antes de que la red aprenda, y el F1 baja a 0.461.
+	\item \textbf{¿Ayuda extraer patrones espaciales?} Sí, y de forma decisiva. La
+	      MLP, con 20 veces más parámetros, no logra ajustar ni el entrenamiento (F1 de
+	      0.018). Compartir filtros locales en toda la imagen es lo que hace aprendible el
+	      problema con unas cien imágenes por clase.
+	\item \textbf{¿Ayuda una red más profunda?} No. La CNN ampliada memoriza el
+	      entrenamiento más rápido, pero su validación se estanca en el mismo nivel (F1
+	      de 0.566). Con una sola semilla, su diferencia con la referencia está dentro del
+	      ruido; lo que sí muestra es que, con estos datos, agregar capas no basta para subir
+	      el techo.
+	\item \textbf{¿Ayuda la regularización?} Sí. Sin dropout, aumento ni
+	      decaimiento de pesos, la brecha de F1 sube de 0.235 a 0.344 y el F1 de
+	      validación baja 0.045, con la mayor pérdida en las clases pequeñas. Reducir el
+	      dropout a 0.3 va en la misma dirección.
+	\item \textbf{¿Ayuda compensar el desbalance con pesos por clase?} No. Sube la
+	      sensibilidad de las clases raras, pero a costa de predecirlas de más y de
+	      perder las clases medianas y grandes, que son mayoría; el F1 macro baja a
+	      0.488.
+	\item \textbf{¿Qué tan sensibles son los hiperparámetros?} La tasa de
+	      aprendizaje es el más sensible: con $3\times10^{-4}$, el calendario en meseta la
+	      lleva al mínimo antes de que la red aprenda, y el F1 baja a 0.461.
 \end{itemize}
 
 En conjunto, los experimentos muestran un techo cercano a 64\% de exactitud con
@@ -59,3 +59,17 @@ umbrales de decisión después de entrenar, en lugar de pesos inversamente
 proporcionales al tamaño. Por último, repetir cada configuración con varias
 semillas permitiría decidir las diferencias pequeñas que hoy quedan dentro del
 ruido, como las de la CNN ampliada y el dropout.
+
+\section{Conclusión individual (Angel Luna)}
+
+Este proyecto me permitió comprobar, con evidencia experimental y no solo con intuición teórica, qué factores determinan realmente el desempeño de una red neuronal en un problema de clasificación de imágenes con pocos datos por clase. Con una CNN de referencia de cuatro convoluciones y 480,936 parámetros se obtuvo un F1 macro de 0.5784 y una exactitud de 64.06,\% en validación. Ninguno de los seis cambios evaluados, cada uno aislado respecto a ella, logró superarla.
+
+El resultado que considero más instructivo es la comparación entre la MLP y la CNN. Con veinte veces más parámetros, la MLP alcanzó un F1 de apenas 0.018 y no pudo ajustar ni el entrenamiento. Se sigue que lo decisivo no es el número de parámetros, sino que la arquitectura incorpore el supuesto correcto sobre los datos: los filtros locales con pesos compartidos hacen aprendible el problema con alrededor de cien imágenes por clase. Esto me dejó claro que la capacidad de un modelo debe entenderse junto con su sesgo inductivo y no de forma aislada.
+
+También aprendí que más capacidad no implica mejor generalización. La CNN ampliada memorizó el entrenamiento más rápido, pero su validación se estancó en el mismo nivel (F1 de 0.566). Del mismo modo, los pesos por clase, que en principio parecen una solución natural al desbalance, redujeron el F1 macro a 0.488: la sensibilidad macro no cambió y la precisión cayó, es decir, la red solo redistribuyó sus predicciones en lugar de distinguir mejor las flores. En cambio, la regularización sí aportó (el F1 de validación bajó 0.045 al retirarla y la brecha de F1 subió de 0.235 a 0.344), y la tasa de aprendizaje resultó ser el hiperparámetro más sensible por su interacción con la reducción en meseta.
+
+Un aprendizaje metodológico importante fue corregir la forma de medir el sobreajuste. Al evaluar el entrenamiento sin aumento de datos y sin dropout, la brecha real resultó casi el doble de la reportada en el avance anterior. Aprendí que una métrica solo es comparable cuando se mide bajo las mismas condiciones, y que una conclusión puede cambiar por completo según cómo se calcule.
+
+Reconozco también las limitaciones del trabajo. Cada configuración se entrenó con una sola semilla y las corridas repetidas de los pesos por clase mostraron una variación de aproximadamente 0.04 en F1, por lo que diferencias pequeñas, como la de la CNN ampliada o la del dropout, no son concluyentes. Además, la validación se usó para elegir el checkpoint y no se evaluó sobre datos nunca vistos. Con estas salvedades, las diferencias grandes (MLP, tasa de aprendizaje y pesos por clase) sí son sólidas.
+
+Finalmente, los resultados señalan un techo cercano a 64,\% de exactitud con dos causas que actúan juntas: la capacidad limitada de una CNN pequeña entrenada desde cero a $112 \times 112$ y la escasez de datos por clase. Por ello, el siguiente paso natural es la transferencia de aprendizaje desde un modelo preentrenado en ImageNet, junto con repetir los experimentos con varias semillas. Más allá de la cifra final, el proyecto me deja una forma de trabajo que considero valiosa: cambiar un solo factor a la vez, medir con cuidado y no atribuir a una mejora lo que podría ser ruido.

@@ -1,0 +1,108 @@
+{
+  "f1_macro": 0.5538,
+  "accuracy": 0.6161,
+  "worst_classes": [
+    {
+      "label": 92,
+      "name": "pink quill",
+      "f1": 0.0
+    },
+    {
+      "label": 31,
+      "name": "garden phlox",
+      "f1": 0.0
+    },
+    {
+      "label": 2,
+      "name": "canterbury bells",
+      "f1": 0.0
+    },
+    {
+      "label": 3,
+      "name": "sweet pea",
+      "f1": 0.0
+    },
+    {
+      "label": 44,
+      "name": "bolero deep blue",
+      "f1": 0.0
+    },
+    {
+      "label": 83,
+      "name": "columbine",
+      "f1": 0.1754
+    },
+    {
+      "label": 38,
+      "name": "siam tulip",
+      "f1": 0.2
+    },
+    {
+      "label": 100,
+      "name": "trumpet creeper",
+      "f1": 0.2
+    },
+    {
+      "label": 89,
+      "name": "canna lily",
+      "f1": 0.2105
+    },
+    {
+      "label": 42,
+      "name": "sword lily",
+      "f1": 0.2353
+    }
+  ],
+  "confused_pairs": [
+    {
+      "true": "common tulip",
+      "pred": "rose",
+      "count": 16
+    },
+    {
+      "true": "wild rose",
+      "pred": "windflower",
+      "count": 13
+    },
+    {
+      "true": "carnation",
+      "pred": "rose",
+      "count": 12
+    },
+    {
+      "true": "wild geranium",
+      "pred": "iris",
+      "count": 10
+    },
+    {
+      "true": "rose",
+      "pred": "poinsettia",
+      "count": 10
+    },
+    {
+      "true": "wild geranium",
+      "pred": "morning glory",
+      "count": 9
+    },
+    {
+      "true": "anthurium",
+      "pred": "rose",
+      "count": 9
+    },
+    {
+      "true": "petunia",
+      "pred": "azalea",
+      "count": 9
+    },
+    {
+      "true": "camellia",
+      "pred": "rose",
+      "count": 9
+    },
+    {
+      "true": "wild rose",
+      "pred": "rose",
+      "count": 8
+    }
+  ]
+}

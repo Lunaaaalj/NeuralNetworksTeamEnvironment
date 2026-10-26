@@ -1,0 +1,16 @@
+{
+  "run": "distilled_ipc10_res112_s1",
+  "data": "distilled",
+  "ipc": 10,
+  "seed": 1,
+  "img_size": 112,
+  "train_images": 1040,
+  "epochs_run": 230,
+  "best_epoch": 180,
+  "val_f1_macro": 0.2188,
+  "val_accuracy": 0.222,
+  "train_seconds": 246.9,
+  "distill_seconds": 1510.0,
+  "distill_iterations": 500,
+  "model_path": "/Users/angelluna/Documents/STEM_PROJECTS/py/CNN-flower_classification/NeuralNetworksTeamEnvironment/models/distilled_ipc10_res112_s1.keras"
+}
