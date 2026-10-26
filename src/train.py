@@ -181,7 +181,8 @@ def run(cfg, data, ipc=None, seed=0, epochs=None, val_ds=None):
 
 def main():
     # SIGUSR1 imprime la pila de todos los hilos: run_final lo usa antes de matar una corrida colgada.
-    faulthandler.register(signal.SIGUSR1, all_threads=True)
+    if hasattr(signal, "SIGUSR1") and hasattr(faulthandler, "register"):
+        faulthandler.register(signal.SIGUSR1, all_threads=True)
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--config", default="configs/local.yaml")
     parser.add_argument("--data", choices=["full", "random", "distilled"], required=True)

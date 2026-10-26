@@ -1,0 +1,33 @@
+{
+  "lightweight_unit_tests": {
+    "command": "python -m unittest tests.test_avance4_evidence tests.test_avance4_regularization tests.test_avance4_report tests.test_avance4_delivery -v",
+    "passed": 14,
+    "failed": 0
+  },
+  "full_pytest": {
+    "status": "blocked_at_collection",
+    "reason": "ModuleNotFoundError: tensorflow in tests/conftest.py"
+  },
+  "notebook": {
+    "code_cells_executed": 10,
+    "errors": 0,
+    "embedded_visuals": 6,
+    "mode": "historical evidence, RUN_TRAINING=False"
+  },
+  "checkpoint_epoch_metadata": {
+    "A4_MLP": 77,
+    "A4_CNN_original": 53,
+    "A4_CNN_deep": 46,
+    "A4_CNN_AdamW": 61,
+    "method": "pickletools opcode inspection; no model deserialization or inference"
+  },
+  "syntax_python_and_notebook_code": "passed",
+  "json_and_csv_consistency": "passed",
+  "pdf": "compiled with Tectonic 0.17.0, 12 pages visually reviewed",
+  "zip_smoke_test": {
+    "status": "passed",
+    "code_cells_executed": 10,
+    "errors": 0,
+    "mode": "evidence from ZIP extraction, no original checkout inputs"
+  }
+}

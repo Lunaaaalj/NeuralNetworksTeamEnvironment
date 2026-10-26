@@ -1,16 +1,21 @@
-ENTREGA AVANCE 4
+ENTREGA CORREGIDA AVANCE 4 — RED CONVOLUTIVA
 
-Subir a Canvas: equipo_proyecto_avance4.pdf y equipo_proyecto_avance4.ipynb.
-El ZIP acompaña las figuras y la evidencia; no contiene los datos originales ni checkpoints grandes.
+Subir: equipo_proyecto_avance4.pdf y equipo_proyecto_avance4.ipynb.
+El notebook está ejecutado en modo evidencia: no entrena por defecto ni necesita TFRecords/TensorFlow para mostrar resultados históricos. Requiere Python 3.12, numpy, pandas, scipy, scikit-learn, matplotlib, PyYAML y Jupyter para volver a ejecutarlo.
 
-Figuras: arquitecturas, curvas por modelo, comparación, matrices de confusión y ejemplos de predicciones.
-Métricas: resultados.csv, históricos por época, eval_report.json y predicciones individuales.
-Los modelos .pt y .keras se conservan en reports/entregable_4/avance4_2026-10-21/models/.
+Familia A4: cuatro corridas históricas DirectML. Familia F: par complementario del reporte final usado para regularización, con tabla de checkpoints y época común 34. No se mezclan métricas de familias diferentes.
 
-La MLP está identificada como referencia reconstruida: no se encontró el artefacto exacto del Avance 3.
-Las métricas corresponden a una semilla y a validación, no a prueba independiente.
-Se atendió la observación compartida sobre representaciones; no se recibió el texto completo de la retroalimentación.
+Reproducir desde la raíz del ZIP/repo:
+python -m pip install -r reports/entregable_4/requirements-evidence.txt
+python -m scripts.build_avance4_report
+python reports/entregable_4/correcciones_etapa3/analizar_regularizacion.py
+python -m unittest tests.test_avance4_evidence tests.test_avance4_regularization tests.test_avance4_report tests.test_avance4_delivery -v
+python -m jupyter nbconvert --to notebook --execute --inplace notebooks/equipo_proyecto_avance4.ipynb
 
-Reproducir: ejecutar las celdas del notebook; activar RUN_TRAINING para nuevas ejecuciones.
-Construir PDF desde reports/entregable_4/: tectonic equipo_proyecto_avance4.tex.
-El notebook usa los módulos de este repositorio y sus dependencias (requirements-directml.txt).
+Compilar desde reports/entregable_4/: tectonic equipo_proyecto_avance4.tex
+Empaquetar desde la raíz: python -m scripts.package_avance4
+La validación visual del PDF debe renovarse si cambian sus fuentes; el empaquetado verifica el hash revisado.
+
+El ZIP contiene las fuentes actuales, el notebook idéntico al entregado, curvas/tablas y CSV/JSON de evidencia necesarios para el análisis final; excluye datos, checkpoints y residuos de pruebas. El diagnóstico detallado de pesos de etapa 2 requiere los checkpoints del repositorio completo para repetirse; su lectura es opcional y no afecta al modo evidencia de este notebook.
+
+No se hicieron nuevos entrenamientos ni inferencia sobre imágenes: faltaron TFRecords y frameworks. F1/exactitud/métricas por clase se recalcularon desde predicciones; pérdidas y train limpio se verificaron documentalmente. La suite pytest completa sigue requiriendo TensorFlow; no se declara aprobada. La MLP histórica se conserva con bajo ajuste. Una semilla y validación usada para selección limitan las conclusiones.

@@ -1,125 +1,120 @@
-"""Validate and package the PDF, executed notebook, figures and CSV evidence."""
-
+"""Package current verified A4 delivery; original experimental manifests stay read-only."""
 import argparse
 import hashlib
-from importlib.metadata import version
 import json
 from pathlib import Path
 import shutil
-from zipfile import ZipFile, ZIP_DEFLATED
-
+from zipfile import ZipFile,ZIP_DEFLATED
 import nbformat
-import numpy as np
 import pandas as pd
-from sklearn.metrics import accuracy_score, f1_score
-
-from src.config import ROOT
+from scripts.build_avance4_report import HISTORICAL,ROOT,REPORT
 
 
-def package(output):
-    output = Path(output).resolve()
-    table = pd.read_csv(output / "resultados.csv")
-    assert set(table.experiment) == {"mlp_referencia", "cnn_original", "cnn_dos_capas_extra", "cnn_regularizada"}
-    for row in table.itertuples():
-        directory = next((output / "runs" / row.experiment).glob("*/summary.json")).parent
-        pred = pd.read_csv(directory / "evaluation/validation_predictions.csv")
-        matrix = pd.read_csv(directory / "evaluation/confusion_matrix.csv", index_col=0).to_numpy()
-        np.testing.assert_allclose(accuracy_score(pred.true_label, pred.predicted_label), row.val_accuracy, atol=1e-9)
-        np.testing.assert_allclose(f1_score(pred.true_label, pred.predicted_label, average="macro"),
-                                   row.val_f1_macro, atol=0.000051)
-        assert matrix.shape == (104, 104)
-        assert matrix.sum() == len(pred) == 3712
-        assert matrix.trace() == pred.correct.sum()
-        assert row.train_images == 12753
-        evaluation = json.loads((directory / "eval_report.json").read_text(encoding="utf-8"))
-        assert evaluation["keras_export_verified"]
-        for name in ("curvas_entrenamiento_validacion", "confusion_matrix", "confusion_matrix_normalized", "predicciones_ejemplo"):
-            for extension in ("png", "pdf"):
-                assert (output / "figures" / row.experiment / f"{name}.{extension}").is_file()
-    notebook = ROOT / "notebooks/equipo_proyecto_avance4.ipynb"
-    nb = nbformat.read(notebook, as_version=4)
-    nbformat.validate(nb)
-    for cell in nb.cells:
-        if cell.cell_type == "code":
-            assert cell.execution_count is not None, "Execute all notebook cells before packaging"
-            assert not any(item.output_type == "error" for item in cell.outputs)
-    pdf = ROOT / "reports/entregable_4/equipo_proyecto_avance4.pdf"
-    assert pdf.is_file() and pdf.stat().st_size > 20000
-    delivery = ROOT / "entregables/avance4"
-    delivery.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(pdf, delivery / pdf.name)
-    shutil.copy2(notebook, delivery / notebook.name)
-    instructions = """ENTREGA AVANCE 4
-
-Subir a Canvas: equipo_proyecto_avance4.pdf y equipo_proyecto_avance4.ipynb.
-El ZIP acompaña las figuras y la evidencia; no contiene los datos originales ni checkpoints grandes.
-
-Figuras: arquitecturas, curvas por modelo, comparación, matrices de confusión y ejemplos de predicciones.
-Métricas: resultados.csv, históricos por época, eval_report.json y predicciones individuales.
-Los modelos .pt y .keras se conservan en reports/entregable_4/avance4_2026-10-21/models/.
-
-La MLP está identificada como referencia reconstruida: no se encontró el artefacto exacto del Avance 3.
-Las métricas corresponden a una semilla y a validación, no a prueba independiente.
-Se atendió la observación compartida sobre representaciones; no se recibió el texto completo de la retroalimentación.
-
-Reproducir: ejecutar las celdas del notebook; activar RUN_TRAINING para nuevas ejecuciones.
-Construir PDF desde reports/entregable_4/: tectonic equipo_proyecto_avance4.tex.
-El notebook usa los módulos de este repositorio y sus dependencias (requirements-directml.txt).
-"""
-    (delivery / "LEEME.txt").write_text(instructions, encoding="utf-8")
-    manifest_path = output / "manifest.json"
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    manifest["teacher_feedback"] = "User reports missing model representations; full written feedback not provided"
-    manifest["fully_connected_avance3"] = "Reconstructed reference; original Avance 3 artifact not identified"
-    source_files = list((ROOT / "src").glob("*.py")) + [ROOT / "scripts" / name for name in
-                    ("run_avance4.py", "prepare_avance4.py", "build_avance4_report.py", "package_avance4.py",
-                     "execute_avance4_notebook.py")]
-    manifest["packaged_source_sha256"] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
-                                          for p in source_files}
-    manifest["validated"] = {"runs": 4, "samples_each": 3712, "confusion_shape": [104, 104],
-                              "notebook_executed_without_errors": True, "checkpoint_export_parity": True}
-    manifest["package_versions"] = {package: version(package) for package in
-                                    ("tensorflow", "torch", "torch-directml", "keras", "numpy",
-                                     "scikit-learn", "matplotlib", "nbformat", "nbclient")}
-    data_root = ROOT / "data/raw/tpu-getting-started/tfrecords-jpeg-224x224"
-    manifest["dataset_sha256"] = {}
-    for split in ("train", "val"):
-        for path in sorted((data_root / split).glob("*.tfrec")):
-            with path.open("rb") as stream:
-                digest = hashlib.file_digest(stream, "sha256").hexdigest()
-            manifest["dataset_sha256"][path.relative_to(ROOT).as_posix()] = digest
-    manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
-    archive = delivery / "equipo_proyecto_avance4.zip"
-    with ZipFile(archive, "w", ZIP_DEFLATED) as bundle:
-        for file in (delivery / pdf.name, delivery / notebook.name, delivery / "LEEME.txt"):
-            bundle.write(file, file.name)
-        for base in (output / "figures", output / "runs", output / "diagnosticos"):
-            for file in base.rglob("*"):
-                if file.is_file() and file.suffix.lower() in {".png", ".pdf", ".csv", ".json", ".yaml"}:
-                    bundle.write(file, file.relative_to(ROOT).as_posix())
-        for file in (list(output.glob("*.yaml")) + list(output.glob("*.json")) + list(output.glob("*.csv"))
-                     + [output / "resumen_presentacion.txt"]):
-            bundle.write(file, file.relative_to(ROOT).as_posix())
-        for directory in (ROOT / "src", ROOT / "scripts", ROOT / "configs"):
-            for file in directory.glob("*"):
-                if file.is_file() and file.suffix in {".py", ".yaml"}:
-                    bundle.write(file, file.relative_to(ROOT).as_posix())
-        for filename in ("requirements.txt", "requirements-directml.txt"):
-            bundle.write(ROOT / filename, filename)
-        for file in (ROOT / "reports/entregable_4").rglob("*.tex"):
-            if output not in file.parents:
-                bundle.write(file, file.relative_to(ROOT).as_posix())
-        bundle.write(ROOT / "reports/entregable_4/references.bib", "reports/entregable_4/references.bib")
-        for name in ("cnn_diagram.png", "ejemplos_flores.png"):
-            file = ROOT / "reports/entregable_4/figures" / name
-            bundle.write(file, "reports/entregable_4/figures/" + file.name)
-        bundle.write(output / "figures/dm_historico/PROCEDENCIA.txt",
-                     (output / "figures/dm_historico/PROCEDENCIA.txt").relative_to(ROOT).as_posix())
-    print(json.dumps({"delivery": str(delivery), "archive": str(archive),
-                      "validated_runs": len(table)}, indent=2))
+def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", required=True)
+def verify_archive(archive,pdf,notebook):
+    with ZipFile(archive) as bundle:
+        assert bundle.testzip() is None
+        assert bundle.read(pdf.name)==pdf.read_bytes(),'ZIP PDF stale'
+        assert bundle.read(notebook.name)==notebook.read_bytes(),'ZIP notebook stale'
+        assert bundle.read('notebooks/'+notebook.name)==notebook.read_bytes()
+        names=bundle.namelist()
+        assert len(names)==len(set(names))
+        assert not any(any(word in n for word in ['pytest-temp','pytest-atomic-temp','latex-build','.venv','__pycache__']) for n in names)
+        assert not any(n.endswith(('.pt','.keras','.tfrec','.tmp')) for n in names)
+    return len(names)
+
+
+def package(output=HISTORICAL):
+    if Path(output).resolve()!=HISTORICAL.resolve():raise ValueError('Use audited historical A4 evidence')
+    notebook=ROOT/'notebooks/equipo_proyecto_avance4.ipynb'
+    pdf=REPORT/'equipo_proyecto_avance4.pdf'
+    nb=nbformat.read(notebook,as_version=4);nbformat.validate(nb)
+    code=[cell for cell in nb.cells if cell.cell_type=='code']
+    assert code and all(cell.execution_count is not None for cell in code)
+    assert not any(o.output_type=='error' for cell in code for o in cell.outputs)
+    assert pdf.is_file() and pdf.stat().st_size>20000
+    review=REPORT/'correcciones_etapa5/validacion_pdf.json'
+    checked=json.loads(review.read_text(encoding='utf-8'))
+    assert checked['pdf_sha256']==digest(pdf) and checked['pages_visually_reviewed']==list(range(1,checked['pages']+1))
+    assert checked['no_missing_references'] and checked['no_text_outside_page']
+    classes=pd.read_csv(REPORT/'correcciones_etapa4/metricas_seleccionado.csv')
+    selected=json.loads((REPORT/'correcciones_etapa4/evaluacion_seleccionado.json').read_text(encoding='utf-8'))
+    assert len(classes)==104 and classes.support.sum()==3712
+    assert abs(classes.f1.mean()-selected['f1_macro'])<1e-14
+    delivery=ROOT/'entregables/avance4';delivery.mkdir(exist_ok=True,parents=True)
+    shutil.copy2(pdf,delivery/pdf.name);shutil.copy2(notebook,delivery/notebook.name)
+    instructions='''ENTREGA CORREGIDA AVANCE 4 — RED CONVOLUTIVA
+
+Subir: equipo_proyecto_avance4.pdf y equipo_proyecto_avance4.ipynb.
+El notebook está ejecutado en modo evidencia: no entrena por defecto ni necesita TFRecords/TensorFlow para mostrar resultados históricos. Requiere Python 3.12, numpy, pandas, scipy, scikit-learn, matplotlib, PyYAML y Jupyter para volver a ejecutarlo.
+
+Familia A4: cuatro corridas históricas DirectML. Familia F: par complementario del reporte final usado para regularización, con tabla de checkpoints y época común 34. No se mezclan métricas de familias diferentes.
+
+Reproducir desde la raíz del ZIP/repo:
+python -m pip install -r reports/entregable_4/requirements-evidence.txt
+python -m scripts.build_avance4_report
+python reports/entregable_4/correcciones_etapa3/analizar_regularizacion.py
+python -m unittest tests.test_avance4_evidence tests.test_avance4_regularization tests.test_avance4_report tests.test_avance4_delivery -v
+python -m jupyter nbconvert --to notebook --execute --inplace notebooks/equipo_proyecto_avance4.ipynb
+
+Compilar desde reports/entregable_4/: tectonic equipo_proyecto_avance4.tex
+Empaquetar desde la raíz: python -m scripts.package_avance4
+La validación visual del PDF debe renovarse si cambian sus fuentes; el empaquetado verifica el hash revisado.
+
+El ZIP contiene las fuentes actuales, el notebook idéntico al entregado, curvas/tablas y CSV/JSON de evidencia necesarios para el análisis final; excluye datos, checkpoints y residuos de pruebas. El diagnóstico detallado de pesos de etapa 2 requiere los checkpoints del repositorio completo para repetirse; su lectura es opcional y no afecta al modo evidencia de este notebook.
+
+No se hicieron nuevos entrenamientos ni inferencia sobre imágenes: faltaron TFRecords y frameworks. F1/exactitud/métricas por clase se recalcularon desde predicciones; pérdidas y train limpio se verificaron documentalmente. La suite pytest completa sigue requiriendo TensorFlow; no se declara aprobada. La MLP histórica se conserva con bajo ajuste. Una semilla y validación usada para selección limitan las conclusiones.
+'''
+    (delivery/'LEEME.txt').write_text(instructions,encoding='utf-8')
+    files={}
+    def include(path,arc=None):
+        path=Path(path)
+        assert path.is_file(),path
+        files[arc or path.relative_to(ROOT).as_posix()]=path
+    for p in [delivery/pdf.name,delivery/notebook.name,delivery/'LEEME.txt']:include(p,p.name)
+    include(notebook)
+    for folder in ['src','scripts','configs','tests']:
+        for p in (ROOT/folder).glob('*'):
+            if p.is_file() and p.suffix in {'.py','.yaml'}:include(p)
+    for p in [ROOT/'requirements.txt',ROOT/'requirements-directml.txt',REPORT/'requirements-evidence.txt']:include(p)
+    for folder in [REPORT/'secciones',REPORT/'tablas']:
+        for p in folder.glob('*.tex'):include(p)
+    for p in [REPORT/'main.tex',REPORT/'equipo_proyecto_avance4.tex',REPORT/'references.bib']:include(p)
+    for stage in [2,3,4,5]:
+        for p in (REPORT/f'correcciones_etapa{stage}').rglob('*'):
+            if p.is_file() and p.name!='manifiesto_entrega.json' and p.suffix in {'.csv','.json','.md','.py','.png','.pdf'}:include(p)
+    for p in [REPORT/'AUDITORIA_CORRECCIONES.md',REPORT/'PLAN_EXPERIMENTAL.md',REPORT/'ETAPA_2_MLP_CNN.md',REPORT/'ETAPA_4_REPORTE.md']:include(p)
+    for p in (HISTORICAL/'runs').rglob('*'):
+        if p.is_file() and p.suffix in {'.csv','.json'}:include(p)
+    for p in list(HISTORICAL.glob('*.yaml'))+[HISTORICAL/'manifest.json']:include(p)
+    figure_names=['arquitecturas','comparacion_original_ampliada','cnn_regularizada/confusiones_principales','cnn_regularizada/confusion_matrix_normalized']
+    for name in figure_names:
+        for ext in ['png','pdf']:include(HISTORICAL/'figures'/f'{name}.{ext}')
+    # Include F/mlp as provenance support for the stage-2 tables, separately from the regularization pair.
+    final=ROOT/'reports/final/experimentos'
+    include(final/'conteo_por_clase.csv')
+    for variant in ['referencia','sin_regularizacion','mlp']:
+        include(final/'configs'/f'{variant}.yaml')
+        for p in (final/'runs'/variant).rglob('*'):
+            if p.is_file() and p.suffix in {'.csv','.json'}:include(p)
+    manifest={'purpose':'Current corrected A4 delivery; original evidence unchanged',
+        'files_sha256':{name:digest(p) for name,p in sorted(files.items())},
+        'notebook_code_cells_executed':len(code),'new_training':False,'new_image_inference':False,
+        'limitations':['Loss and clean-train metrics checked against histories, not re-inferred',
+                       'Full TensorFlow test suite unavailable','Single seed; no independent labeled test']}
+    manifest_path=REPORT/'correcciones_etapa5/manifiesto_entrega.json'
+    manifest_path.write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding='utf-8')
+    include(manifest_path)
+    archive=delivery/'equipo_proyecto_avance4.zip'
+    with ZipFile(archive,'w',ZIP_DEFLATED) as bundle:
+        for name,p in sorted(files.items()):bundle.write(p,name)
+    count=verify_archive(archive,pdf,notebook)
+    assert digest(pdf)==digest(delivery/pdf.name) and digest(notebook)==digest(delivery/notebook.name)
+    print(json.dumps({'archive_entries':count,'pdf_sha256':digest(pdf),'notebook_sha256':digest(notebook),
+                      'delivery':str(delivery)},indent=2))
+
+if __name__=='__main__':
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',type=Path,default=HISTORICAL)
     package(parser.parse_args().output)
