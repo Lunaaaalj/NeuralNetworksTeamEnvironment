@@ -35,7 +35,7 @@ class DeliveryTest(unittest.TestCase):
         notebook = nbformat.read(ROOT/"notebooks/equipo_proyecto_avance4.ipynb",as_version=4)
         nbformat.validate(notebook)
         cells = [c for c in notebook.cells if c.cell_type=="code"]
-        self.assertEqual(len(cells),10)
+        self.assertEqual(len(cells),11)
         self.assertTrue(all(c.execution_count is not None for c in cells))
         self.assertFalse(any(o.output_type=="error" for c in cells for o in c.outputs))
         self.assertGreaterEqual(sum("image/png" in o.get("data",{}) for c in cells for o in c.outputs),5)

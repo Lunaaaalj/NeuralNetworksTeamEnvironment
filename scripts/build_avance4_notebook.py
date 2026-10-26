@@ -29,9 +29,9 @@ def build():
     md('''# Avance 4 — Red convolutiva: clasificación de 104 flores
 
 ## 1. Introducción y objetivo
-Comparar una MLP reconstruida con CNN de cuatro/seis convoluciones y cuantificar la regularización mediante evidencia histórica verificable.
+Continuar el Entregable 3 corregido: allí se desarrolló una CNN de cuatro bloques (480,936 parámetros) y se estudió el conjunto completo, muestras aleatorias reducidas y datos sintéticos de Distribution Matching (DM). También se documentaron hiperparámetros y regularización. Aquí se incorpora una MLP de referencia reconstruida posteriormente, se comparan CNN de cuatro/seis convoluciones y se amplían regularización y evaluación por clase. El A3 corregido usa una CNN, no una MLP.
 
-**Familia A4:** cuatro corridas PyTorch/DirectML históricas. **Familia F:** dos corridas complementarias TensorFlow/Metal del reporte final. No son la misma ejecución ni réplicas equivalentes.
+**Familia A3:** CNN inicial y reducción/DM. **Familia A4:** cuatro corridas PyTorch/DirectML históricas. **Familia F:** hiperparámetros TensorFlow/Metal reutilizados en el A3 corregido y conservados en el reporte final; aquí se profundiza su par de regularización. Las copias A3/F son la misma evidencia, no repeticiones independientes.
 
 El modo predeterminado lee evidencia y no entrena. Se recalculan F1, exactitud, métricas por clase y matrices desde predicciones. Pérdidas y train limpio se cotejan con históricos; no se repite inferencia sobre TFRecords. Una semilla y validación usada para selección no permiten afirmar significancia estadística ni desempeño independiente de test.''')
     code('''%matplotlib inline
@@ -51,6 +51,29 @@ RUN_TRAINING = False
 plt.rcParams.update({"font.family":"DejaVu Sans", "font.size":10,
                      "axes.spines.top":False, "axes.spines.right":False})
 print("Modo evidencia histórico. RUN_TRAINING =", RUN_TRAINING)''')
+    md('''### Continuidad experimental respecto al Entregable 3
+
+1. CNN inicial A3: Adam 1e-3, batch 32, entrada RGB 112×112, F1 macro 0.5538 y exactitud 61.61%, checkpoint 38/43.
+2. Reducción/DM: IPC 1 y 10, tres semillas de clasificador por modalidad; un conjunto sintético por IPC compartido. F1 medio DM/aleatorio: 0.0672/0.0514 con IPC1 y 0.2044/0.2575 con IPC10. No se usaron imágenes DM en las cuatro corridas principales A4.
+3. Hiperparámetros y regularización F ya documentados en A3: referencia 0.5784, LR3e-4 0.4605, dropout0.3 0.5596 y control 0.5332. Sus archivos duplicados no suman entrenamientos.
+4. A4 amplía MLP/CNN y profundidad, con ejecuciones diferentes y batch64 DirectML. La CNN original conserva la arquitectura A3; F1 0.5740 no continúa el checkpoint 0.5538 ni prueba mejora arquitectónica.
+5. Evaluación detallada del seleccionado A4 (checkpoint61), con las104 clases.
+
+Es una progresión académica de preguntas. El A3 corregido incorporó F después de las corridas históricas A4 del21 de octubre; no implica ese orden literal de ejecución. El antiguo alias H del plan equivale a A3; sus hiperparámetros pertenecen a F. Matriz completa: `reports/entregable_4/ALINEACION_AVANCE3_AVANCE4.md`.
+
+La siguiente celda solo lee las fuentes: verifica13 clasificadores A3, las ocho copias idénticas A3/F, parámetros por cálculo y hashes del A3 intacto. No ejecuta el notebook A3 ni escribe en sus carpetas.''')
+    code('''from scripts.check_avance3_avance4 import inspect, verify_frozen_a3
+provenance = inspect()
+frozen = json.loads((REPORT/"alineacion_avance3/procedencia.json").read_text(encoding="utf-8"))
+verify_frozen_a3(frozen)
+print("A3 intacto; clasificadores:", provenance["a3_classifiers_checked"])
+display(pd.DataFrame([
+    {"familia":"A3", "fuente":"reports/entregable_3/runs", "uso":"CNN inicial y reducción/DM; 13 clasificadores"},
+    {"familia":"F", "fuente":"reports/final/experimentos/runs; alias A3/hiperparametros", "uso":"4 corridas de hiperparámetros, sin duplicar alias; par de regularización"},
+    {"familia":"A4", "fuente":"reports/entregable_4/avance4_2026-10-21/runs", "uso":"4 corridas DirectML; selección solo dentro de A4"}
+]))
+print("Pérdida mínima del historial y pérdida del checkpoint F1 son cantidades distintas:")
+display(pd.DataFrame(provenance["loss_definitions"]).round(6))''')
     md('''## 2. Carga y preparación de datos
 Se mantienen train=12,753, val=3,712 y test=7,382 sin etiquetas locales. Origen JPEG 224×224 → RGB float32/255 → bilineal con antialias a 112×112. Aumentos de train: flip horizontal, rotación 0.05, zoom 0.1 y contraste 0.1. Validación sin aumentos. Se emplean las 104 clases en F1 macro, incluidos ceros.
 
@@ -139,9 +162,9 @@ indexed=results.set_index("experiment_id")
 print("MLP → CNN original, diferencia de exactitud (pp):",100*(indexed.loc["A4_CNN_original","exactitud"]-indexed.loc["A4_MLP_lr1e4","exactitud"]))
 print("MLP → CNN original, diferencia de F1:",indexed.loc["A4_CNN_original","f1_macro"]-indexed.loc["A4_MLP_lr1e4","f1_macro"])''')
     md('''## 7. Regularización: familia F complementaria
-Se compara F/referencia (dropout0.5, aumentos, AdamW/WD0.01) con F/sin_regularizacion (dropout0, sin aumentos, Adam/WD0). Ambas conservan parada temprana y reducción de LR. Train limpio se midió históricamente sobre3,712 imágenes fijas sin aumentos y con `training=False`; no es todo train ni una muestra estratificada.
+Se profundiza la misma evidencia de regularización ya documentada en el A3 corregido, conservada también en F. Se compara F/referencia (dropout0.5, aumentos, AdamW/WD0.01) con F/sin_regularizacion (dropout0, sin aumentos, Adam/WD0). Ambas conservan parada temprana y reducción de LR. Train limpio se midió históricamente sobre3,712 imágenes fijas sin aumentos y con `training=False`; no es todo train ni una muestra estratificada.
 
-Primero se comparan checkpoints seleccionados (91/103 y34/46); después se extrae **exactamente la época34** de ambas corridas. Se conservan ambos análisis y no se interpolan datos. Las brechas se restan con precisión completa dentro de la misma fila.''')
+Primero se comparan checkpoints seleccionados (91/103 y34/46); después se extrae **exactamente la época34** de ambas corridas. Se conservan ambos análisis y no se interpolan datos. Las brechas se restan con precisión completa dentro de la misma fila. La pérdida aquí es la del checkpoint por F1: 1.4830/2.0395. El A3 registra también mínimos de historial (1.4637 en54 y1.8247 en25), compatibles pero distintos. La tabla de procedencia anterior muestra ambos valores y épocas para las cuatro corridas F.''')
     code('''fields=["experiment_id","epoch","train_f1_macro","val_f1_macro","train_eval_accuracy","val_accuracy","train_eval_loss","val_loss","gap_f1"]
 print("Mejores checkpoints:")
 display(reg_table[reg_table.comparison=="selected_checkpoint"][fields].round(6))
