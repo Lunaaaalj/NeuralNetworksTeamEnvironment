@@ -1,62 +1,54 @@
-\section{Regularización}
+\section{Regularización y generalización}
+\subsection{Evidencia complementaria F}
+La Tabla~\ref{tab:regularizacion_checkpoints} compara los checkpoints F con mayor
+F1 macro: época 91 de 103 con regularización conjunta y 34 de 46 sin ella.
+La versión regularizada obtiene F1 0.5784 y exactitud 64.06\%, frente a 0.5332
+y 59.64\%. La diferencia es +0.045155 de F1 y +4.4181 puntos porcentuales de
+exactitud. La brecha F1 baja de 0.3435 a 0.2354, una reducción de 0.108023.
+\input{tablas/regularizacion_checkpoints}
 
-\subsection{Diagnóstico con curvas de entrenamiento y validación}
-
-La Figura~\ref{fig:curvas-av4} compara exactitud y entropía cruzada para cada
-modelo. Se muestran todas las épocas ejecutadas y se marca la época seleccionada
-por F1 macro. No se confunde la última época con el checkpoint final evaluado.
-En una fase de sobreajuste, el modelo sigue reduciendo su error de entrenamiento
-sin obtener la misma mejora en validación; en particular, una pérdida de validación
-que aumenta revela errores más confiados aunque la exactitud cambie poco.
-
-\begin{itemize}
-\item \textbf{MLP de referencia}: la menor pérdida de validación fue 3.339 en la época 76. Al terminar, la pérdida de entrenamiento fue 3.595 y la de validación 3.345; la exactitud de entrenamiento fue 11.78\% y la de validación 15.41\%. Estas curvas deben interpretarse junto con F1 macro; no se concluye sobreajuste solo por una diferencia entre exactitudes.
-\item \textbf{CNN original}: la menor pérdida de validación fue 1.520 en la época 53. Al terminar, la pérdida de entrenamiento fue 0.937 y la de validación 1.609; la exactitud de entrenamiento fue 71.17\% y la de validación 62.53\%. La reducción de la pérdida de entrenamiento junto con una pérdida de validación mayor que su mínimo es evidencia de sobreajuste en la fase final.
-\item \textbf{CNN + 2 convoluciones}: la menor pérdida de validación fue 1.658 en la época 31. Al terminar, la pérdida de entrenamiento fue 0.564 y la de validación 2.024; la exactitud de entrenamiento fue 82.66\% y la de validación 60.48\%. La reducción de la pérdida de entrenamiento junto con una pérdida de validación mayor que su mínimo es evidencia de sobreajuste en la fase final.
-\item \textbf{CNN + AdamW + LR}: la menor pérdida de validación fue 1.494 en la época 52. Al terminar, la pérdida de entrenamiento fue 0.785 y la de validación 1.512; la exactitud de entrenamiento fue 76.16\% y la de validación 64.41\%. Estas curvas deben interpretarse junto con F1 macro; no se concluye sobreajuste solo por una diferencia entre exactitudes.
-\end{itemize}
-
-\begin{figure*}[p]
-\centering
-\includegraphics[width=\textwidth,keepaspectratio]{avance4_2026-10-21/figures/comparacion_original_ampliada.pdf}
-\caption{CNN original y CNN ampliada: curvas reales por época. El entrenamiento usa aumentos y dropout; la
-validación no. Las líneas verticales marcan el mejor checkpoint por F1 macro.}
-\label{fig:curvas-av4}
-\end{figure*}
-
-\begin{figure*}[p]
-\centering
-\includegraphics[width=\textwidth,keepaspectratio]{avance4_2026-10-21/figures/comparacion_referencia_regularizada.pdf}
-\caption{Curvas de la referencia totalmente conectada y la CNN con la intervención
-combinada de regularización. Se mantienen separados sus checkpoints y métricas.}
-\label{fig:curvas-ref-reg-av4}
-\end{figure*}
-
-\subsection{Técnicas aplicadas y efecto medido}
-
-Todos los modelos usan dropout de 0.5 antes de la salida, aumentos de datos
-solo en entrenamiento y parada temprana con restauración del mejor checkpoint.
-No se entrenó una ablación sin dropout ni sin aumentos; por eso no se atribuye
-por separado una mejora numérica a estas dos técnicas.
-
-La intervención adicional conserva la CNN de cuatro convoluciones, pero utiliza
-AdamW con decaimiento de pesos de 0.01 sobre matrices de pesos, excluyendo sesgos.
-Se trata de decaimiento desacoplado y no de añadir un término L2 a la pérdida
-mostrada. Además, reduce la tasa de aprendizaje a la mitad cuando la pérdida de
-validación no mejora durante dos evaluaciones, hasta un mínimo de $10^{-5}$.
-La paciencia de parada temprana pasa de 5 a 12 evaluaciones para permitir actuar
-a esa reducción. Esta es una intervención combinada: no permite aislar cuánto
-aportó el decaimiento, el ajuste de tasa o la paciencia.
-
-Frente a la CNN original, la variante regularizada cambia la exactitud de 63.25\% a 64.44\% (+1.19 puntos porcentuales) y F1 macro de 0.5740 a 0.5745 (+0.0005). Ambos valores se obtienen de los respectivos checkpoints seleccionados por F1 macro sobre la misma validación.
-
-La diferencia de F1 macro es pequeña. Con una sola semilla no se considera evidencia de una mejora robusta o estadísticamente significativa.
-
-Una mejora de exactitud acompañada de una caída de F1 macro no se interpreta como mejora general: el criterio prioritario es el desempeño equilibrado entre las 104 clases. Tampoco se afirma que el sobreajuste desaparezca; se compara la evidencia de las curvas y se conserva el checkpoint que generaliza mejor según la validación disponible.
-
+Sin dropout, aumentos ni decaimiento, F1 de train limpio alcanza 0.8767, superior
+a 0.8138 de la referencia, pero val obtiene menor F1 y mayor pérdida (2.0395
+frente a 1.4830). Este patrón es compatible con mayor sobreajuste: ajustar
+mejor ejemplos conocidos no garantiza mejores predicciones fuera de train.
+La pérdida de validación puede crecer aunque F1 cambie poco, por errores
+incorrectos más confiados. Las curvas completas se muestran en
+Figura~\ref{fig:reg-curvas}.
 \begin{figure*}[htbp]
 \centering
-\includegraphics[width=\textwidth]{avance4_2026-10-21/figures/cnn_regularizada/tasa_aprendizaje.pdf}
-\caption{Tasa de aprendizaje realmente utilizada en cada época de la variante regularizada. Las reducciones responden al estancamiento de la pérdida de validación.}
-\label{fig:lr-av4}
+\includegraphics[width=\textwidth]{correcciones_etapa3/curvas_comparadas.pdf}
+\caption{Familia F: curvas históricas y brecha F1. Train limpio usa 3,712 imágenes
+fijas sin aumentos ni dropout. Los puntos marcan checkpoints seleccionados; la
+línea vertical indica época 34.}\label{fig:reg-curvas}
 \end{figure*}
+
+\subsection{Comparación en la época común 34}
+Los dos historiales contienen todas las métricas en las épocas 1--46. La
+Tabla~\ref{tab:regularizacion_epoca34} extrae la fila exacta de la época 34.
+Sin regularización, F1 val 0.5332 y exactitud 59.64\% superan a 0.4851 y 56.98\%
+de la regularizada en ese punto. Sin embargo, la regularizada tiene menor loss
+val (1.6289 frente a 2.0395) y menor brecha F1 (0.0942 frente a 0.3435).
+\input{tablas/regularizacion_epoca34}
+
+Por tanto, no hay dominio de la variante regularizada en todas las épocas.
+Ajusta más lentamente y sigue mejorando después; su checkpoint seleccionado
+alcanza mejor F1 que el máximo de la variante sin esas intervenciones. Una
+brecha pequeña temprana puede reflejar ajuste insuficiente, por lo que se
+interpreta junto con métricas de ambos splits, no como sinónimo de mejor modelo.
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=\textwidth]{correcciones_etapa3/epoca_comun_34.pdf}
+\caption{Métricas F en época 34. Las barras sólidas representan train limpio;
+las rayadas, validación. La misma época no implica igual trayectoria de optimización.}
+\label{fig:reg-comun}
+\end{figure*}
+
+\subsection{Alcance de la intervención}
+Se modifican simultáneamente dropout, aumento, decaimiento de pesos y optimizador.
+No se puede cuantificar el aporte individual de cada técnica. Ambas corridas
+siguen usando parada temprana y ajuste de tasa; ``sin regularización'' denota
+la retirada de esas tres intervenciones explícitas. En época 34 las LR registradas
+son $10^{-3}$ con regularización y $1.25\times10^{-4}$ sin ella: el punto común
+no es un ensayo causal completamente controlado. Los resultados de una semilla
+no permiten afirmar significancia estadística ni una mejora universal. Las
+brechas de esta sección pertenecen únicamente a F, no a las corridas A4.

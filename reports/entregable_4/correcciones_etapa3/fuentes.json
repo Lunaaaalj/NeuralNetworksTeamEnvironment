@@ -1,0 +1,186 @@
+{
+  "family": "F: complementary historical final-report experiments",
+  "backend_provenance": "TensorFlow/Metal according to repository documentation, not newly detected",
+  "common_epochs": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "common_epoch": 34,
+  "train_protocol": "First 3712 fixed train images, no augmentation, training=False; metrics from histories",
+  "sources": {
+    "reports/final/experimentos/configs/referencia.yaml": {
+      "sha256": "5b5eb7586f0e59d483affdff254c3007204562e24777e6c9c6aca9e5869db1dc",
+      "text_lf_sha256": "44d7305cfa1779ab2a241b7180b4206ba0918c525ddb0bafb977f2ce59eea46f"
+    },
+    "reports/final/experimentos/runs/referencia/full_res112_s0_adamw_plateau/summary.json": {
+      "sha256": "128f74a8effae2e6c20b5766df00da0491c1261dcc3a62318aa8dcddb4163fa8",
+      "text_lf_sha256": "fc56f105365d34134ce15a0b6097d311acf3619445395475a6b30052b8342eb8"
+    },
+    "reports/final/experimentos/runs/referencia/full_res112_s0_adamw_plateau/history.csv": {
+      "sha256": "8b3a587e2d566b7c014657f48a9cdff541e098ffdbd99923a529b0caa57d676f",
+      "text_lf_sha256": "fab6b8f325f196495af92da39f9a53adf645711b82c1c3c1abb056d34768d6a8"
+    },
+    "reports/final/experimentos/runs/referencia/full_res112_s0_adamw_plateau/eval_report.json": {
+      "sha256": "41188bfcc794377f300bf92a4721b303f067ef3f4448069f6d1a9f66c056178c",
+      "text_lf_sha256": "9d92a9188a9a6487b307ae68b7ead6e746e4a1cda98b90045d3084ed544f3bbe"
+    },
+    "reports/final/experimentos/runs/referencia/full_res112_s0_adamw_plateau/evaluation/validation_predictions.csv": {
+      "sha256": "15529e5a8f090930985fbae89a4d42b2f72ee6daf0a998f3a963a04d0aec417c",
+      "text_lf_sha256": "332f4138ab94a56d13f00ed8a1c35d69a351abd5254e6b13b9e7398ee86db24d"
+    },
+    "reports/final/experimentos/runs/referencia/full_res112_s0_adamw_plateau/evaluation/confusion_matrix.csv": {
+      "sha256": "0dfce745c382e086fec71cf2c5b49f4c3c7d9e4782c0e950f4d018af7cb6d39b",
+      "text_lf_sha256": "ef4057daa3150be0172ceea68d0e4f19aec2fb298e3c21b63562939de5d45510"
+    },
+    "reports/final/experimentos/configs/sin_regularizacion.yaml": {
+      "sha256": "f29ffe874d57dc202b620605e4961b3c5550de3b80a6538f5f5df4116b62dcc5",
+      "text_lf_sha256": "4f9163077c9166375901d10d89179319a7b86bcd9611c05c605d2f98de8e3961"
+    },
+    "reports/final/experimentos/runs/sin_regularizacion/full_res112_s0_adam_plateau/summary.json": {
+      "sha256": "b1aef84c7e47414fbde5cb7b5aeb0172281c33d67e626c7141619053c1c4ff4e",
+      "text_lf_sha256": "7634a2ceaf200459217b0886782ff1faf21c440052222faa29c79e96f8d9048e"
+    },
+    "reports/final/experimentos/runs/sin_regularizacion/full_res112_s0_adam_plateau/history.csv": {
+      "sha256": "4cfa9a906285593dcff18d8ef034ee886c0f3f979cbe58abb1bad0d2740495ac",
+      "text_lf_sha256": "6bce43b6521dc682724bf617189261e188451769995f4d75cc4bd24f1986efd1"
+    },
+    "reports/final/experimentos/runs/sin_regularizacion/full_res112_s0_adam_plateau/eval_report.json": {
+      "sha256": "e9f20507b2b7ec47fb89292ed79d4955b46d004f137bfa93d945537b28540c69",
+      "text_lf_sha256": "ab23c9cb08b74728d571d72868502b613ecf4480489bdecbf7943ee704c913d2"
+    },
+    "reports/final/experimentos/runs/sin_regularizacion/full_res112_s0_adam_plateau/evaluation/validation_predictions.csv": {
+      "sha256": "b6efa3492f6d32762bc51b477cfbed404d4cb5c89352dd49d9ba7807be66a47e",
+      "text_lf_sha256": "899af39d81a6bb112fe3b847cd5cddcaf347bf2d9460890dd79fd55f8ae6d413"
+    },
+    "reports/final/experimentos/runs/sin_regularizacion/full_res112_s0_adam_plateau/evaluation/confusion_matrix.csv": {
+      "sha256": "9456f0c69e3e4822f392dc6ec5dbe7233a8c5eb3bf0694b96f5a3423fc4f7f4f",
+      "text_lf_sha256": "b3a94dcc83aa097ba7840608be7df1d446636171693ef4b745d74a56da1928ef"
+    }
+  },
+  "best_delta_con_minus_sin": {
+    "val_f1_macro": 0.0451550760215661,
+    "val_accuracy": 0.044181034482758674,
+    "gap_f1": -0.10802311515890362
+  },
+  "snapshots": [
+    {
+      "comparison": "selected_checkpoint",
+      "experiment_id": "F/referencia",
+      "run": "full_res112_s0_adamw_plateau",
+      "epochs_run": 103,
+      "epoch": 91,
+      "train_eval_accuracy": 0.830010775862069,
+      "train_eval_loss": 0.5571364965932123,
+      "train_f1_macro": 0.8137964260998521,
+      "val_accuracy": 0.640625,
+      "val_loss": 1.4829723629458198,
+      "val_f1_macro": 0.578366870583084,
+      "learning_rate": 9.999999747378752e-06,
+      "gap_f1": 0.23542955551676814,
+      "gap_accuracy": 0.18938577586206895,
+      "gap_loss": 0.9258358663526075
+    },
+    {
+      "comparison": "selected_checkpoint",
+      "experiment_id": "F/sin_regularizacion",
+      "run": "full_res112_s0_adam_plateau",
+      "epochs_run": 46,
+      "epoch": 34,
+      "train_eval_accuracy": 0.8733836206896551,
+      "train_eval_loss": 0.4434450833961881,
+      "train_f1_macro": 0.8766644652371897,
+      "val_accuracy": 0.5964439655172413,
+      "val_loss": 2.039543924660518,
+      "val_f1_macro": 0.5332117945615179,
+      "learning_rate": 0.0001250000059371,
+      "gap_f1": 0.34345267067567176,
+      "gap_accuracy": 0.2769396551724138,
+      "gap_loss": 1.59609884126433
+    },
+    {
+      "comparison": "common_epoch_34",
+      "experiment_id": "F/referencia",
+      "run": "full_res112_s0_adamw_plateau",
+      "epochs_run": 103,
+      "epoch": 34,
+      "train_eval_accuracy": 0.6422413793103449,
+      "train_eval_loss": 1.224729431086573,
+      "train_f1_macro": 0.579325545627921,
+      "val_accuracy": 0.5697737068965517,
+      "val_loss": 1.6289261004020428,
+      "val_f1_macro": 0.4851090392503908,
+      "learning_rate": 0.0010000000474974,
+      "gap_f1": 0.09421650637753026,
+      "gap_accuracy": 0.07246767241379315,
+      "gap_loss": 0.4041966693154697
+    },
+    {
+      "comparison": "common_epoch_34",
+      "experiment_id": "F/sin_regularizacion",
+      "run": "full_res112_s0_adam_plateau",
+      "epochs_run": 46,
+      "epoch": 34,
+      "train_eval_accuracy": 0.8733836206896551,
+      "train_eval_loss": 0.4434450833961881,
+      "train_f1_macro": 0.8766644652371897,
+      "val_accuracy": 0.5964439655172413,
+      "val_loss": 2.039543924660518,
+      "val_f1_macro": 0.5332117945615179,
+      "learning_rate": 0.0001250000059371,
+      "gap_f1": 0.34345267067567176,
+      "gap_accuracy": 0.2769396551724138,
+      "gap_loss": 1.59609884126433
+    }
+  ],
+  "limitations": [
+    "One seed; no statistical significance",
+    "Joint dropout/augmentation/optimizer/WD intervention",
+    "Both retain early stopping and adaptive LR",
+    "Train metrics not independently re-inferred",
+    "Common epoch does not equal common optimization trajectory"
+  ]
+}

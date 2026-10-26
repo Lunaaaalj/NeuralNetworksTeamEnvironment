@@ -1,0 +1,87 @@
+{
+  "experiment_id": "A4_CNN_AdamW",
+  "selection": "max macro F1 among four historical A4 runs",
+  "checkpoint_epoch": 61,
+  "epochs_run": 73,
+  "samples": 3712,
+  "correct": 2392,
+  "accuracy": 0.6443965517241379,
+  "f1_macro": 0.5744742345749192,
+  "precision_macro": 0.6214684170187184,
+  "recall_macro": 0.5634652236613092,
+  "val_loss_saved": 1.5074768929645932,
+  "confusions": [
+    {
+      "true_label": 30,
+      "predicted_label": 73,
+      "true": "carnation",
+      "predicted": "rose",
+      "count": 12
+    },
+    {
+      "true_label": 102,
+      "predicted_label": 73,
+      "true": "common tulip",
+      "predicted": "rose",
+      "count": 12
+    },
+    {
+      "true_label": 79,
+      "predicted_label": 73,
+      "true": "anthurium",
+      "predicted": "rose",
+      "count": 10
+    },
+    {
+      "true_label": 48,
+      "predicted_label": 49,
+      "true": "daisy",
+      "predicted": "common dandelion",
+      "count": 8
+    },
+    {
+      "true_label": 68,
+      "predicted_label": 103,
+      "true": "windflower",
+      "predicted": "wild rose",
+      "count": 8
+    },
+    {
+      "true_label": 95,
+      "predicted_label": 73,
+      "true": "camellia",
+      "predicted": "rose",
+      "count": 8
+    },
+    {
+      "true_label": 103,
+      "predicted_label": 68,
+      "true": "wild rose",
+      "predicted": "windflower",
+      "count": 8
+    },
+    {
+      "true_label": 49,
+      "predicted_label": 48,
+      "true": "common dandelion",
+      "predicted": "daisy",
+      "count": 7
+    },
+    {
+      "true_label": 68,
+      "predicted_label": 4,
+      "true": "windflower",
+      "predicted": "wild geranium",
+      "count": 7
+    },
+    {
+      "true_label": 73,
+      "predicted_label": 103,
+      "true": "rose",
+      "predicted": "wild rose",
+      "count": 7
+    }
+  ],
+  "new_training": false,
+  "new_image_inference": false
+}

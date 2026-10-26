@@ -1,6 +1,13 @@
 \section{Contexto del problema}
-Muchas categorías de flores son visualmente parecidas y distinguirlas puede requerir conocimiento especializado. Identificarlas de forma manual es lento cuando se tienen miles de fotografías. Por eso resulta útil contar con modelos que reconozcan la clase de una flor a partir de una imagen.
+Reconocer flores en fotografías requiere distinguir categorías con colores,
+texturas y formas semejantes bajo variaciones de pose, escala, fondo e iluminación.
+El problema se plantea como clasificación supervisada: dada una imagen RGB,
+se predice una de 104 etiquetas de la competencia \textit{Petals to the Metal}
+\citep{kagglePetalsMetal}. La variación dentro de cada clase y el desbalance
+hacen necesario evaluar algo más que el porcentaje global de aciertos.
 
-Este proyecto parte de la competencia "Petals to the Metal", encontrado en Kaggle, cuyo reto es construir un modelo que identifique el tipo de flor en un conjunto de imágenes. La competencia se limita a 104 clases de flores, y consiste en un problema de clasificación multiclase de imágenes en el que el modelo debe tener la capacidad de identificar valores finos como la forma, estructura y color para distinguir entre categorías cercanas. 
-
-Este problema tiene varias dificultades que lo hacen relevante desde un enfoque de redes neuronales. Primeramente, las clases son heterogéneas, ya que algunas de ellas solo tienen un subtipo de flor y otras agrupan muchas subvariedades. Además, las imágenes de las flores no fueron capturadas en el mismo entorno, dando más variedad a las mismas. Por último, el número de imágenes por cada clase tampoco es uniforme, por lo que, considerando la métrica de evaluación, es un punto fuerte a tomar en cuenta que el modelo funcione de manera efectiva tanto para clases con pocos ejemplos como también para aquellas con muchos. 
+Un clasificador de este tipo puede apoyar identificación educativa, organización
+de colecciones y revisión de observaciones de biodiversidad. Su alcance se
+restringe a las categorías disponibles: no identifica cualquier especie ni
+reconoce de forma confiable clases ajenas al entrenamiento. Los resultados de
+validación tampoco sustituyen una evaluación en fotografías de otro dominio.

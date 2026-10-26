@@ -1,0 +1,12 @@
+# Versions used for the executed evidence notebook; no training frameworks.
+numpy==2.3.5
+pandas==2.2.3
+scipy==1.18.1
+scikit-learn==1.9.0
+matplotlib==3.10.8
+pyyaml==6.0.3
+nbformat==5.11.1
+nbclient==0.11.0
+nbconvert==7.17.2
+ipykernel==7.4.0
+# Optional PDF verification: pypdf and pdfplumber (bundled runtime used in this review).

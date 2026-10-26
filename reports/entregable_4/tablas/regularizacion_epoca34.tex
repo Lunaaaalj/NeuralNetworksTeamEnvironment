@@ -1,0 +1,16 @@
+\begin{table*}[htbp]
+\centering
+\small
+\caption{Familia F: comparación complementaria en la época 34 de ambas corridas.}
+\label{tab:regularizacion_epoca34}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Variante & Época & $F_t$ & $F_v$ & $E_t$(\%) & $E_v$(\%) & $L_t$ & $L_v$ & $\Delta F$ \\
+\midrule
+Con & 34 & 0.5793 & 0.4851 & 64.22 & 56.98 & 1.2247 & 1.6289 & 0.0942 \\
+Sin & 34 & 0.8767 & 0.5332 & 87.34 & 59.64 & 0.4434 & 2.0395 & 0.3435 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\parbox{0.97\textwidth}{\footnotesize $t$: 3,712 imágenes fijas de train, sin aumentos y en inferencia; $v$: 3,712 de validación. $F$: F1 macro; $E$: exactitud; $L$: entropía cruzada; $\Delta F=F_t-F_v$. TensorFlow/Metal según documentación histórica; train y pérdidas solo cotejados con históricos.}
+\end{table*}
