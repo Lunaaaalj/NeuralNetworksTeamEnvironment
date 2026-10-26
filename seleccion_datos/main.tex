@@ -1,0 +1,40 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.8cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=apa]{biblatex}
+\addbibresource{references.bib}
+\usepackage{hyperref}
+
+\graphicspath{{figures/}}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=cyan,
+    citecolor=blue
+}
+
+\begin{document}
+
+\pagenumbering{Alph}
+\input{secciones/00_portada}
+\pagenumbering{arabic}
+
+\tableofcontents
+\clearpage
+
+\input{secciones/01_resumen}
+\clearpage
+
+\input{secciones/02_contexto}
+\input{secciones/03_dataset}
+\input{secciones/04_algoritmos}
+
+\printbibliography[title=Referencias]
+\end{document}
