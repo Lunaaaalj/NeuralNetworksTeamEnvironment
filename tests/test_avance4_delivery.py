@@ -1,5 +1,7 @@
 """Delivery synchronization and stale-archive rejection; no training dependencies."""
 import tempfile
+import hashlib
+import json
 from pathlib import Path
 import unittest
 from zipfile import ZipFile
@@ -8,6 +10,16 @@ from scripts.package_avance4 import ROOT, digest, verify_archive
 
 
 class DeliveryTest(unittest.TestCase):
+    def test_zip_manifest_matches_every_archived_source(self):
+        with ZipFile(ROOT/'entregables/avance4/equipo_proyecto_avance4.zip') as bundle:
+            manifest = json.loads(bundle.read('reports/entregable_4/correcciones_etapa5/manifiesto_entrega.json'))
+            for name, expected in manifest['files_sha256'].items():
+                self.assertEqual(hashlib.sha256(bundle.read(name)).hexdigest(), expected, name)
+            self.assertIn('reports/entregable_4/ALINEACION_AVANCE3_AVANCE4.md', bundle.namelist())
+            frozen = json.loads(bundle.read('reports/entregable_4/alineacion_avance3/procedencia.json'))
+            for name, expected in frozen['a3_files_sha256'].items():
+                self.assertEqual(hashlib.sha256(bundle.read(name)).hexdigest(), expected, name)
+
     def test_canonical_and_delivery_copies_are_identical(self):
         delivery = ROOT / "entregables/avance4"
         pdf = ROOT / "reports/entregable_4/equipo_proyecto_avance4.pdf"

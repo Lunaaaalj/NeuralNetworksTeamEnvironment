@@ -3,11 +3,12 @@ ENTREGA CORREGIDA AVANCE 4 — RED CONVOLUTIVA
 Subir: equipo_proyecto_avance4.pdf y equipo_proyecto_avance4.ipynb.
 El notebook está ejecutado en modo evidencia: no entrena por defecto ni necesita TFRecords/TensorFlow para mostrar resultados históricos. Requiere Python 3.12, numpy, pandas, scipy, scikit-learn, matplotlib, PyYAML y Jupyter para volver a ejecutarlo.
 
-Familia A4: cuatro corridas históricas DirectML. Familia F: par complementario del reporte final usado para regularización, con tabla de checkpoints y época común 34. No se mezclan métricas de familias diferentes.
+Familia A3: CNN inicial y reducción/DM, antecedentes del proyecto. Familia A4: cuatro corridas históricas DirectML; MLP reconstruida posteriormente y CNN compartida de 480,936 parámetros, con ejecuciones diferentes del A3. Familia F: hiperparámetros reutilizados en A3 corregido y reporte final, sin contar copias como repeticiones. Se profundiza regularización con checkpoints y época común 34. Pérdida mínima y pérdida del checkpoint F1 son cantidades distintas. No se mezclan métricas entre familias ni se usan datos DM en las cuatro corridas A4.
 
 Reproducir desde la raíz del ZIP/repo:
 python -m pip install -r reports/entregable_4/requirements-evidence.txt
 python -m scripts.build_avance4_report
+python -m scripts.check_avance3_avance4
 python reports/entregable_4/correcciones_etapa3/analizar_regularizacion.py
 python -m unittest tests.test_avance4_evidence tests.test_avance4_regularization tests.test_avance4_report tests.test_avance4_delivery -v
 python -m jupyter nbconvert --to notebook --execute --inplace notebooks/equipo_proyecto_avance4.ipynb
