@@ -1,0 +1,521 @@
+experiment_id,rank,label,name,predicted_count,validation_support,train_support
+A4_MLP_lr1e4,1,67,iris,1033,228,782
+A4_MLP_lr1e4,2,73,rose,831,134,460
+A4_MLP_lr1e4,3,103,wild rose,666,216,743
+A4_MLP_lr1e4,4,53,sunflower,376,134,460
+A4_MLP_lr1e4,5,4,wild geranium,258,205,703
+A4_MLP_lr1e4,6,48,daisy,209,123,422
+A4_MLP_lr1e4,7,49,common dandelion,162,164,563
+A4_MLP_lr1e4,8,102,common tulip,49,114,390
+A4_MLP_lr1e4,9,47,buttercup,29,76,261
+A4_MLP_lr1e4,10,71,azalea,18,40,137
+A4_MLP_lr1e4,11,46,marigold,17,37,125
+A4_MLP_lr1e4,12,88,watercress,16,28,96
+A4_MLP_lr1e4,13,55,bishop of llandaff,14,17,58
+A4_MLP_lr1e4,14,14,yellow iris,12,66,227
+A4_MLP_lr1e4,15,87,cyclamen,6,43,146
+A4_MLP_lr1e4,16,45,wallflower,5,50,172
+A4_MLP_lr1e4,17,93,foxglove,5,41,139
+A4_MLP_lr1e4,18,50,petunia,2,58,201
+A4_MLP_lr1e4,19,80,frangipani,2,45,153
+A4_MLP_lr1e4,20,0,pink primrose,1,79,272
+A4_MLP_lr1e4,21,75,morning glory,1,89,306
+A4_MLP_lr1e4,22,1,hard-leaved pocket orchid,0,7,26
+A4_MLP_lr1e4,23,2,canterbury bells,0,6,20
+A4_MLP_lr1e4,24,3,sweet pea,0,6,21
+A4_MLP_lr1e4,25,5,tiger lily,0,25,87
+A4_MLP_lr1e4,26,6,moon orchid,0,5,18
+A4_MLP_lr1e4,27,7,bird of paradise,0,31,105
+A4_MLP_lr1e4,28,8,monkshood,0,25,87
+A4_MLP_lr1e4,29,9,globe thistle,0,24,84
+A4_MLP_lr1e4,30,10,snapdragon,0,40,136
+A4_MLP_lr1e4,31,11,colt's foot,0,13,43
+A4_MLP_lr1e4,32,12,king protea,0,27,92
+A4_MLP_lr1e4,33,13,spear thistle,0,77,263
+A4_MLP_lr1e4,34,15,globe-flower,0,6,21
+A4_MLP_lr1e4,35,16,purple coneflower,0,16,55
+A4_MLP_lr1e4,36,17,peruvian lily,0,14,50
+A4_MLP_lr1e4,37,18,balloon flower,0,26,90
+A4_MLP_lr1e4,38,19,giant white arum lily,0,8,26
+A4_MLP_lr1e4,39,20,fire lily,0,6,19
+A4_MLP_lr1e4,40,21,pincushion flower,0,28,96
+A4_MLP_lr1e4,41,22,fritillary,0,14,48
+A4_MLP_lr1e4,42,23,red ginger,0,6,19
+A4_MLP_lr1e4,43,24,grape hyacinth,0,24,85
+A4_MLP_lr1e4,44,25,corn poppy,0,24,83
+A4_MLP_lr1e4,45,26,prince of wales feathers,0,6,21
+A4_MLP_lr1e4,46,27,stemless gentian,0,10,34
+A4_MLP_lr1e4,47,28,artichoke,0,34,119
+A4_MLP_lr1e4,48,29,sweet william,0,32,109
+A4_MLP_lr1e4,49,30,carnation,0,31,105
+A4_MLP_lr1e4,50,31,garden phlox,0,7,24
+A4_MLP_lr1e4,51,32,love in the mist,0,7,23
+A4_MLP_lr1e4,52,33,cosmos,0,6,20
+A4_MLP_lr1e4,53,34,alpine sea holly,0,5,18
+A4_MLP_lr1e4,54,35,ruby-lipped cattleya,0,11,36
+A4_MLP_lr1e4,55,36,cape flower,0,17,57
+A4_MLP_lr1e4,56,37,great masterwort,0,8,26
+A4_MLP_lr1e4,57,38,siam tulip,0,5,19
+A4_MLP_lr1e4,58,39,lenten rose,0,21,73
+A4_MLP_lr1e4,59,40,barberton daisy,0,18,64
+A4_MLP_lr1e4,60,41,daffodil,0,28,96
+A4_MLP_lr1e4,61,42,sword lily,0,18,63
+A4_MLP_lr1e4,62,43,poinsettia,0,32,110
+A4_MLP_lr1e4,63,44,bolero deep blue,0,5,18
+A4_MLP_lr1e4,64,51,wild pansy,0,30,105
+A4_MLP_lr1e4,65,52,primula,0,33,115
+A4_MLP_lr1e4,66,54,lilac hibiscus,0,11,37
+A4_MLP_lr1e4,67,56,gaura,0,26,89
+A4_MLP_lr1e4,68,57,geranium,0,18,63
+A4_MLP_lr1e4,69,58,orange dahlia,0,10,36
+A4_MLP_lr1e4,70,59,pink-yellow dahlia,0,17,58
+A4_MLP_lr1e4,71,60,cautleya spicata,0,8,27
+A4_MLP_lr1e4,72,61,japanese anemone,0,8,29
+A4_MLP_lr1e4,73,62,black-eyed susan,0,27,93
+A4_MLP_lr1e4,74,63,silverbush,0,8,28
+A4_MLP_lr1e4,75,64,californian poppy,0,16,55
+A4_MLP_lr1e4,76,65,osteospermum,0,9,33
+A4_MLP_lr1e4,77,66,spring crocus,0,6,21
+A4_MLP_lr1e4,78,68,windflower,0,76,260
+A4_MLP_lr1e4,79,69,tree poppy,0,27,94
+A4_MLP_lr1e4,80,70,gazania,0,30,104
+A4_MLP_lr1e4,81,72,water lily,0,49,167
+A4_MLP_lr1e4,82,74,thorn apple,0,36,125
+A4_MLP_lr1e4,83,76,passion flower,0,35,119
+A4_MLP_lr1e4,84,77,lotus,0,41,139
+A4_MLP_lr1e4,85,78,toad lily,0,25,86
+A4_MLP_lr1e4,86,79,anthurium,0,34,118
+A4_MLP_lr1e4,87,81,clematis,0,29,101
+A4_MLP_lr1e4,88,82,hibiscus,0,39,134
+A4_MLP_lr1e4,89,83,columbine,0,33,112
+A4_MLP_lr1e4,90,84,desert-rose,0,9,31
+A4_MLP_lr1e4,91,85,tree mallow,0,9,29
+A4_MLP_lr1e4,92,86,magnolia,0,35,120
+A4_MLP_lr1e4,93,89,canna lily,0,13,46
+A4_MLP_lr1e4,94,90,hippeastrum,0,31,106
+A4_MLP_lr1e4,95,91,bee balm,0,32,111
+A4_MLP_lr1e4,96,92,pink quill,0,7,24
+A4_MLP_lr1e4,97,94,bougainvillea,0,38,131
+A4_MLP_lr1e4,98,95,camellia,0,37,127
+A4_MLP_lr1e4,99,96,mallow,0,29,100
+A4_MLP_lr1e4,100,97,mexican petunia,0,12,41
+A4_MLP_lr1e4,101,98,bromelia,0,10,34
+A4_MLP_lr1e4,102,99,blanket flower,0,7,24
+A4_MLP_lr1e4,103,100,trumpet creeper,0,9,31
+A4_MLP_lr1e4,104,101,blackberry lily,0,7,25
+A4_CNN_original,1,67,iris,272,228,782
+A4_CNN_original,2,103,wild rose,229,216,743
+A4_CNN_original,3,4,wild geranium,215,205,703
+A4_CNN_original,4,53,sunflower,196,134,460
+A4_CNN_original,5,73,rose,185,134,460
+A4_CNN_original,6,49,common dandelion,164,164,563
+A4_CNN_original,7,48,daisy,124,123,422
+A4_CNN_original,8,102,common tulip,109,114,390
+A4_CNN_original,9,68,windflower,100,76,260
+A4_CNN_original,10,47,buttercup,87,76,261
+A4_CNN_original,11,13,spear thistle,86,77,263
+A4_CNN_original,12,75,morning glory,84,89,306
+A4_CNN_original,13,0,pink primrose,75,79,272
+A4_CNN_original,14,14,yellow iris,71,66,227
+A4_CNN_original,15,93,foxglove,67,41,139
+A4_CNN_original,16,29,sweet william,59,32,109
+A4_CNN_original,17,50,petunia,57,58,201
+A4_CNN_original,18,72,water lily,54,49,167
+A4_CNN_original,19,86,magnolia,52,35,120
+A4_CNN_original,20,95,camellia,49,37,127
+A4_CNN_original,21,45,wallflower,46,50,172
+A4_CNN_original,22,30,carnation,43,31,105
+A4_CNN_original,23,87,cyclamen,42,43,146
+A4_CNN_original,24,10,snapdragon,40,40,136
+A4_CNN_original,25,43,poinsettia,40,32,110
+A4_CNN_original,26,82,hibiscus,37,39,134
+A4_CNN_original,27,80,frangipani,36,45,153
+A4_CNN_original,28,90,hippeastrum,36,31,106
+A4_CNN_original,29,74,thorn apple,31,36,125
+A4_CNN_original,30,9,globe thistle,30,24,84
+A4_CNN_original,31,5,tiger lily,29,25,87
+A4_CNN_original,32,79,anthurium,29,34,118
+A4_CNN_original,33,94,bougainvillea,29,38,131
+A4_CNN_original,34,96,mallow,29,29,100
+A4_CNN_original,35,56,gaura,28,26,89
+A4_CNN_original,36,76,passion flower,28,35,119
+A4_CNN_original,37,88,watercress,28,28,96
+A4_CNN_original,38,7,bird of paradise,27,31,105
+A4_CNN_original,39,8,monkshood,27,25,87
+A4_CNN_original,40,21,pincushion flower,26,28,96
+A4_CNN_original,41,91,bee balm,26,32,111
+A4_CNN_original,42,12,king protea,25,27,92
+A4_CNN_original,43,71,azalea,25,40,137
+A4_CNN_original,44,18,balloon flower,24,26,90
+A4_CNN_original,45,78,toad lily,24,25,86
+A4_CNN_original,46,51,wild pansy,23,30,105
+A4_CNN_original,47,81,clematis,23,29,101
+A4_CNN_original,48,41,daffodil,22,28,96
+A4_CNN_original,49,57,geranium,22,18,63
+A4_CNN_original,50,62,black-eyed susan,22,27,93
+A4_CNN_original,51,77,lotus,22,41,139
+A4_CNN_original,52,39,lenten rose,20,21,73
+A4_CNN_original,53,28,artichoke,19,34,119
+A4_CNN_original,54,46,marigold,19,37,125
+A4_CNN_original,55,36,cape flower,18,17,57
+A4_CNN_original,56,59,pink-yellow dahlia,18,17,58
+A4_CNN_original,57,69,tree poppy,18,27,94
+A4_CNN_original,58,64,californian poppy,17,16,55
+A4_CNN_original,59,70,gazania,17,30,104
+A4_CNN_original,60,83,columbine,17,33,112
+A4_CNN_original,61,55,bishop of llandaff,16,17,58
+A4_CNN_original,62,16,purple coneflower,15,16,55
+A4_CNN_original,63,22,fritillary,15,14,48
+A4_CNN_original,64,24,grape hyacinth,14,24,85
+A4_CNN_original,65,40,barberton daisy,14,18,64
+A4_CNN_original,66,17,peruvian lily,12,14,50
+A4_CNN_original,67,25,corn poppy,11,24,83
+A4_CNN_original,68,58,orange dahlia,11,10,36
+A4_CNN_original,69,52,primula,10,33,115
+A4_CNN_original,70,54,lilac hibiscus,10,11,37
+A4_CNN_original,71,99,blanket flower,10,7,24
+A4_CNN_original,72,63,silverbush,9,8,28
+A4_CNN_original,73,65,osteospermum,9,9,33
+A4_CNN_original,74,89,canna lily,9,13,46
+A4_CNN_original,75,98,bromelia,9,10,34
+A4_CNN_original,76,37,great masterwort,8,8,26
+A4_CNN_original,77,60,cautleya spicata,8,8,27
+A4_CNN_original,78,11,colt's foot,7,13,43
+A4_CNN_original,79,19,giant white arum lily,7,8,26
+A4_CNN_original,80,20,fire lily,7,6,19
+A4_CNN_original,81,42,sword lily,7,18,63
+A4_CNN_original,82,97,mexican petunia,7,12,41
+A4_CNN_original,83,101,blackberry lily,7,7,25
+A4_CNN_original,84,61,japanese anemone,6,8,29
+A4_CNN_original,85,84,desert-rose,6,9,31
+A4_CNN_original,86,6,moon orchid,5,5,18
+A4_CNN_original,87,23,red ginger,5,6,19
+A4_CNN_original,88,26,prince of wales feathers,5,6,21
+A4_CNN_original,89,27,stemless gentian,5,10,34
+A4_CNN_original,90,35,ruby-lipped cattleya,5,11,36
+A4_CNN_original,91,1,hard-leaved pocket orchid,4,7,26
+A4_CNN_original,92,32,love in the mist,4,7,23
+A4_CNN_original,93,34,alpine sea holly,4,5,18
+A4_CNN_original,94,100,trumpet creeper,4,9,31
+A4_CNN_original,95,15,globe-flower,2,6,21
+A4_CNN_original,96,92,pink quill,2,7,24
+A4_CNN_original,97,2,canterbury bells,1,6,20
+A4_CNN_original,98,31,garden phlox,1,7,24
+A4_CNN_original,99,33,cosmos,1,6,20
+A4_CNN_original,100,38,siam tulip,1,5,19
+A4_CNN_original,101,66,spring crocus,1,6,21
+A4_CNN_original,102,85,tree mallow,1,9,29
+A4_CNN_original,103,3,sweet pea,0,6,21
+A4_CNN_original,104,44,bolero deep blue,0,5,18
+A4_CNN_deep,1,67,iris,268,228,782
+A4_CNN_deep,2,103,wild rose,253,216,743
+A4_CNN_deep,3,4,wild geranium,240,205,703
+A4_CNN_deep,4,73,rose,179,134,460
+A4_CNN_deep,5,49,common dandelion,148,164,563
+A4_CNN_deep,6,53,sunflower,123,134,460
+A4_CNN_deep,7,102,common tulip,123,114,390
+A4_CNN_deep,8,48,daisy,118,123,422
+A4_CNN_deep,9,14,yellow iris,80,66,227
+A4_CNN_deep,10,68,windflower,80,76,260
+A4_CNN_deep,11,75,morning glory,72,89,306
+A4_CNN_deep,12,13,spear thistle,71,77,263
+A4_CNN_deep,13,47,buttercup,70,76,261
+A4_CNN_deep,14,93,foxglove,65,41,139
+A4_CNN_deep,15,0,pink primrose,64,79,272
+A4_CNN_deep,16,50,petunia,64,58,201
+A4_CNN_deep,17,82,hibiscus,59,39,134
+A4_CNN_deep,18,87,cyclamen,58,43,146
+A4_CNN_deep,19,29,sweet william,54,32,109
+A4_CNN_deep,20,45,wallflower,53,50,172
+A4_CNN_deep,21,74,thorn apple,51,36,125
+A4_CNN_deep,22,86,magnolia,49,35,120
+A4_CNN_deep,23,72,water lily,47,49,167
+A4_CNN_deep,24,95,camellia,46,37,127
+A4_CNN_deep,25,46,marigold,44,37,125
+A4_CNN_deep,26,10,snapdragon,43,40,136
+A4_CNN_deep,27,79,anthurium,42,34,118
+A4_CNN_deep,28,96,mallow,42,29,100
+A4_CNN_deep,29,69,tree poppy,40,27,94
+A4_CNN_deep,30,71,azalea,40,40,137
+A4_CNN_deep,31,76,passion flower,39,35,119
+A4_CNN_deep,32,80,frangipani,38,45,153
+A4_CNN_deep,33,7,bird of paradise,32,31,105
+A4_CNN_deep,34,62,black-eyed susan,32,27,93
+A4_CNN_deep,35,43,poinsettia,31,32,110
+A4_CNN_deep,36,94,bougainvillea,31,38,131
+A4_CNN_deep,37,8,monkshood,28,25,87
+A4_CNN_deep,38,78,toad lily,28,25,86
+A4_CNN_deep,39,5,tiger lily,27,25,87
+A4_CNN_deep,40,9,globe thistle,27,24,84
+A4_CNN_deep,41,77,lotus,27,41,139
+A4_CNN_deep,42,28,artichoke,26,34,119
+A4_CNN_deep,43,88,watercress,26,28,96
+A4_CNN_deep,44,56,gaura,24,26,89
+A4_CNN_deep,45,51,wild pansy,23,30,105
+A4_CNN_deep,46,36,cape flower,22,17,57
+A4_CNN_deep,47,52,primula,22,33,115
+A4_CNN_deep,48,12,king protea,21,27,92
+A4_CNN_deep,49,21,pincushion flower,21,28,96
+A4_CNN_deep,50,57,geranium,21,18,63
+A4_CNN_deep,51,91,bee balm,21,32,111
+A4_CNN_deep,52,41,daffodil,20,28,96
+A4_CNN_deep,53,83,columbine,19,33,112
+A4_CNN_deep,54,22,fritillary,18,14,48
+A4_CNN_deep,55,59,pink-yellow dahlia,18,17,58
+A4_CNN_deep,56,24,grape hyacinth,17,24,85
+A4_CNN_deep,57,70,gazania,17,30,104
+A4_CNN_deep,58,16,purple coneflower,16,16,55
+A4_CNN_deep,59,81,clematis,16,29,101
+A4_CNN_deep,60,55,bishop of llandaff,15,17,58
+A4_CNN_deep,61,97,mexican petunia,15,12,41
+A4_CNN_deep,62,64,californian poppy,14,16,55
+A4_CNN_deep,63,90,hippeastrum,14,31,106
+A4_CNN_deep,64,17,peruvian lily,13,14,50
+A4_CNN_deep,65,18,balloon flower,13,26,90
+A4_CNN_deep,66,39,lenten rose,13,21,73
+A4_CNN_deep,67,58,orange dahlia,13,10,36
+A4_CNN_deep,68,85,tree mallow,13,9,29
+A4_CNN_deep,69,25,corn poppy,10,24,83
+A4_CNN_deep,70,27,stemless gentian,10,10,34
+A4_CNN_deep,71,42,sword lily,10,18,63
+A4_CNN_deep,72,54,lilac hibiscus,10,11,37
+A4_CNN_deep,73,60,cautleya spicata,10,8,27
+A4_CNN_deep,74,61,japanese anemone,10,8,29
+A4_CNN_deep,75,63,silverbush,10,8,28
+A4_CNN_deep,76,11,colt's foot,9,13,43
+A4_CNN_deep,77,40,barberton daisy,9,18,64
+A4_CNN_deep,78,65,osteospermum,9,9,33
+A4_CNN_deep,79,99,blanket flower,9,7,24
+A4_CNN_deep,80,89,canna lily,8,13,46
+A4_CNN_deep,81,35,ruby-lipped cattleya,7,11,36
+A4_CNN_deep,82,98,bromelia,6,10,34
+A4_CNN_deep,83,100,trumpet creeper,6,9,31
+A4_CNN_deep,84,1,hard-leaved pocket orchid,5,7,26
+A4_CNN_deep,85,34,alpine sea holly,5,5,18
+A4_CNN_deep,86,101,blackberry lily,5,7,25
+A4_CNN_deep,87,19,giant white arum lily,4,8,26
+A4_CNN_deep,88,20,fire lily,4,6,19
+A4_CNN_deep,89,23,red ginger,4,6,19
+A4_CNN_deep,90,32,love in the mist,4,7,23
+A4_CNN_deep,91,37,great masterwort,4,8,26
+A4_CNN_deep,92,84,desert-rose,4,9,31
+A4_CNN_deep,93,92,pink quill,4,7,24
+A4_CNN_deep,94,6,moon orchid,3,5,18
+A4_CNN_deep,95,26,prince of wales feathers,3,6,21
+A4_CNN_deep,96,30,carnation,3,31,105
+A4_CNN_deep,97,2,canterbury bells,2,6,20
+A4_CNN_deep,98,33,cosmos,2,6,20
+A4_CNN_deep,99,44,bolero deep blue,2,5,18
+A4_CNN_deep,100,66,spring crocus,2,6,21
+A4_CNN_deep,101,15,globe-flower,1,6,21
+A4_CNN_deep,102,38,siam tulip,1,5,19
+A4_CNN_deep,103,3,sweet pea,0,6,21
+A4_CNN_deep,104,31,garden phlox,0,7,24
+A4_CNN_AdamW,1,103,wild rose,256,216,743
+A4_CNN_AdamW,2,67,iris,240,228,782
+A4_CNN_AdamW,3,4,wild geranium,234,205,703
+A4_CNN_AdamW,4,73,rose,186,134,460
+A4_CNN_AdamW,5,49,common dandelion,173,164,563
+A4_CNN_AdamW,6,53,sunflower,154,134,460
+A4_CNN_AdamW,7,48,daisy,124,123,422
+A4_CNN_AdamW,8,102,common tulip,110,114,390
+A4_CNN_AdamW,9,13,spear thistle,83,77,263
+A4_CNN_AdamW,10,68,windflower,77,76,260
+A4_CNN_AdamW,11,75,morning glory,77,89,306
+A4_CNN_AdamW,12,14,yellow iris,75,66,227
+A4_CNN_AdamW,13,0,pink primrose,73,79,272
+A4_CNN_AdamW,14,47,buttercup,72,76,261
+A4_CNN_AdamW,15,93,foxglove,53,41,139
+A4_CNN_AdamW,16,29,sweet william,52,32,109
+A4_CNN_AdamW,17,86,magnolia,52,35,120
+A4_CNN_AdamW,18,72,water lily,49,49,167
+A4_CNN_AdamW,19,45,wallflower,48,50,172
+A4_CNN_AdamW,20,43,poinsettia,46,32,110
+A4_CNN_AdamW,21,50,petunia,44,58,201
+A4_CNN_AdamW,22,87,cyclamen,42,43,146
+A4_CNN_AdamW,23,5,tiger lily,41,25,87
+A4_CNN_AdamW,24,79,anthurium,41,34,118
+A4_CNN_AdamW,25,46,marigold,40,37,125
+A4_CNN_AdamW,26,9,globe thistle,39,24,84
+A4_CNN_AdamW,27,28,artichoke,37,34,119
+A4_CNN_AdamW,28,71,azalea,37,40,137
+A4_CNN_AdamW,29,76,passion flower,36,35,119
+A4_CNN_AdamW,30,80,frangipani,34,45,153
+A4_CNN_AdamW,31,82,hibiscus,33,39,134
+A4_CNN_AdamW,32,95,camellia,33,37,127
+A4_CNN_AdamW,33,7,bird of paradise,32,31,105
+A4_CNN_AdamW,34,70,gazania,32,30,104
+A4_CNN_AdamW,35,10,snapdragon,31,40,136
+A4_CNN_AdamW,36,77,lotus,30,41,139
+A4_CNN_AdamW,37,88,watercress,30,28,96
+A4_CNN_AdamW,38,12,king protea,29,27,92
+A4_CNN_AdamW,39,24,grape hyacinth,29,24,85
+A4_CNN_AdamW,40,94,bougainvillea,29,38,131
+A4_CNN_AdamW,41,21,pincushion flower,28,28,96
+A4_CNN_AdamW,42,74,thorn apple,28,36,125
+A4_CNN_AdamW,43,90,hippeastrum,28,31,106
+A4_CNN_AdamW,44,41,daffodil,27,28,96
+A4_CNN_AdamW,45,56,gaura,27,26,89
+A4_CNN_AdamW,46,8,monkshood,25,25,87
+A4_CNN_AdamW,47,30,carnation,25,31,105
+A4_CNN_AdamW,48,78,toad lily,25,25,86
+A4_CNN_AdamW,49,81,clematis,24,29,101
+A4_CNN_AdamW,50,57,geranium,23,18,63
+A4_CNN_AdamW,51,96,mallow,23,29,100
+A4_CNN_AdamW,52,62,black-eyed susan,22,27,93
+A4_CNN_AdamW,53,51,wild pansy,21,30,105
+A4_CNN_AdamW,54,36,cape flower,20,17,57
+A4_CNN_AdamW,55,91,bee balm,20,32,111
+A4_CNN_AdamW,56,18,balloon flower,19,26,90
+A4_CNN_AdamW,57,25,corn poppy,19,24,83
+A4_CNN_AdamW,58,39,lenten rose,19,21,73
+A4_CNN_AdamW,59,52,primula,19,33,115
+A4_CNN_AdamW,60,59,pink-yellow dahlia,18,17,58
+A4_CNN_AdamW,61,64,californian poppy,18,16,55
+A4_CNN_AdamW,62,69,tree poppy,17,27,94
+A4_CNN_AdamW,63,16,purple coneflower,16,16,55
+A4_CNN_AdamW,64,40,barberton daisy,16,18,64
+A4_CNN_AdamW,65,22,fritillary,15,14,48
+A4_CNN_AdamW,66,55,bishop of llandaff,15,17,58
+A4_CNN_AdamW,67,83,columbine,15,33,112
+A4_CNN_AdamW,68,27,stemless gentian,13,10,34
+A4_CNN_AdamW,69,58,orange dahlia,12,10,36
+A4_CNN_AdamW,70,89,canna lily,11,13,46
+A4_CNN_AdamW,71,98,bromelia,11,10,34
+A4_CNN_AdamW,72,65,osteospermum,10,9,33
+A4_CNN_AdamW,73,97,mexican petunia,10,12,41
+A4_CNN_AdamW,74,99,blanket flower,10,7,24
+A4_CNN_AdamW,75,11,colt's foot,9,13,43
+A4_CNN_AdamW,76,37,great masterwort,8,8,26
+A4_CNN_AdamW,77,54,lilac hibiscus,8,11,37
+A4_CNN_AdamW,78,60,cautleya spicata,8,8,27
+A4_CNN_AdamW,79,61,japanese anemone,8,8,29
+A4_CNN_AdamW,80,63,silverbush,8,8,28
+A4_CNN_AdamW,81,17,peruvian lily,7,14,50
+A4_CNN_AdamW,82,6,moon orchid,6,5,18
+A4_CNN_AdamW,83,19,giant white arum lily,6,8,26
+A4_CNN_AdamW,84,23,red ginger,6,6,19
+A4_CNN_AdamW,85,35,ruby-lipped cattleya,6,11,36
+A4_CNN_AdamW,86,84,desert-rose,6,9,31
+A4_CNN_AdamW,87,85,tree mallow,6,9,29
+A4_CNN_AdamW,88,20,fire lily,5,6,19
+A4_CNN_AdamW,89,1,hard-leaved pocket orchid,4,7,26
+A4_CNN_AdamW,90,26,prince of wales feathers,4,6,21
+A4_CNN_AdamW,91,101,blackberry lily,4,7,25
+A4_CNN_AdamW,92,15,globe-flower,3,6,21
+A4_CNN_AdamW,93,32,love in the mist,3,7,23
+A4_CNN_AdamW,94,42,sword lily,3,18,63
+A4_CNN_AdamW,95,38,siam tulip,2,5,19
+A4_CNN_AdamW,96,66,spring crocus,2,6,21
+A4_CNN_AdamW,97,92,pink quill,2,7,24
+A4_CNN_AdamW,98,2,canterbury bells,1,6,20
+A4_CNN_AdamW,99,31,garden phlox,1,7,24
+A4_CNN_AdamW,100,33,cosmos,1,6,20
+A4_CNN_AdamW,101,34,alpine sea holly,1,5,18
+A4_CNN_AdamW,102,44,bolero deep blue,1,5,18
+A4_CNN_AdamW,103,100,trumpet creeper,1,9,31
+A4_CNN_AdamW,104,3,sweet pea,0,6,21
+F_MLP_AdamW,1,67,iris,1010,228,782
+F_MLP_AdamW,2,73,rose,816,134,460
+F_MLP_AdamW,3,4,wild geranium,563,205,703
+F_MLP_AdamW,4,49,common dandelion,403,164,563
+F_MLP_AdamW,5,53,sunflower,373,134,460
+F_MLP_AdamW,6,103,wild rose,264,216,743
+F_MLP_AdamW,7,48,daisy,177,123,422
+F_MLP_AdamW,8,102,common tulip,65,114,390
+F_MLP_AdamW,9,47,buttercup,36,76,261
+F_MLP_AdamW,10,87,cyclamen,4,43,146
+F_MLP_AdamW,11,74,thorn apple,1,36,125
+F_MLP_AdamW,12,0,pink primrose,0,79,272
+F_MLP_AdamW,13,1,hard-leaved pocket orchid,0,7,26
+F_MLP_AdamW,14,2,canterbury bells,0,6,20
+F_MLP_AdamW,15,3,sweet pea,0,6,21
+F_MLP_AdamW,16,5,tiger lily,0,25,87
+F_MLP_AdamW,17,6,moon orchid,0,5,18
+F_MLP_AdamW,18,7,bird of paradise,0,31,105
+F_MLP_AdamW,19,8,monkshood,0,25,87
+F_MLP_AdamW,20,9,globe thistle,0,24,84
+F_MLP_AdamW,21,10,snapdragon,0,40,136
+F_MLP_AdamW,22,11,colt's foot,0,13,43
+F_MLP_AdamW,23,12,king protea,0,27,92
+F_MLP_AdamW,24,13,spear thistle,0,77,263
+F_MLP_AdamW,25,14,yellow iris,0,66,227
+F_MLP_AdamW,26,15,globe-flower,0,6,21
+F_MLP_AdamW,27,16,purple coneflower,0,16,55
+F_MLP_AdamW,28,17,peruvian lily,0,14,50
+F_MLP_AdamW,29,18,balloon flower,0,26,90
+F_MLP_AdamW,30,19,giant white arum lily,0,8,26
+F_MLP_AdamW,31,20,fire lily,0,6,19
+F_MLP_AdamW,32,21,pincushion flower,0,28,96
+F_MLP_AdamW,33,22,fritillary,0,14,48
+F_MLP_AdamW,34,23,red ginger,0,6,19
+F_MLP_AdamW,35,24,grape hyacinth,0,24,85
+F_MLP_AdamW,36,25,corn poppy,0,24,83
+F_MLP_AdamW,37,26,prince of wales feathers,0,6,21
+F_MLP_AdamW,38,27,stemless gentian,0,10,34
+F_MLP_AdamW,39,28,artichoke,0,34,119
+F_MLP_AdamW,40,29,sweet william,0,32,109
+F_MLP_AdamW,41,30,carnation,0,31,105
+F_MLP_AdamW,42,31,garden phlox,0,7,24
+F_MLP_AdamW,43,32,love in the mist,0,7,23
+F_MLP_AdamW,44,33,cosmos,0,6,20
+F_MLP_AdamW,45,34,alpine sea holly,0,5,18
+F_MLP_AdamW,46,35,ruby-lipped cattleya,0,11,36
+F_MLP_AdamW,47,36,cape flower,0,17,57
+F_MLP_AdamW,48,37,great masterwort,0,8,26
+F_MLP_AdamW,49,38,siam tulip,0,5,19
+F_MLP_AdamW,50,39,lenten rose,0,21,73
+F_MLP_AdamW,51,40,barberton daisy,0,18,64
+F_MLP_AdamW,52,41,daffodil,0,28,96
+F_MLP_AdamW,53,42,sword lily,0,18,63
+F_MLP_AdamW,54,43,poinsettia,0,32,110
+F_MLP_AdamW,55,44,bolero deep blue,0,5,18
+F_MLP_AdamW,56,45,wallflower,0,50,172
+F_MLP_AdamW,57,46,marigold,0,37,125
+F_MLP_AdamW,58,50,petunia,0,58,201
+F_MLP_AdamW,59,51,wild pansy,0,30,105
+F_MLP_AdamW,60,52,primula,0,33,115
+F_MLP_AdamW,61,54,lilac hibiscus,0,11,37
+F_MLP_AdamW,62,55,bishop of llandaff,0,17,58
+F_MLP_AdamW,63,56,gaura,0,26,89
+F_MLP_AdamW,64,57,geranium,0,18,63
+F_MLP_AdamW,65,58,orange dahlia,0,10,36
+F_MLP_AdamW,66,59,pink-yellow dahlia,0,17,58
+F_MLP_AdamW,67,60,cautleya spicata,0,8,27
+F_MLP_AdamW,68,61,japanese anemone,0,8,29
+F_MLP_AdamW,69,62,black-eyed susan,0,27,93
+F_MLP_AdamW,70,63,silverbush,0,8,28
+F_MLP_AdamW,71,64,californian poppy,0,16,55
+F_MLP_AdamW,72,65,osteospermum,0,9,33
+F_MLP_AdamW,73,66,spring crocus,0,6,21
+F_MLP_AdamW,74,68,windflower,0,76,260
+F_MLP_AdamW,75,69,tree poppy,0,27,94
+F_MLP_AdamW,76,70,gazania,0,30,104
+F_MLP_AdamW,77,71,azalea,0,40,137
+F_MLP_AdamW,78,72,water lily,0,49,167
+F_MLP_AdamW,79,75,morning glory,0,89,306
+F_MLP_AdamW,80,76,passion flower,0,35,119
+F_MLP_AdamW,81,77,lotus,0,41,139
+F_MLP_AdamW,82,78,toad lily,0,25,86
+F_MLP_AdamW,83,79,anthurium,0,34,118
+F_MLP_AdamW,84,80,frangipani,0,45,153
+F_MLP_AdamW,85,81,clematis,0,29,101
+F_MLP_AdamW,86,82,hibiscus,0,39,134
+F_MLP_AdamW,87,83,columbine,0,33,112
+F_MLP_AdamW,88,84,desert-rose,0,9,31
+F_MLP_AdamW,89,85,tree mallow,0,9,29
+F_MLP_AdamW,90,86,magnolia,0,35,120
+F_MLP_AdamW,91,88,watercress,0,28,96
+F_MLP_AdamW,92,89,canna lily,0,13,46
+F_MLP_AdamW,93,90,hippeastrum,0,31,106
+F_MLP_AdamW,94,91,bee balm,0,32,111
+F_MLP_AdamW,95,92,pink quill,0,7,24
+F_MLP_AdamW,96,93,foxglove,0,41,139
+F_MLP_AdamW,97,94,bougainvillea,0,38,131
+F_MLP_AdamW,98,95,camellia,0,37,127
+F_MLP_AdamW,99,96,mallow,0,29,100
+F_MLP_AdamW,100,97,mexican petunia,0,12,41
+F_MLP_AdamW,101,98,bromelia,0,10,34
+F_MLP_AdamW,102,99,blanket flower,0,7,24
+F_MLP_AdamW,103,100,trumpet creeper,0,9,31
+F_MLP_AdamW,104,101,blackberry lily,0,7,25

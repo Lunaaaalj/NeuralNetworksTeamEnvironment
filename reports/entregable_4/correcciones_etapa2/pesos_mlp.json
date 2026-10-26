@@ -1,0 +1,90 @@
+{
+  "method": "Read-only Keras config and HDF5 arrays; no pickle/model loading",
+  "python": "3.12.10",
+  "numpy": "2.5.4",
+  "h5py": "3.16.0",
+  "models": {
+    "A4_MLP_lr1e4": {
+      "source": "reports/entregable_4/avance4_2026-10-21/models/mlp_referencia/full_res112_s0_mlp_reference_directml.keras",
+      "sha256": "7bcfb14519477ab0445bbe674952cceb4604a247bfdb4c2ad5369c66be006cd7",
+      "layer_types": [
+        "InputLayer",
+        "Flatten",
+        "Dense",
+        "Dropout",
+        "Dense"
+      ],
+      "shapes": [
+        [
+          37632,
+          256
+        ],
+        [
+          256
+        ],
+        [
+          256,
+          104
+        ],
+        [
+          104
+        ]
+      ],
+      "parameters": 9660776,
+      "first_layer_parameters": 9634048,
+      "dropout": 0.5,
+      "negative_kernel_fraction": 0.52273331207483,
+      "negative_incoming_sum_with_bias_units": 252,
+      "kernel_column_sum_min_median_max": [
+        -105.0951067554654,
+        -19.561413840784585,
+        14.498473176863627
+      ],
+      "guaranteed_inactive_units_on_unit_cube": 0,
+      "guaranteed_active_units_on_unit_cube": 0,
+      "finite_weights": true,
+      "limitation": "No real images, activations, gradients or logits were evaluated. Negative column sums do not prove inactive ReLUs on real images."
+    },
+    "A4_MLP_lr1e3_failed": {
+      "source": "reports/entregable_4/avance4_2026-10-21/diagnosticos/mlp_lr1e3/models/full_res112_s0_mlp_reference_directml.keras",
+      "sha256": "17993c812b71bbd171bd89184c9e405b475505bc1c64826b0c0cb5fb3b35d998",
+      "layer_types": [
+        "InputLayer",
+        "Flatten",
+        "Dense",
+        "Dropout",
+        "Dense"
+      ],
+      "shapes": [
+        [
+          37632,
+          256
+        ],
+        [
+          256
+        ],
+        [
+          256,
+          104
+        ],
+        [
+          104
+        ]
+      ],
+      "parameters": 9660776,
+      "first_layer_parameters": 9634048,
+      "dropout": 0.5,
+      "negative_kernel_fraction": 0.6928181550940689,
+      "negative_incoming_sum_with_bias_units": 256,
+      "kernel_column_sum_min_median_max": [
+        -351.4532615469302,
+        -190.5198915143937,
+        -3.789742826949805
+      ],
+      "guaranteed_inactive_units_on_unit_cube": 0,
+      "guaranteed_active_units_on_unit_cube": 0,
+      "finite_weights": true,
+      "limitation": "No real images, activations, gradients or logits were evaluated. Negative column sums do not prove inactive ReLUs on real images."
+    }
+  }
+}
