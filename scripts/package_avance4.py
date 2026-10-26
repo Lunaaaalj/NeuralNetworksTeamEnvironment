@@ -50,11 +50,12 @@ def package(output=HISTORICAL):
 Subir: equipo_proyecto_avance4.pdf y equipo_proyecto_avance4.ipynb.
 El notebook está ejecutado en modo evidencia: no entrena por defecto ni necesita TFRecords/TensorFlow para mostrar resultados históricos. Requiere Python 3.12, numpy, pandas, scipy, scikit-learn, matplotlib, PyYAML y Jupyter para volver a ejecutarlo.
 
-Familia A4: cuatro corridas históricas DirectML. Familia F: par complementario del reporte final usado para regularización, con tabla de checkpoints y época común 34. No se mezclan métricas de familias diferentes.
+Familia A3: CNN inicial y reducción/DM, antecedentes del proyecto. Familia A4: cuatro corridas históricas DirectML; MLP reconstruida posteriormente y CNN compartida de 480,936 parámetros, con ejecuciones diferentes del A3. Familia F: hiperparámetros reutilizados en A3 corregido y reporte final, sin contar copias como repeticiones. Se profundiza regularización con checkpoints y época común 34. Pérdida mínima y pérdida del checkpoint F1 son cantidades distintas. No se mezclan métricas entre familias ni se usan datos DM en las cuatro corridas A4.
 
 Reproducir desde la raíz del ZIP/repo:
 python -m pip install -r reports/entregable_4/requirements-evidence.txt
 python -m scripts.build_avance4_report
+python -m scripts.check_avance3_avance4
 python reports/entregable_4/correcciones_etapa3/analizar_regularizacion.py
 python -m unittest tests.test_avance4_evidence tests.test_avance4_regularization tests.test_avance4_report tests.test_avance4_delivery -v
 python -m jupyter nbconvert --to notebook --execute --inplace notebooks/equipo_proyecto_avance4.ipynb
@@ -85,7 +86,12 @@ No se hicieron nuevos entrenamientos ni inferencia sobre imágenes: faltaron TFR
     for stage in [2,3,4,5]:
         for p in (REPORT/f'correcciones_etapa{stage}').rglob('*'):
             if p.is_file() and p.name!='manifiesto_entrega.json' and p.suffix in {'.csv','.json','.md','.py','.png','.pdf'}:include(p)
-    for p in [REPORT/'AUDITORIA_CORRECCIONES.md',REPORT/'PLAN_EXPERIMENTAL.md',REPORT/'ETAPA_2_MLP_CNN.md',REPORT/'ETAPA_4_REPORTE.md']:include(p)
+    for p in [REPORT/'AUDITORIA_CORRECCIONES.md',REPORT/'PLAN_EXPERIMENTAL.md',REPORT/'ETAPA_2_MLP_CNN.md',REPORT/'ETAPA_4_REPORTE.md',REPORT/'ALINEACION_AVANCE3_AVANCE4.md']:include(p)
+    for p in (REPORT/'alineacion_avance3').glob('*'):
+        if p.is_file() and p.suffix in {'.md','.json','.csv'}:include(p)
+    # A3 is a read-only reference; include its frozen files so provenance checks run offline.
+    for p in (ROOT/'reports/entregable_3').rglob('*'):
+        if p.is_file():include(p)
     for p in (HISTORICAL/'runs').rglob('*'):
         if p.is_file() and p.suffix in {'.csv','.json'}:include(p)
     for p in list(HISTORICAL.glob('*.yaml'))+[HISTORICAL/'manifest.json']:include(p)
@@ -95,7 +101,7 @@ No se hicieron nuevos entrenamientos ni inferencia sobre imágenes: faltaron TFR
     # Include F/mlp as provenance support for the stage-2 tables, separately from the regularization pair.
     final=ROOT/'reports/final/experimentos'
     include(final/'conteo_por_clase.csv')
-    for variant in ['referencia','sin_regularizacion','mlp']:
+    for variant in ['referencia','sin_regularizacion','mlp','lr_3e-4','dropout_0.3']:
         include(final/'configs'/f'{variant}.yaml')
         for p in (final/'runs'/variant).rglob('*'):
             if p.is_file() and p.suffix in {'.csv','.json'}:include(p)

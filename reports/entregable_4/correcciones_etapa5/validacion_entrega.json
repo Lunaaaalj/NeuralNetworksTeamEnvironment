@@ -1,7 +1,7 @@
 {
   "lightweight_unit_tests": {
-    "command": "python -m unittest tests.test_avance4_evidence tests.test_avance4_regularization tests.test_avance4_report tests.test_avance4_delivery -v",
-    "passed": 14,
+    "command": "python -m unittest tests.test_avance4_evidence tests.test_avance4_regularization tests.test_avance4_report tests.test_avance3_avance4_alignment tests.test_avance4_delivery -v",
+    "passed": 18,
     "failed": 0
   },
   "full_pytest": {
@@ -9,7 +9,7 @@
     "reason": "ModuleNotFoundError: tensorflow in tests/conftest.py"
   },
   "notebook": {
-    "code_cells_executed": 10,
+    "code_cells_executed": 11,
     "errors": 0,
     "embedded_visuals": 6,
     "mode": "historical evidence, RUN_TRAINING=False"
@@ -23,11 +23,20 @@
   },
   "syntax_python_and_notebook_code": "passed",
   "json_and_csv_consistency": "passed",
-  "pdf": "compiled with Tectonic 0.17.0, 12 pages visually reviewed",
+  "pdf": "compiled with Tectonic 0.17.0, all 13 pages rendered with Poppler and visually reviewed; 8 table and 7 figure destinations checked",
   "zip_smoke_test": {
     "status": "passed",
-    "code_cells_executed": 10,
+    "code_cells_executed": 11,
     "errors": 0,
     "mode": "evidence from ZIP extraction, no original checkout inputs"
+  },
+  "alignment_base": "fe49c37",
+  "alignment_checks": {
+    "a3_classifiers": 13,
+    "identical_alias_files": 8,
+    "f_loss_definitions": 4,
+    "a3_frozen_hashes": "verified",
+    "new_training": false,
+    "new_image_inference": false
   }
 }

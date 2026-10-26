@@ -1,8 +1,10 @@
 \section{Protocolo experimental y reproducibilidad}
 \subsection{Familias y condiciones}
-Se distinguen \textbf{A4}: MLP, CNN original, CNN ampliada y CNN AdamW/LR; y
-\textbf{F}: CNN con y sin intervención conjunta de regularización del reporte
-final. Todas declaran seed 0, train completo, la misma validación, entrada 112,
+Se distinguen \textbf{A3}: CNN inicial y experimentos aleatorios/DM;
+\textbf{A4}: MLP, CNN original, CNN ampliada y CNN AdamW/LR; y
+\textbf{F}: hiperparámetros históricos reutilizados en el A3 corregido y
+conservados en el reporte final. Las corridas A4 y el par F aquí analizado
+declaran seed 0, train completo, la misma validación, entrada 112,
 batch 64 y hasta 150 épocas. No se promedian resultados entre familias.
 
 En A4, las CNN original y ampliada usan Adam LR $10^{-3}$ y paciencia de cinco
@@ -18,6 +20,8 @@ sin aumentos y Adam/WD 0. Ambas conservan LR inicial $10^{-3}$, la misma regla
 de reducción de tasa, paciencia doce y tope 150. Sus trayectorias reales de LR
 pueden diferir. El checkpoint se selecciona por máximo F1 macro; exactitud y
 pérdida se asocian a ese mismo modelo, no a máximos independientes.
+El mínimo de pérdida de todo un historial es otra cantidad, obtenida posiblemente
+en otra época; no se usa para completar métricas del checkpoint por F1.
 
 \subsection{Medición de la brecha}
 En A4, train se mide durante actualizaciones con dropout y aumentos. En F se

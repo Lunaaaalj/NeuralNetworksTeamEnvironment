@@ -30,15 +30,15 @@ def validate(pdf, reviewed):
                     outside.append({"page": i, "text": word["text"]})
     assert not outside, outside
     # Check targets, not merely the absence of unresolved reference markers.
-    expected = {"figure.1": 3, "figure.2": 5, "figure.3": 5, "figure.4": 6,
-                "figure.5": 7, "figure.6": 8, "figure.7": 12,
-                "table.1": 1, "table.2": 4, "table.3": 5, "table.4": 6,
-                "table.5": 7, "table.6": 7, "table.7": 10}
+    expected = {"figure.1": 4, "figure.2": 6, "figure.3": 6, "figure.4": 7,
+                "figure.5": 8, "figure.6": 9, "figure.7": 13,
+                "table.1": 2, "table.2": 3, "table.3": 5, "table.4": 5,
+                "table.5": 7, "table.6": 8, "table.7": 8, "table.8": 11}
     actual = {name: reader.get_destination_page_number(reader.named_destinations[name])+1 for name in expected}
     assert actual == expected, "Layout changed: inspect and update expected reference destinations"
     result = {"pdf": "reports/entregable_4/equipo_proyecto_avance4.pdf",
               "pdf_sha256": hashlib.sha256(pdf.read_bytes()).hexdigest(), "pages": len(reader.pages),
-              "pages_visually_reviewed": sorted(reviewed), "review_method": "All 12 pages rendered with Poppler and inspected by agent",
+              "pages_visually_reviewed": sorted(reviewed), "review_method": f"All {len(reader.pages)} pages rendered with Poppler and inspected by agent",
               "no_missing_references": True, "no_text_outside_page": True,
               "reference_destinations_pages": actual, "expected_values_found": True,
               "compiler": "Tectonic 0.17.0, XeTeX and BibTeX, successful exit",

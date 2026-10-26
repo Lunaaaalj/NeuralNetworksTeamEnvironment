@@ -1,4 +1,27 @@
 \section{Metodología}
+\subsection{Continuidad experimental respecto al Entregable 3}
+La evolución académica parte de la CNN inicial del A3 (480,936 parámetros,
+Adam, batch 32): F1 macro 0.5538 y exactitud 61.61\%, checkpoint 38 de 43 épocas.
+Luego se estudió la reducción de datos con muestras aleatorias y DM, usando
+una y diez imágenes por clase y tres semillas de clasificador por configuración.
+Con IPC 1, DM obtuvo F1 medio 0.0672 frente a 0.0514 aleatorio; con IPC 10,
+0.2044 frente a 0.2575. Se generó un conjunto sintético por IPC y se reutilizó
+entre semillas; esas imágenes no se usan en las cuatro corridas principales A4.
+
+El A3 corregido también documenta la familia F de hiperparámetros: referencia
+0.5784, LR reducido 0.4605, dropout 0.3 con 0.5596 y control sin intervenciones
+explícitas con 0.5332. A4 profundiza el análisis de regularización de esa misma
+evidencia e incorpora una MLP reconstruida posteriormente y CNN de cuatro/seis
+convoluciones, para terminar con la evaluación de las 104 clases del seleccionado.
+La Tabla~\ref{tab:procedencia} distingue grupos y evita contar copias como réplicas.
+\input{tablas/procedencia}
+
+Esta secuencia explica la evolución de preguntas, no un calendario literal de
+ejecución: el A3 corregido incorporó evidencia F después de las corridas históricas
+A4 del 21 de octubre. La CNN original A4 comparte la definición del A3, pero se
+entrenó en otra ejecución, con batch 64 y DirectML. Su F1 0.5740 no continúa el
+checkpoint de F1 0.5538 ni demuestra una mejora causada por la arquitectura.
+
 \subsection{Arquitecturas entrenadas}
 La MLP aplica Flatten, Dense256/ReLU, dropout 0.5 y Dense104; tiene 9,660,776
 parámetros. La primera capa aporta 9,634,048 (99.72\%), porque cada uno de los
@@ -34,7 +57,8 @@ Los registros conservan una prueba histórica de paridad sobre un lote. Este
 análisis recalcula métricas desde las predicciones guardadas y coteja las pérdidas
 con los archivos; no vuelve a ejecutar inferencia sobre imágenes.
 
-El par complementario F procede del reporte final y utiliza TensorFlow/Metal,
+El par complementario F está conservado en el reporte final y reutilizado en
+el A3 corregido; utiliza TensorFlow/Metal,
 según su documentación. No se trata de una repetición DirectML. La destilación
 Distribution Matching pertenece a otro experimento del proyecto: no se usaron
 sus imágenes sintéticas para entrenar las seis corridas aquí comparadas.
