@@ -1,0 +1,13 @@
+\begin{table*}[htbp]
+\centering\small
+\caption{Grupos de evidencia y continuidad académica. Épocas en base 1.}
+\label{tab:procedencia}
+\begin{tabular}{p{0.10\textwidth}p{0.27\textwidth}p{0.28\textwidth}p{0.25\textwidth}}
+\toprule Familia & Evidencia y procedencia & Condiciones distintivas & Papel en A4 \\
+\midrule
+A3 & \path{reports/entregable_3/runs/}: CNN completa y 12 clasificadores reducidos & Adam, batch 32; completo 38/43; DM/aleatorio IPC 1/10, semillas 0--2 & Antecedente CNN y reducción; sin sintéticos en A4 \\
+F & \path{reports/final/experimentos/runs/}; cuatro alias en \path{reports/entregable_3/hiperparametros/} & TensorFlow/Metal según documentación; batch 64, LR adaptable; referencia 91/103, control 34/46 & Hiperparámetros y regularización reutilizados; los alias no aumentan el número de corridas \\
+A4 & \path{reports/entregable_4/avance4_2026-10-21/runs/}: MLP y tres CNN & DirectML, batch 64; checkpoints 77, 53, 46 y 61 respectivamente & Comparación principal y selección; métricas por clase del checkpoint 61 \\
+\bottomrule
+\end{tabular}
+\end{table*}

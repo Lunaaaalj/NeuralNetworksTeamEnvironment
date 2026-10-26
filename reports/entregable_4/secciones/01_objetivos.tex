@@ -1,13 +1,18 @@
 \section{Resumen y objetivos}
-El objetivo es evaluar modelos de clasificación multiclase de flores y estudiar
+El Entregable 3 desarrolló una CNN para clasificar flores y analizó el conjunto
+completo, muestras aleatorias reducidas y datos sintéticos obtenidos mediante
+Distribution Matching. Su versión corregida incorporó también evidencia histórica
+de hiperparámetros y regularización. El objetivo de esta entrega es ampliar esa
+investigación y estudiar
 su capacidad de ajuste y generalización. Se comparan una red totalmente conectada
 (MLP), una CNN de cuatro convoluciones, una variante de seis convoluciones y
 una CNN con AdamW y ajuste de tasa. Se cuantifican F1 macro, exactitud, pérdida,
 parámetros y errores por clase. La MLP es una referencia reconstruida con el
-pipeline del equipo; no se atribuye a un checkpoint MLP del Avance 3.
+pipeline del equipo para contrastar conectividad densa y convolucional: el
+Entregable 3 corregido utilizó una CNN, no una MLP.
 
 Para estudiar la regularización se incorpora, en un grupo experimental separado,
-un par de corridas existentes con y sin dropout, aumento de datos y decaimiento
+el mismo par de corridas históricas ya analizado en el A3 corregido, con y sin dropout, aumento de datos y decaimiento
 de pesos. Se presentan tanto sus mejores checkpoints como una comparación en
 la misma época registrada. Las curvas y las brechas permiten distinguir mayor
 ajuste de train de una mejora efectiva en validación.

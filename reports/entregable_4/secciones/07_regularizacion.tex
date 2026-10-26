@@ -1,5 +1,11 @@
 \section{Regularización y generalización}
 \subsection{Evidencia complementaria F}
+Este par ya forma parte del estudio de hiperparámetros del Entregable 3 corregido.
+Los archivos de historial y resumen de sus carpetas \texttt{hiperparametros/}
+son idénticos a los conservados en el reporte final: son evidencia reutilizada,
+no entrenamientos nuevos ni repeticiones independientes. Aquí se profundiza
+su lectura mediante checkpoints, curvas y época común.
+
 La Tabla~\ref{tab:regularizacion_checkpoints} compara los checkpoints F con mayor
 F1 macro: época 91 de 103 con regularización conjunta y 34 de 46 sin ella.
 La versión regularizada obtiene F1 0.5784 y exactitud 64.06\%, frente a 0.5332
@@ -14,6 +20,11 @@ mejor ejemplos conocidos no garantiza mejores predicciones fuera de train.
 La pérdida de validación puede crecer aunque F1 cambie poco, por errores
 incorrectos más confiados. Las curvas completas se muestran en
 Figura~\ref{fig:reg-curvas}.
+Las pérdidas anteriores pertenecen a los checkpoints elegidos por F1. En cambio,
+el campo \texttt{val\_loss\_min} del A3 informa mínimos de historial:
+1.4637 en época 54 con regularización y 1.8247 en época 25 sin ella. No son
+las pérdidas 1.4830 (época 91) y 2.0395 (época 34) de la tabla. Ambas lecturas
+son compatibles y no deben etiquetarse como la misma cantidad.
 \begin{figure*}[htbp]
 \centering
 \includegraphics[width=\textwidth]{correcciones_etapa3/curvas_comparadas.pdf}

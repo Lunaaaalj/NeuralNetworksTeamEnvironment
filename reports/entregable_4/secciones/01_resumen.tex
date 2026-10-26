@@ -1,12 +1,19 @@
 \begin{abstract}
-Se estudia la clasificación de 104 categorías de flores mediante una MLP sobre
+Como continuación del Entregable 3 corregido, que desarrolló una CNN y comparó
+datos completos, subconjuntos aleatorios y datos sintéticos mediante Distribution
+Matching (DM), se amplía el estudio de clasificación de 104 categorías de flores
+mediante una MLP de referencia reconstruida posteriormente sobre
 píxeles aplanados y CNN entrenadas desde cero con entrada RGB de $112\times112$.
 Se analizan cuatro corridas históricas A4 sobre 12,753 imágenes de entrenamiento
 y 3,712 de validación. La CNN original obtiene F1 macro 0.5740 y exactitud 63.25\%,
 frente a 0.0280 y 15.52\% de la MLP; una CNN de seis convoluciones obtiene 0.5502
 y 62.23\%. Se selecciona la CNN de cuatro convoluciones con AdamW y tasa adaptable
 por F1 macro 0.5745, exactitud 64.44\% y checkpoint 61 de 73 épocas.
-Como evidencia complementaria separada, dos corridas TensorFlow del reporte final
+Se conserva la arquitectura CNN de 480,936 parámetros del A3, cuya corrida inicial
+obtuvo F1 0.5538 y exactitud 61.61\%; A4 utiliza ejecuciones distintas, sin
+continuidad de checkpoint demostrada ni datos sintéticos en sus corridas principales.
+Como evidencia complementaria separada, dos corridas TensorFlow de la familia F,
+ya documentadas como hiperparámetros en el A3 corregido y conservadas en el reporte final,
 permiten comparar la regularización conjunta: F1 macro 0.5784 con dropout,
 aumentos y AdamW, frente a 0.5332 sin esas intervenciones; la brecha F1 de
 entrenamiento limpio menos validación baja de 0.3435 a 0.2354. En la época común
