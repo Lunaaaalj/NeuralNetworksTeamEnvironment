@@ -1,0 +1,18 @@
+\begin{table*}[htbp]
+\centering
+\small
+\caption{Familia A4: validación histórica recalculada desde predicciones (3,712 imágenes).}
+\label{tab:modelos-a4}
+\begin{tabular}{lrrrrr}
+\toprule
+Modelo & Parámetros & Época/total & Exact. (\%) & F1 macro & Pérdida \\
+\midrule
+MLP & 9,660,776 & 77/87 & 15.52 & 0.0280 & 3.4032 \\
+CNN original & 480,936 & 53/58 & 63.25 & 0.5740 & 1.5196 \\
+CNN ampliada & 1,218,600 & 46/51 & 62.23 & 0.5502 & 1.7857 \\
+CNN AdamW/LR & 480,936 & 61/73 & 64.44 & 0.5745 & 1.5075 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\parbox{0.97\textwidth}{\footnotesize Época seleccionada por F1 macro / épocas completas. PyTorch/DirectML, seed 0, entrada 112 por 112. La pérdida procede de evaluación guardada; no se repitió inferencia.}
+\end{table*}

@@ -6,6 +6,8 @@
 \newcommand{\autocite}[1]{\citep{#1}}
 \newcommand{\parencite}[1]{\citep{#1}}
 \usepackage{float}
+\usepackage{longtable}
+\usepackage{xurl}
 % cas-dc ya carga graphicx, amsmath, amssymb, booktabs y hyperref
 \graphicspath{{figures/}}
 \hypersetup{
@@ -51,6 +53,22 @@
 \input{secciones/08_resultados}
 
 \clearpage
-\nocite{*}
+
 \bibliography{references}
+\clearpage
+\onecolumn
+\section*{Anexo: métricas completas y matriz de confusión}
+Las métricas se derivan de las 3,712 predicciones de validación del modelo
+A4-CNN-AdamW/LR, checkpoint 61. El soporte total es 3,712; los ceros por
+clase se conservan al promediar F1 macro. No se trata de métricas de test.
+\input{tablas/clases_completas}
+\clearpage
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{avance4_2026-10-21/figures/cnn_regularizada/confusion_matrix_normalized.pdf}
+\caption{Matriz completa normalizada por clase real del modelo seleccionado
+(104 clases). La diagonal representa recall; la vista de foco del cuerpo permite
+leer los errores más frecuentes.}\label{fig:matriz-completa}
+\end{figure}
+
 \end{document}

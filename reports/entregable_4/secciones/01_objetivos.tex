@@ -1,19 +1,13 @@
 \section{Resumen y objetivos}
+El objetivo es evaluar modelos de clasificación multiclase de flores y estudiar
+su capacidad de ajuste y generalización. Se comparan una red totalmente conectada
+(MLP), una CNN de cuatro convoluciones, una variante de seis convoluciones y
+una CNN con AdamW y ajuste de tasa. Se cuantifican F1 macro, exactitud, pérdida,
+parámetros y errores por clase. La MLP es una referencia reconstruida con el
+pipeline del equipo; no se atribuye a un checkpoint MLP del Avance 3.
 
-Este avance compara una red totalmente conectada de referencia con la CNN
-original del equipo y con una segunda CNN que agrega dos capas convolucionales.
-Además, evalúa una intervención de regularización sobre la arquitectura original.
-El objetivo es medir si extraer patrones espaciales mejora la clasificación de
-104 categorías de flores y si aumentar la profundidad o regularizar mejora la
-generalización. Se reportan exactitud, F1 macro, pérdida y matrices de confusión
-sobre la misma partición de validación.
-
-Para responder a la observación sobre las representaciones de los modelos,
-se incorporan diagramas de arquitectura con dimensiones, curvas comparables de
-entrenamiento y validación, y ejemplos de aciertos y errores. El notebook adjunto
-contiene las llamadas de entrenamiento y las salidas de la evaluación.
-
-La red totalmente conectada se reconstruye para esta comparación a partir del
-cargador y del ciclo de entrenamiento existentes. No se encontró en el repositorio
-un modelo totalmente conectado identificado como la entrega del Avance 3; por
-ello no se atribuyen a aquella entrega los resultados de esta referencia.
+Para estudiar la regularización se incorpora, en un grupo experimental separado,
+un par de corridas existentes con y sin dropout, aumento de datos y decaimiento
+de pesos. Se presentan tanto sus mejores checkpoints como una comparación en
+la misma época registrada. Las curvas y las brechas permiten distinguir mayor
+ajuste de train de una mejora efectiva en validación.

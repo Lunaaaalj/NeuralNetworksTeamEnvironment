@@ -1,17 +1,20 @@
 \begin{abstract}
-Se comparan una red totalmente conectada de referencia, una CNN original de cuatro
-convoluciones, una variante con dos convoluciones adicionales y una intervención
-de regularización con AdamW y ajuste de tasa. Se utilizan 12,753 imágenes reales
-de entrenamiento y 3,712 de validación de 104 categorías de flores, con entrada
-$112\times112$. Se incluyen representaciones de las arquitecturas, curvas de
-entrenamiento y validación, matrices de confusión y predicciones ilustrativas.
-El modelo elegido por F1 macro de validación es CNN + AdamW + LR, con F1 macro 0.5745 y exactitud 64.44\%. 
-La red totalmente conectada es una referencia reconstruida, no un checkpoint
-histórico identificado del Avance 3. Los resultados corresponden a una sola
-semilla y no se presentan como evaluación sobre prueba independiente.
+Se estudia la clasificación de 104 categorías de flores mediante una MLP sobre
+píxeles aplanados y CNN entrenadas desde cero con entrada RGB de $112\times112$.
+Se analizan cuatro corridas históricas A4 sobre 12,753 imágenes de entrenamiento
+y 3,712 de validación. La CNN original obtiene F1 macro 0.5740 y exactitud 63.25\%,
+frente a 0.0280 y 15.52\% de la MLP; una CNN de seis convoluciones obtiene 0.5502
+y 62.23\%. Se selecciona la CNN de cuatro convoluciones con AdamW y tasa adaptable
+por F1 macro 0.5745, exactitud 64.44\% y checkpoint 61 de 73 épocas.
+Como evidencia complementaria separada, dos corridas TensorFlow del reporte final
+permiten comparar la regularización conjunta: F1 macro 0.5784 con dropout,
+aumentos y AdamW, frente a 0.5332 sin esas intervenciones; la brecha F1 de
+entrenamiento limpio menos validación baja de 0.3435 a 0.2354. En la época común
+34 la variante sin regularización tiene mayor F1, aunque mayor pérdida y brecha.
+Se incluyen curvas, métricas de las 104 clases y matriz de confusión. Los
+resultados provienen de una semilla y de validación usada para selección;
+no constituyen una prueba independiente ni una atribución causal individual.
 \end{abstract}
-
 \begin{keywords}
-Clasificación de imágenes \sep Redes neuronales convolucionales \sep
-Regularización \sep F1 macro \sep Flores
+Clasificación de imágenes \sep CNN \sep MLP \sep Regularización \sep F1 macro
 \end{keywords}

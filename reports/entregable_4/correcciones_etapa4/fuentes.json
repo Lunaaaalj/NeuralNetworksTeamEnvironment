@@ -1,0 +1,224 @@
+{
+  "sources": {
+    "reports/final/experimentos/conteo_por_clase.csv": {
+      "sha256": "1751a66d8187ccc924e0822629d7d9f53fba7b1bf305a87ae60bd9d520c9b963",
+      "text_lf_sha256": "46207feae3bc8c2dc251fd91bafde0520a71e75ee1ccce692cde460ced088b22"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/mlp_referencia/full_res112_s0_mlp_reference_directml/summary.json": {
+      "sha256": "f7787c6d83f1df3e5089afa0c6b8024f751d69ff668b8bbcca569db4b5f42e89",
+      "text_lf_sha256": "586baba38767e3180d7c4ef749741ac37a59b1b70bfbbe812470c06afd5a8c99"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/mlp_referencia/full_res112_s0_mlp_reference_directml/eval_report.json": {
+      "sha256": "3534d31d3d50dc5256beb767b174e8feb7733df8d531903cc0ce3969a25ba95f",
+      "text_lf_sha256": "8658adfe85a510d7c0a5e4cd6312d0a986dac43c3e69b53a9eaadd0b7b091ce9"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/mlp_referencia/full_res112_s0_mlp_reference_directml/evaluation/validation_predictions.csv": {
+      "sha256": "d93e979f9be790eb5cfb6541654fd3874b66f050d38524bad8b95969a0379895",
+      "text_lf_sha256": "c347bf267579fdb337f3ca0b574936dd16fd0fccf271930d180d810518e1f695"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/mlp_referencia/full_res112_s0_mlp_reference_directml/evaluation/confusion_matrix.csv": {
+      "sha256": "6d3d9ec7200a852592bdfd6745c64a2f9ebc2a2c22428e90a5c40fb3660876f1",
+      "text_lf_sha256": "8c83333601b38cfc58a1873bac4a47f426c27d914f590daab9faff3638342cf3"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/mlp_referencia/full_res112_s0_mlp_reference_directml/history.csv": {
+      "sha256": "08ce572ccba2614bc6bda4c83a7c4e1df863c57e3a4f2cac2373f60a6d67f2cc",
+      "text_lf_sha256": "1c791326111b57aced70e1ef28854e74f16b2524544893005f63f9f65433b557"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_original/full_res112_s0_directml/summary.json": {
+      "sha256": "22652809b7dc14f990b40ac5af4c565f052dc88a249f0de2341ab80f72885a7e",
+      "text_lf_sha256": "6bfc750d4da2968d78374f754f1d58ba8df0db2fca06217966930bdcffdd2f1b"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_original/full_res112_s0_directml/eval_report.json": {
+      "sha256": "07abd3a506c7146c6926d2578da6207054a232e1f89c4fc04534523fd8738617",
+      "text_lf_sha256": "b84077271b25d93ad93e103fee79c58017fff5cff109fb446824c8a17cb8f64d"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_original/full_res112_s0_directml/evaluation/validation_predictions.csv": {
+      "sha256": "7bfd0c3981b0f5ff73081cbab16f52e102fe890dba62ce7ed92166bf4a4ce149",
+      "text_lf_sha256": "eba6a64b7588f96c4f64502580d9485720ad3430debfb39b9ea8b2cd434e130e"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_original/full_res112_s0_directml/evaluation/confusion_matrix.csv": {
+      "sha256": "8b14f0daea75f8de84ba9998e7bc65fa80249e768110eb40d43aaeb8333898fe",
+      "text_lf_sha256": "7ced366a5098e3628cdaa15a5e317bab1e4e64005a057fff589f713c93a4ed46"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_original/full_res112_s0_directml/history.csv": {
+      "sha256": "91cc2696fda8db158e7ffe5dd626e5091bc45b15bcbbd2eead51109eab03dda8",
+      "text_lf_sha256": "d37f9a09edf3be1422e4d181baa6f3ee13a68e9c8c8ffebdb7226f4ca3664c22"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_dos_capas_extra/full_res112_s0_deep_directml/summary.json": {
+      "sha256": "3792df10eabeeb4c67d589f57e62b4a58f2c2ef81367cd116082c4c626c731fc",
+      "text_lf_sha256": "023cd343069d632dc978776b7c35b39209579fb6764e5310f804bb9f1026699a"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_dos_capas_extra/full_res112_s0_deep_directml/eval_report.json": {
+      "sha256": "ff38acf6bb9cfca74222d2d7e18f883e7531502df32a9488c2f6f6416b47c0f3",
+      "text_lf_sha256": "eabb01cdf39945ad78ba935a5a59ca578d957f1e35f0bde6d68068c54182f59b"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_dos_capas_extra/full_res112_s0_deep_directml/evaluation/validation_predictions.csv": {
+      "sha256": "cd0c3b7391bc185b219b61e33df783d525b89ae33be9eecff4170b310b03079f",
+      "text_lf_sha256": "996e3d33b88f7b779c2311d164c355dafc5d26c5bfafdb2ef210b8c68418d355"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_dos_capas_extra/full_res112_s0_deep_directml/evaluation/confusion_matrix.csv": {
+      "sha256": "576f97426cc0ba5b4180516611f7c7d967b982c3c235f1dd929c280c3413421f",
+      "text_lf_sha256": "5ec24ec378d099c1cc574c63af8bd66e0ead3f8b4ba8c72ae91f9157d7a77c47"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_dos_capas_extra/full_res112_s0_deep_directml/history.csv": {
+      "sha256": "3b726328643a230f3b806ac96cecb53bec651d1c2c186b3ba6e47ed9d70aa439",
+      "text_lf_sha256": "81cb175f2c3f14808bb6c89203497f2bfb725891303cd173ce6495c512efdba8"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_regularizada/full_res112_s0_adamw_plateau_directml/summary.json": {
+      "sha256": "7fc46babe40f2a18e88e10214e841e1ddba435f7a433c4fccd1b945510a045f1",
+      "text_lf_sha256": "40f0929172d4b7d91e7a55725dd29a489d5bbc89fd436110dae764a4ca149407"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_regularizada/full_res112_s0_adamw_plateau_directml/eval_report.json": {
+      "sha256": "a52fb4216d25d0d29a228d750983602a70e6e7d9a680057167692d720d256932",
+      "text_lf_sha256": "62e3a902304cb56b4d63952477c9f89681bba89b0b70d81f3f06e4b6d4bb68f8"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_regularizada/full_res112_s0_adamw_plateau_directml/evaluation/validation_predictions.csv": {
+      "sha256": "7fcb3f6124b196490604cb2af5aaf741f1e3665793034cc6ea0c61a7f3fdfd94",
+      "text_lf_sha256": "e53baa0b625486493d68fab9d2b1f42617eec05e7818a63b58dcfed3c55ee337"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_regularizada/full_res112_s0_adamw_plateau_directml/evaluation/confusion_matrix.csv": {
+      "sha256": "be483a6b4b486ecfa4bf794caea0b4cf69c8c7331592181cc33b28bf4bac15ae",
+      "text_lf_sha256": "4aa3ac4dc83341434e5178c4f2c2026e553d61e7292dab0ed5f4769430fe50a0"
+    },
+    "reports/entregable_4/avance4_2026-10-21/runs/cnn_regularizada/full_res112_s0_adamw_plateau_directml/history.csv": {
+      "sha256": "ea4baecb7776c9a29c62696481ee12f0d7bcb2368e3b595449ff57126874ec00",
+      "text_lf_sha256": "f5229b9e409b9aae7b8f633dd436a093021082ac38173e6568711b68d59f55f2"
+    },
+    "reports/final/experimentos/configs/referencia.yaml": {
+      "sha256": "5b5eb7586f0e59d483affdff254c3007204562e24777e6c9c6aca9e5869db1dc",
+      "text_lf_sha256": "44d7305cfa1779ab2a241b7180b4206ba0918c525ddb0bafb977f2ce59eea46f"
+    },
+    "reports/final/experimentos/runs/referencia/full_res112_s0_adamw_plateau/summary.json": {
+      "sha256": "128f74a8effae2e6c20b5766df00da0491c1261dcc3a62318aa8dcddb4163fa8",
+      "text_lf_sha256": "fc56f105365d34134ce15a0b6097d311acf3619445395475a6b30052b8342eb8"
+    },
+    "reports/final/experimentos/runs/referencia/full_res112_s0_adamw_plateau/history.csv": {
+      "sha256": "8b3a587e2d566b7c014657f48a9cdff541e098ffdbd99923a529b0caa57d676f",
+      "text_lf_sha256": "fab6b8f325f196495af92da39f9a53adf645711b82c1c3c1abb056d34768d6a8"
+    },
+    "reports/final/experimentos/runs/referencia/full_res112_s0_adamw_plateau/eval_report.json": {
+      "sha256": "41188bfcc794377f300bf92a4721b303f067ef3f4448069f6d1a9f66c056178c",
+      "text_lf_sha256": "9d92a9188a9a6487b307ae68b7ead6e746e4a1cda98b90045d3084ed544f3bbe"
+    },
+    "reports/final/experimentos/runs/referencia/full_res112_s0_adamw_plateau/evaluation/validation_predictions.csv": {
+      "sha256": "15529e5a8f090930985fbae89a4d42b2f72ee6daf0a998f3a963a04d0aec417c",
+      "text_lf_sha256": "332f4138ab94a56d13f00ed8a1c35d69a351abd5254e6b13b9e7398ee86db24d"
+    },
+    "reports/final/experimentos/runs/referencia/full_res112_s0_adamw_plateau/evaluation/confusion_matrix.csv": {
+      "sha256": "0dfce745c382e086fec71cf2c5b49f4c3c7d9e4782c0e950f4d018af7cb6d39b",
+      "text_lf_sha256": "ef4057daa3150be0172ceea68d0e4f19aec2fb298e3c21b63562939de5d45510"
+    },
+    "reports/final/experimentos/configs/sin_regularizacion.yaml": {
+      "sha256": "f29ffe874d57dc202b620605e4961b3c5550de3b80a6538f5f5df4116b62dcc5",
+      "text_lf_sha256": "4f9163077c9166375901d10d89179319a7b86bcd9611c05c605d2f98de8e3961"
+    },
+    "reports/final/experimentos/runs/sin_regularizacion/full_res112_s0_adam_plateau/summary.json": {
+      "sha256": "b1aef84c7e47414fbde5cb7b5aeb0172281c33d67e626c7141619053c1c4ff4e",
+      "text_lf_sha256": "7634a2ceaf200459217b0886782ff1faf21c440052222faa29c79e96f8d9048e"
+    },
+    "reports/final/experimentos/runs/sin_regularizacion/full_res112_s0_adam_plateau/history.csv": {
+      "sha256": "4cfa9a906285593dcff18d8ef034ee886c0f3f979cbe58abb1bad0d2740495ac",
+      "text_lf_sha256": "6bce43b6521dc682724bf617189261e188451769995f4d75cc4bd24f1986efd1"
+    },
+    "reports/final/experimentos/runs/sin_regularizacion/full_res112_s0_adam_plateau/eval_report.json": {
+      "sha256": "e9f20507b2b7ec47fb89292ed79d4955b46d004f137bfa93d945537b28540c69",
+      "text_lf_sha256": "ab23c9cb08b74728d571d72868502b613ecf4480489bdecbf7943ee704c913d2"
+    },
+    "reports/final/experimentos/runs/sin_regularizacion/full_res112_s0_adam_plateau/evaluation/validation_predictions.csv": {
+      "sha256": "b6efa3492f6d32762bc51b477cfbed404d4cb5c89352dd49d9ba7807be66a47e",
+      "text_lf_sha256": "899af39d81a6bb112fe3b847cd5cddcaf347bf2d9460890dd79fd55f8ae6d413"
+    },
+    "reports/final/experimentos/runs/sin_regularizacion/full_res112_s0_adam_plateau/evaluation/confusion_matrix.csv": {
+      "sha256": "9456f0c69e3e4822f392dc6ec5dbe7233a8c5eb3bf0694b96f5a3423fc4f7f4f",
+      "text_lf_sha256": "b3a94dcc83aa097ba7840608be7df1d446636171693ef4b745d74a56da1928ef"
+    }
+  },
+  "selection": {
+    "experiment_id": "A4_CNN_AdamW",
+    "selection": "max macro F1 among four historical A4 runs",
+    "checkpoint_epoch": 61,
+    "epochs_run": 73,
+    "samples": 3712,
+    "correct": 2392,
+    "accuracy": 0.6443965517241379,
+    "f1_macro": 0.5744742345749192,
+    "precision_macro": 0.6214684170187184,
+    "recall_macro": 0.5634652236613092,
+    "val_loss_saved": 1.5074768929645932,
+    "confusions": [
+      {
+        "true_label": 30,
+        "predicted_label": 73,
+        "true": "carnation",
+        "predicted": "rose",
+        "count": 12
+      },
+      {
+        "true_label": 102,
+        "predicted_label": 73,
+        "true": "common tulip",
+        "predicted": "rose",
+        "count": 12
+      },
+      {
+        "true_label": 79,
+        "predicted_label": 73,
+        "true": "anthurium",
+        "predicted": "rose",
+        "count": 10
+      },
+      {
+        "true_label": 48,
+        "predicted_label": 49,
+        "true": "daisy",
+        "predicted": "common dandelion",
+        "count": 8
+      },
+      {
+        "true_label": 68,
+        "predicted_label": 103,
+        "true": "windflower",
+        "predicted": "wild rose",
+        "count": 8
+      },
+      {
+        "true_label": 95,
+        "predicted_label": 73,
+        "true": "camellia",
+        "predicted": "rose",
+        "count": 8
+      },
+      {
+        "true_label": 103,
+        "predicted_label": 68,
+        "true": "wild rose",
+        "predicted": "windflower",
+        "count": 8
+      },
+      {
+        "true_label": 49,
+        "predicted_label": 48,
+        "true": "common dandelion",
+        "predicted": "daisy",
+        "count": 7
+      },
+      {
+        "true_label": 68,
+        "predicted_label": 4,
+        "true": "windflower",
+        "predicted": "wild geranium",
+        "count": 7
+      },
+      {
+        "true_label": 73,
+        "predicted_label": 103,
+        "true": "rose",
+        "predicted": "wild rose",
+        "count": 7
+      }
+    ],
+    "new_training": false,
+    "new_image_inference": false
+  },
+  "method": "Derived from historical predictions and histories; originals unchanged"
+}
